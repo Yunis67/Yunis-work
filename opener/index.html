@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="./gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Space Grotesk"; src: url("fonts/SpaceGrotesk-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "Space Grotesk"; src: url("fonts/SpaceGrotesk-500.woff2") format("woff2"); font-weight: 500; }
+      @font-face { font-family: "Inter"; src: url("fonts/Inter-400.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Inter"; src: url("fonts/Inter-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-400.woff2") format("woff2"); font-weight: 400; }
+
+      :root {
+        --bg: #0b0a12;
+        --panel: #16141f;
+        --line: #2a2738;
+        --brand: #5b41da;
+        --brand-text: #8f7bff;
+        --red: #ff5a5f;
+        --green: #34c759;
+        --white: #f5f4fa;
+        --muted: #8b88a0;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+      #root {
+        position: relative; width: 1080px; height: 1920px; overflow: hidden;
+        font-family: "Inter", sans-serif; color: var(--white);
+        background: radial-gradient(900px 700px at 50% 38%, #1d1638 0%, var(--bg) 70%);
+      }
+      .clip { position: absolute; inset: 0; }
+      .center { position: absolute; left: 108px; right: 108px; }
+      .label {
+        font-family: "JetBrains Mono", monospace; font-size: 30px; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 18px;
+      }
+      .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--red); }
+      .h {
+        font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 118px;
+        line-height: 1.02; letter-spacing: -0.035em;
+      }
+      .mask { display: block; overflow: hidden; padding-bottom: 8px; }
+      .mask > span { display: block; }
+      .accent { color: var(--brand-text); }
+      .red { color: var(--red); }
+
+      .card {
+        position: absolute; left: 140px; right: 140px; border-radius: 48px;
+        background: var(--panel); border: 2px solid var(--line);
+        box-shadow: 0 40px 80px rgba(0,0,0,0.45); padding: 56px 56px 60px;
+      }
+      .caller { display: flex; align-items: center; gap: 36px; }
+      .avatar {
+        position: relative; width: 132px; height: 132px; border-radius: 50%;
+        background: var(--brand); display: grid; place-items: center; flex: none;
+      }
+      .avatar svg { width: 60px; height: 60px; }
+      .ring { position: absolute; inset: 0; border-radius: 50%; border: 4px solid var(--brand-text); opacity: 0; }
+      .caller-meta .small { font-size: 30px; color: var(--muted); margin-bottom: 10px; }
+      .caller-meta .num { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 56px; letter-spacing: -0.02em; }
+      .btns { display: flex; justify-content: space-between; margin-top: 56px; padding: 0 30px; }
+      .btn { width: 120px; height: 120px; border-radius: 50%; display: grid; place-items: center; }
+      .btn svg { width: 54px; height: 54px; }
+      .btn.no { background: var(--red); }
+      .btn.yes { background: var(--green); }
+
+      .note {
+        position: absolute; left: 140px; right: 140px; height: 132px; border-radius: 36px;
+        background: var(--panel); border: 2px solid var(--line);
+        display: flex; align-items: center; gap: 30px; padding: 0 40px;
+      }
+      .note .ic { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,90,95,0.16); display: grid; place-items: center; flex: none; }
+      .note .ic svg { width: 34px; height: 34px; }
+      .note .t { font-size: 38px; font-weight: 700; }
+      .note .time { margin-left: auto; font-family: "JetBrains Mono", monospace; font-size: 30px; color: var(--muted); }
+
+      .big {
+        font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 360px;
+        letter-spacing: -0.06em; line-height: 0.9; text-align: center;
+      }
+      .sub { font-size: 46px; color: var(--muted); text-align: center; }
+      .math { font-family: "JetBrains Mono", monospace; font-size: 58px; text-align: center; color: var(--white); }
+
+      #wipe { position: absolute; left: 540px; top: 960px; width: 200px; height: 200px; margin: -100px 0 0 -100px; border-radius: 50%; background: var(--brand); }
+      .wordmark {
+        font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 168px; letter-spacing: -0.05em;
+        color: #fff; display: flex; align-items: center; justify-content: center; gap: 28px;
+      }
+      .wave { display: flex; gap: 12px; align-items: center; height: 120px; }
+      .wave i { display: block; width: 18px; border-radius: 9px; background: #fff; }
+      .ans {
+        position: absolute; left: 140px; right: 140px; border-radius: 48px; background: #fff; color: #17142a;
+        padding: 44px 48px 48px; box-shadow: 0 40px 90px rgba(20,8,70,0.45);
+      }
+      .ans .top { display: flex; align-items: center; gap: 16px; font-size: 32px; font-weight: 700; }
+      .ans .top .g { width: 18px; height: 18px; border-radius: 50%; background: var(--green); }
+      .ans .top .tm { margin-left: auto; font-family: "JetBrains Mono", monospace; font-weight: 400; color: #6d6a80; }
+      .bub { margin-top: 28px; font-size: 40px; line-height: 1.25; padding: 26px 34px; border-radius: 34px; max-width: 86%; }
+      .bub.in { background: #efedf7; border-bottom-left-radius: 10px; }
+      .bub.out { background: var(--brand); color: #fff; margin-left: auto; border-bottom-right-radius: 10px; display: flex; align-items: center; gap: 18px; }
+      .tick { width: 44px; height: 44px; border-radius: 50%; background: #fff; display: grid; place-items: center; flex: none; }
+      .tick svg { width: 26px; height: 26px; }
+      .tag { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 92px; letter-spacing: -0.03em; text-align: center; color: #fff; line-height: 1.02; }
+      .url { font-family: "JetBrains Mono", monospace; font-size: 32px; letter-spacing: 0.16em; text-align: center; color: rgba(255,255,255,0.75); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="15" data-width="1080" data-height="1920">
+
+      <!-- SCENE 1 · the rush (0 to 3.4s) -->
+      <div id="s1" class="clip" data-start="0" data-duration="3.4" data-track-index="0">
+        <div class="center label" id="s1-label" style="top:330px"><span class="dot"></span>Friday · 7:42 PM</div>
+        <div class="center h" id="s1-h" style="top:410px">
+          <span class="mask"><span id="s1-a">Dinner rush.</span></span>
+          <span class="mask"><span id="s1-b" class="accent">Phone's ringing.</span></span>
+        </div>
+        <div class="card" id="call" style="top:900px">
+          <div class="caller">
+            <div class="avatar">
+              <div class="ring" id="r1"></div><div class="ring" id="r2"></div>
+              <svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+            </div>
+            <div class="caller-meta">
+              <div class="small">Incoming call</div>
+              <div class="num">(905) 555-0148</div>
+            </div>
+          </div>
+          <div class="btns">
+            <div class="btn no"><svg viewBox="0 0 24 24" fill="#fff" style="transform:rotate(135deg)"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></div>
+            <div class="btn yes"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 2 · nobody picks up (3.4 to 7s) -->
+      <div id="s2" class="clip" data-start="3.4" data-duration="3.6" data-track-index="0">
+        <div class="center h" style="top:330px">
+          <span class="mask"><span id="s2-a">Nobody</span></span>
+          <span class="mask"><span id="s2-b" class="red">picks up.</span></span>
+        </div>
+        <div id="notes" class="clip">
+          <div class="note" id="n1" style="top:720px"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#ff5a5f" stroke-width="2.6" stroke-linecap="round"><path d="M4 4l16 16M20 4L4 20"/></svg></div><div class="t">Missed call</div><div class="time">7:42 PM</div></div>
+          <div class="note" id="n2" style="top:876px"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#ff5a5f" stroke-width="2.6" stroke-linecap="round"><path d="M4 4l16 16M20 4L4 20"/></svg></div><div class="t">Missed call</div><div class="time">7:49 PM</div></div>
+          <div class="note" id="n3" style="top:1032px"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#ff5a5f" stroke-width="2.6" stroke-linecap="round"><path d="M4 4l16 16M20 4L4 20"/></svg></div><div class="t">Missed call</div><div class="time">8:03 PM</div></div>
+          <div class="note" id="n4" style="top:1188px"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#ff5a5f" stroke-width="2.6" stroke-linecap="round"><path d="M4 4l16 16M20 4L4 20"/></svg></div><div class="t">Missed call</div><div class="time">8:11 PM</div></div>
+        </div>
+        <div id="count-wrap" class="center" style="top:760px">
+          <div class="big red" id="count">0</div>
+          <div class="sub" style="margin-top:30px">missed calls this week</div>
+        </div>
+      </div>
+
+      <!-- SCENE 3 · the math (7 to 10.6s) -->
+      <div id="s3" class="clip" data-start="7" data-duration="3.6" data-track-index="0">
+        <div class="center label" id="s3-label" style="top:520px; justify-content:center">The math</div>
+        <div class="center math" id="math" style="top:610px">20 calls × $50</div>
+        <div class="center big" id="money" style="top:740px; font-size:290px">$0</div>
+        <div class="center sub" id="gone" style="top:1040px">gone. every week.</div>
+        <div class="center h" style="top:1200px; font-size:68px; text-align:center; letter-spacing:-0.02em; line-height:1.15">
+          <span class="mask"><span id="s3-a" style="color:var(--muted)">No voicemail.</span></span>
+          <span class="mask"><span id="s3-b">They call the next place.</span></span>
+        </div>
+      </div>
+
+      <!-- SCENE 4 · RezFlo (10.6 to 15s) -->
+      <div id="s4" class="clip" data-start="10.6" data-duration="4.4" data-track-index="0">
+        <div id="wipe"></div>
+        <div class="center wordmark" id="logo" style="top:330px">
+          <div class="wave"><i style="height:50px"></i><i style="height:100px"></i><i style="height:70px"></i></div>RezFlo
+        </div>
+        <div class="ans" id="ans" style="top:620px">
+          <div class="top"><span class="g"></span>Answered by RezFlo<span class="tm">0:01</span></div>
+          <div class="bub in" id="b1">Hi, table for 4 at 8 tonight?</div>
+          <div class="bub out" id="b2"><span>You're booked. See you at 8.</span><span class="tick" id="tk"><svg viewBox="0 0 24 24" fill="none" stroke="#5b41da" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div>
+        </div>
+        <div class="center tag" style="top:1250px">
+          <span class="mask"><span id="t1">Every call.</span></span>
+          <span class="mask"><span id="t2">Answered.</span></span>
+        </div>
+        <div class="center url" id="url" style="top:1530px">rezflo.ca</div>
+      </div>
+
+      <!-- sound (kit sfx, no music) -->
+      <audio id="sfx-1" src="sfx/tick.wav" data-start="3.75" data-duration="0.09" data-volume="0.7"></audio>
+      <audio id="sfx-2" src="sfx/tick.wav" data-start="4.0" data-duration="0.09" data-volume="0.7"></audio>
+      <audio id="sfx-3" src="sfx/tick.wav" data-start="4.25" data-duration="0.09" data-volume="0.7"></audio>
+      <audio id="sfx-4" src="sfx/tick.wav" data-start="4.5" data-duration="0.09" data-volume="0.7"></audio>
+      <audio id="sfx-5" src="sfx/counter.wav" data-start="5.25" data-duration="1.05" data-volume="0.55"></audio>
+      <audio id="sfx-6" src="sfx/counter.wav" data-start="7.75" data-duration="1.05" data-volume="0.55"></audio>
+      <audio id="sfx-7" src="sfx/pop.wav" data-start="11.05" data-duration="0.17" data-volume="0.7"></audio>
+      <audio id="sfx-8" src="sfx/tick.wav" data-start="12.75" data-duration="0.09" data-volume="0.8"></audio>
+      <audio id="sfx-9" src="sfx/chime.wav" data-start="13.4" data-duration="0.95" data-volume="0.6"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const lineIn = (sel, t, d = 0.5) => tl.fromTo(sel, { yPercent: 110 }, { yPercent: 0, duration: d, ease: "power4.out" }, t);
+      const counter = (sel, from, to, t, d, fmt) => {
+        const o = { v: from };
+        const el = document.querySelector(sel);
+        tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out",
+          onUpdate: () => { el.textContent = fmt(Math.round(o.v)); } }, t);
+      };
+
+      // SCENE 1
+      tl.fromTo("#s1-label", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.05);
+      lineIn("#s1-a", 0.15);
+      lineIn("#s1-b", 0.75);
+      tl.fromTo("#call", { y: 160, opacity: 0, scale: 0.94 }, { y: 0, opacity: 1, scale: 1, duration: 0.7, ease: "power3.out" }, 0.3);
+      [0.9, 1.6, 2.3].forEach((t, k) => {
+        const ir = k === 0;
+        tl.fromTo("#r1", { scale: 1, opacity: 0.8 }, { scale: 1.9, opacity: 0, duration: 0.65, ease: "power2.out", immediateRender: ir }, t);
+        tl.fromTo("#r2", { scale: 1, opacity: 0.6 }, { scale: 1.5, opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: ir }, t + 0.15);
+        tl.to("#call", { rotation: -1.6, duration: 0.05 }, t);
+        tl.to("#call", { rotation: 1.6, duration: 0.05 }, t + 0.05);
+        tl.to("#call", { rotation: -1.2, duration: 0.05 }, t + 0.1);
+        tl.to("#call", { rotation: 1.2, duration: 0.05 }, t + 0.15);
+        tl.to("#call", { rotation: 0, duration: 0.04 }, t + 0.2);
+      });
+      tl.to("#s1-h, #s1-label", { opacity: 0, y: -40, duration: 0.3, ease: "power2.in" }, 3.05);
+      tl.to("#call", { y: 120, opacity: 0, duration: 0.3, ease: "power2.in" }, 3.05);
+
+      // SCENE 2
+      lineIn("#s2-a", 3.45, 0.4);
+      lineIn("#s2-b", 3.6, 0.4);
+      ["#n1", "#n2", "#n3", "#n4"].forEach((id, i) => {
+        tl.fromTo(id, { x: 900, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "power4.out" }, 3.72 + i * 0.25);
+      });
+      tl.fromTo("#notes", { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.92, duration: 0.35, ease: "power2.in" }, 4.9);
+      tl.fromTo("#count-wrap", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.8)" }, 5.15);
+      counter("#count", 0, 20, 5.2, 1.1, (v) => String(v));
+      tl.fromTo("#s2", { opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }, 6.75);
+
+      // SCENE 3
+      tl.fromTo("#s3-label", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 7.05);
+      tl.fromTo("#math", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 7.15);
+      tl.fromTo("#money", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }, 7.6);
+      counter("#money", 0, 1000, 7.62, 1.1, (v) => "$" + v.toLocaleString("en-US"));
+      tl.fromTo("#money", { color: "#f5f4fa" }, { color: "#ff5a5f", duration: 0.3, immediateRender: false }, 8.7);
+      tl.fromTo("#gone", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 8.8);
+      lineIn("#s3-a", 9.15, 0.45);
+      lineIn("#s3-b", 9.5, 0.45);
+
+      // SCENE 4
+      tl.fromTo("#wipe", { scale: 0 }, { scale: 22, duration: 0.6, ease: "power3.inOut" }, 10.6);
+      tl.fromTo("#logo", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(2.2)" }, 11.0);
+      [11.3, 11.75, 12.2, 12.65].forEach((t, k) => {
+        tl.fromTo("#logo .wave i", { scaleY: 1 }, { scaleY: k % 2 ? 1 : 0.45, duration: 0.22, ease: "sine.inOut", stagger: 0.06, immediateRender: k === 0 }, t);
+      });
+      tl.fromTo("#ans", { y: 120, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 11.5);
+      tl.fromTo("#b1", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 11.9);
+      tl.fromTo("#b2", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 12.35);
+      tl.fromTo("#tk", { scale: 0 }, { scale: 1, duration: 0.35, ease: "back.out(3)" }, 12.75);
+      lineIn("#t1", 13.2, 0.5);
+      lineIn("#t2", 13.45, 0.5);
+      tl.fromTo("#url", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 13.9);
+      tl.set({}, {}, 15);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

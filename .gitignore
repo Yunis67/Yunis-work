@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+# raw phone recordings stay local (large, private)
+raw/*
+!raw/.gitkeep
+# scratch renders; keep named finals by committing them explicitly with -f
+renders/*-test.mp4
+renders/*-draft.mp4
