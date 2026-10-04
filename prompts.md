@@ -7,6 +7,7 @@ Before a project: copy the kit's fonts folder into it (and sfx for PROMPT 13). E
 > **RezFlo additions (PROMPT 15 to 19, at the bottom).** Order for a talking-head ad:
 > PROMPT 16 (cut + captions) → PROMPT 11 with the PROMPT 15 style block under it → PROMPT 12 for the one key moment → PROMPT 13 (sounds) → PROMPT 19 (put the opener in front).
 > For a standalone opener or product clip: PROMPT 17 or 18, with PROMPT 15 under it.
+> For a talking-head video with B-roll graphics and morphing cards: PROMPT 20.
 
 ## PROMPT 01 · Setup
 
@@ -329,4 +330,28 @@ Run in the folder that has both renders/rezflo-opener.mp4 and your finished clip
 
 ```
 Join renders/rezflo-opener.mp4 and renders/with-cards.mp4 into one video, opener first. Match them to the same size (1080x1920) and frame rate (use the talking-head clip's frame rate). Make the cut between them a fast punch: the last 0.2 seconds of the opener scales up slightly and the clip starts immediately, no fade to black. Keep the clip's audio exactly as it is and let the opener's sounds finish without overlapping my first word. Render to renders/final.mp4 and tell me the total length.
+```
+
+## PROMPT 20 · Talking head + motion graphics (pre-call video, first 15 seconds)
+
+Make a new folder next to `opener/` (for example `precall/`), copy `kit/fonts` and `kit/sfx` into it, put the video in as `source.mp4`, start Claude Code there and paste. Use the highest-quality copy of the video you have, not a WhatsApp copy.
+
+```
+Add motion graphics to the first 15 seconds of source.mp4 with HyperFrames. Keep its original size and frame rate (it's landscape). Only the first 15 seconds: render that clip, not the whole video.
+
+It's me (Yunis, founder of RezFlo) talking at a desk, framed wide, with empty space on both sides of me. Use that empty space for the graphics. Never cover my face.
+
+Style: modern product motion. One card at a time that morphs into its next state (size, corner radius, colour change, content swaps with a short blur) instead of new things popping in. A cursor clicks things to make them change. Springs with a tiny overshoot at most. No glows, particles, bouncy easing or gradients on the cards. Brand: dark cards #0b0a12, purple #5b41da for fills and #8f7bff for purple text, green #34c759 only for booked/answered, red #ff5a5f only for missed calls. Space Grotesk Bold for headlines, Inter for UI text, JetBrains Mono for small labels and times. Fonts and sounds are in fonts/ and sfx/.
+
+First transcribe the clip with word timings. Every graphic lands on the spoken word, not a guessed timestamp. Then do this:
+
+1. "Hi, it's Yunis from RezFlo" — a small dot grows into a name tag beside me: YUNIS · FOUNDER, RezFlo. Soft pop sound.
+2. "you've already booked a call with us" — the name tag morphs into a booking card (Call with RezFlo · your time). The cursor clicks it and a green ✓ Booked appears. Chime sound.
+3. "what RezFlo is, how it works, and why we built it" — the card morphs into a 3-item list: 01 What it is · 02 How it works · 03 Why we built it. Each line lights up on its word. Tick sound per line. Slow punch-in on me (5% max) while the list builds.
+4. "Restaurants deal with the same problem every single day" — cut to a full-screen dark frame (1.5 seconds max) with big kinetic type: SAME PROBLEM. / EVERY. SINGLE. DAY. One word at a time, on the words. Then back to me.
+5. Captions: short white captions low in the frame, 2–4 words at a time, synced to my words.
+
+Use only words I actually say. No made-up stats.
+
+Show me the plan with timings first and wait for my OK. Then build it, run npx hyperframes check, pull a frame at each of the 4 moments and look at it, and render a draft to renders/precall-15s-draft.mp4.
 ```
