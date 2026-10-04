@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="./gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Archivo Black"; src: url("fonts/ArchivoBlack-400.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Instrument Serif"; src: url("fonts/InstrumentSerif-400-italic.woff2") format("woff2"); font-weight: 400; font-style: italic; }
+      @font-face { font-family: "Inter"; src: url("fonts/Inter-400.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Inter"; src: url("fonts/Inter-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-400.woff2") format("woff2"); font-weight: 400; }
+
+      :root {
+        --ink: #0b0a12;
+        --cream: #f3efe6;
+        --brand: #5b41da;
+        --brand-deep: #3f2ba6; /* brand purple, darkened for text on the light wall */
+        --peri: #8f7bff;
+        --red: #ff5a5f;
+        --green: #34c759;
+        --panel-line: #2a2738;
+        --muted: #8b88a0;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ink); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Inter", sans-serif; }
+      .clip { position: absolute; inset: 0; }
+
+      /* footage */
+      #vid-wrap { position: absolute; inset: 0; transform-origin: 1060px 470px; }
+      #src { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; }
+
+      /* shared type */
+      .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+      .serif { font-family: "Instrument Serif", serif; font-style: italic; }
+      .heavy { font-family: "Archivo Black", sans-serif; text-transform: uppercase; line-height: 1; letter-spacing: -0.01em; }
+      .mask { display: block; overflow: hidden; }
+      .mask > span { display: inline-block; }
+      .pdot { display: inline-block; width: 0.2em; height: 0.2em; border-radius: 50%; background: currentColor; margin-left: 0.06em; vertical-align: baseline; }
+
+      /* 01 · name lockup */
+      #orbit { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+      #name { position: absolute; left: 1475px; top: 318px; width: 380px; text-align: center; font-size: 84px; color: var(--ink); white-space: nowrap; }
+      #name span { display: inline-block; }
+      #from-mask { position: absolute; right: 154px; top: 430px; height: 78px; overflow: hidden; }
+      #from { display: block; font-size: 60px; line-height: 60px; color: var(--brand-deep); white-space: nowrap; }
+      #o-ring { position: absolute; left: 1769px; top: 449px; width: 31px; height: 31px; border-radius: 50%; border: 4px solid var(--brand-deep); }
+      .pulse { position: absolute; border-radius: 50%; border: 3px solid var(--brand); opacity: 0; }
+      #dr1, #dr2 { left: 1771.5px; top: 451.5px; width: 26px; height: 26px; }
+
+      /* 02 · dot → booking card */
+      #shape { position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 13px; background: var(--brand); overflow: hidden; box-shadow: 0 24px 60px rgba(11,10,18,0.28); }
+      #card-inner { position: absolute; left: 0; top: 0; width: 400px; height: 232px; padding: 24px 26px; color: var(--cream); opacity: 0; }
+      #card-inner .lbl { font-size: 13px; color: var(--peri); line-height: 16px; }
+      #card-inner .ttl { font-weight: 700; font-size: 32px; line-height: 38px; margin-top: 14px; letter-spacing: -0.01em; }
+      #card-inner .sub { font-size: 18px; line-height: 23px; margin-top: 6px; color: var(--muted); }
+      #card-inner .div { height: 1px; background: var(--panel-line); margin: 20px 0 16px; }
+      #card-inner .row { display: flex; align-items: center; justify-content: space-between; height: 32px; font-size: 20px; }
+      #toggle { position: relative; width: 58px; height: 32px; border-radius: 16px; background: var(--panel-line); }
+      #knob { position: absolute; left: 4px; will-change: transform; top: 4px; width: 24px; height: 24px; border-radius: 50%; background: #fff; }
+      #booked { position: absolute; left: 1700px; top: 276px; padding: 9px 18px; border-radius: 999px; background: var(--green); color: var(--ink); font-weight: 700; font-size: 18px; letter-spacing: 0.06em; opacity: 0; }
+      #cursor { position: absolute; left: 0; top: 0; width: 34px; height: 34px; opacity: 0; }
+
+      /* 03 · what / how / why */
+      #dots { position: absolute; left: 1462px; top: 280px; width: 420px; height: 420px; }
+      #dots i { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--peri); opacity: 0; }
+      .row3 { position: absolute; left: 1480px; display: flex; align-items: baseline; gap: 10px; }
+      .row3 .n { width: 26px; font-size: 17px; color: var(--ink); }
+      .row3 .mask { height: 100px; }
+      .row3 .w { font-size: 96px; color: var(--ink); }
+      #speak-mask { position: absolute; left: 1480px; top: 652px; height: 66px; overflow: hidden; }
+      #speak { display: block; font-size: 44px; line-height: 50px; color: var(--brand-deep); }
+
+      /* cutaways */
+      .cut { z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      #cut-ov { background: var(--brand); color: var(--cream); }
+      #cut-ov .heavy { font-size: 230px; }
+      #cut-ov .serif { font-size: 64px; color: rgba(243,239,230,0.8); }
+      #cut-ov .mask { margin-top: 18px; padding-bottom: 14px; }
+      #cut-same { background: repeating-linear-gradient(-45deg, var(--brand) 0 80px, var(--ink) 80px 160px); background-size: 226.27px 226.27px; color: var(--cream); }
+      #cut-same .heavy { font-size: 190px; line-height: 0.95; }
+      #cut-every { background: var(--cream); color: var(--ink); }
+      #cut-single { background: var(--ink); color: var(--cream); }
+      #cut-day { background: var(--brand); color: var(--cream); }
+      .big { font-size: 300px; }
+      #day-dot { position: relative; transform-origin: 0% 100%; }
+      #day-dot svg { position: absolute; left: 50%; top: 50%; width: 46%; height: 46%; transform: translate(-50%, -50%); opacity: 0; }
+      .dpulse { position: absolute; inset: 0; border-radius: 50%; border: 0.02em solid var(--cream); opacity: 0; }
+
+      /* HUD */
+      #hud { position: absolute; inset: 0; z-index: 100; pointer-events: none; color: #fff; }
+      #hud.on-footage { color: var(--ink); }
+      #hud.on-footage .hl:not(#hl-bl), #hud.on-footage #hl-bl span { background: rgba(243,239,230,0.88); padding: 5px 9px; margin: -5px -9px; border-radius: 3px; }
+      #hl-bl span { justify-self: start; }
+      #hud.on-dark { mix-blend-mode: normal; color: var(--cream); }
+      #hud.on-light { mix-blend-mode: normal; color: var(--ink); }
+      .hud-in { opacity: 0; }
+      .br { position: absolute; width: 26px; height: 26px; border-color: currentColor; border-style: solid; border-width: 0; }
+      #br-tl { left: 36px; top: 36px; border-top-width: 2px; border-left-width: 2px; transform-origin: 0 0; }
+      #br-tr { right: 36px; top: 36px; border-top-width: 2px; border-right-width: 2px; transform-origin: 100% 0; }
+      #br-bl { left: 36px; bottom: 36px; border-bottom-width: 2px; border-left-width: 2px; transform-origin: 0 100%; }
+      #br-br { right: 36px; bottom: 36px; border-bottom-width: 2px; border-right-width: 2px; transform-origin: 100% 100%; }
+      .hl { position: absolute; font-size: 16px; line-height: 18px; white-space: nowrap; }
+      #hl-tl { left: 76px; top: 46px; }
+      #hl-tr { right: 76px; top: 46px; }
+      #hl-bl { left: 76px; bottom: 56px; }
+      #hl-bl { display: grid; }
+      #hl-bl span { grid-area: 1 / 1; opacity: 0; }
+      #hl-br { right: 76px; bottom: 56px; }
+      #prog-track { position: absolute; left: 76px; right: 76px; bottom: 44px; height: 1px; background: currentColor; opacity: 0.3; }
+      #prog { position: absolute; left: 76px; right: 76px; bottom: 43px; height: 3px; background: currentColor; transform-origin: 0 50%; transform: scaleX(0); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="16" data-width="1920" data-height="1080">
+
+      <!-- FOOTAGE (0 to 16s), sound stays on the clip -->
+      <div id="vid-wrap">
+        <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="16" data-has-audio="true" playsinline></video>
+      </div>
+
+      <!-- 01 / HELLO (0.6 to 4.0s): name lockup on an orbit line, the "o" becomes the dot -->
+      <div id="ch1" class="clip" data-start="0" data-duration="4.2" style="z-index:10">
+        <svg id="orbit" viewBox="0 0 1920 1080">
+          <ellipse id="orbit-path" cx="1665" cy="362" rx="228" ry="58" transform="rotate(-8 1665 362)" fill="none" stroke="#0b0a12" stroke-width="1.5" stroke-dasharray="1000" stroke-dashoffset="1000" />
+        </svg>
+        <div id="name" class="heavy"><span>Y</span><span>O</span><span>U</span><span>S</span><span>E</span><span>F</span></div>
+        <div id="from-mask"><span id="from" class="serif">from RezFl</span></div>
+        <div id="o-ring"></div>
+      </div>
+
+      <!-- 01 → 02: the dot rings, then morphs into the booking card (2.3 to 7.1s) -->
+      <div id="ch2" class="clip" data-start="2.2" data-duration="5.0" style="z-index:20">
+        <div class="pulse" id="dr1"></div>
+        <div class="pulse" id="dr2"></div>
+        <div id="shape">
+          <div id="card-inner">
+            <div class="lbl mono">Booking · RezFlo</div>
+            <div class="ttl">Call with RezFlo</div>
+            <div class="sub">Intro call · your chosen time</div>
+            <div class="div"></div>
+            <div class="row"><span>Confirmed</span><div id="toggle"><div id="knob"></div></div></div>
+          </div>
+        </div>
+        <div id="booked">✓ BOOKED</div>
+        <svg id="cursor" viewBox="0 0 24 24"><path d="M4 2.5 L4 19.5 L8.6 15.2 L11.6 21.6 L14.4 20.3 L11.4 14 L17.6 14 Z" fill="#fff" stroke="#0b0a12" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </div>
+
+      <!-- 03 / OVERVIEW (7.08 to 7.82s): full purple frame -->
+      <div id="cut-ov" class="clip cut" data-start="7.08" data-duration="0.74">
+        <div class="heavy" id="ov-word">Overview<span class="pdot"></span></div>
+        <div class="mask"><span class="serif" id="ov-sub">in three parts</span></div>
+      </div>
+
+      <!-- 03 / what · how · why (7.82 to 12.6s) on the wall to the right -->
+      <div id="ch3" class="clip" data-start="7.82" data-duration="4.8" style="z-index:10">
+        <div id="dots"></div>
+        <div class="row3" id="r-what" style="top:300px"><span class="n mono">01</span><span class="mask"><span class="w heavy">What<span class="pdot"></span></span></span></div>
+        <div class="row3" id="r-how" style="top:418px"><span class="n mono">02</span><span class="mask"><span class="w heavy">How<span class="pdot"></span></span></span></div>
+        <div class="row3" id="r-why" style="top:536px"><span class="n mono">03</span><span class="mask"><span class="w heavy">Why<span class="pdot"></span></span></span></div>
+        <div id="speak-mask"><span id="speak" class="serif">before we speak.</span></div>
+      </div>
+
+      <!-- 04 / THE PROBLEM: one hard cut per word -->
+      <div id="cut-same" class="clip cut" data-start="13.82" data-duration="0.68">
+        <div class="heavy" id="same-a">Same</div>
+        <div class="heavy" id="same-b">Problem<span class="pdot"></span></div>
+      </div>
+      <div id="cut-every" class="clip cut" data-start="14.5" data-duration="0.36">
+        <div class="heavy big" id="w-every">Every<span class="pdot"></span></div>
+      </div>
+      <div id="cut-single" class="clip cut" data-start="14.86" data-duration="0.38">
+        <div class="heavy big" id="w-single">Single<span class="pdot"></span></div>
+      </div>
+      <div id="cut-day" class="clip cut" data-start="15.24" data-duration="0.76">
+        <div class="heavy big" id="w-day">Day<span class="pdot" id="day-dot"><span class="dpulse" id="dp1"></span><span class="dpulse" id="dp2"></span><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span></div>
+      </div>
+
+      <!-- HUD frame, on top the whole time -->
+      <div id="hud" class="on-footage">
+        <div class="br hud-in" id="br-tl"></div>
+        <div class="br hud-in" id="br-tr"></div>
+        <div class="br hud-in" id="br-bl"></div>
+        <div class="br hud-in" id="br-br"></div>
+        <div class="hl mono hud-in" id="hl-tl">RezFlo / Pre-call briefing</div>
+        <div class="hl mono hud-in" id="hl-tr">TC <span id="tc">00:00:00:00</span></div>
+        <div class="hl mono hud-in" id="hl-bl"><span id="c1">01 / Hello</span><span id="c2">02 / Booked</span><span id="c3">03 / Overview</span><span id="c4">04 / The problem</span></div>
+        <div class="hl mono hud-in" id="hl-br">1920×1080 / 30 FPS</div>
+        <div class="hud-in" id="prog-track"></div>
+        <div class="hud-in" id="prog"></div>
+      </div>
+
+      <!-- SOUND (quiet, under his voice) -->
+      <audio id="sfx-1" src="sfx/tick.wav" data-start="0.6" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-2" src="sfx/star.wav" data-start="1.16" data-duration="0.07" data-volume="0.4"></audio>
+      <audio id="sfx-3" src="sfx/pop.wav" data-start="2.28" data-duration="0.17" data-volume="0.45"></audio>
+      <audio id="sfx-4" src="sfx/switch.wav" data-start="4.66" data-duration="0.14" data-volume="0.5"></audio>
+      <audio id="sfx-5" src="sfx/chime.wav" data-start="5.04" data-duration="0.95" data-volume="0.35"></audio>
+      <audio id="sfx-6" src="sfx/snap.wav" data-start="7.08" data-duration="0.16" data-volume="0.45"></audio>
+      <audio id="sfx-7" src="sfx/tick.wav" data-start="7.84" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-8" src="sfx/tick.wav" data-start="9.34" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-9" src="sfx/tick.wav" data-start="10.28" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-10" src="sfx/snap.wav" data-start="13.82" data-duration="0.16" data-volume="0.45"></audio>
+      <audio id="sfx-11" src="sfx/tick.wav" data-start="14.04" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-12" src="sfx/snap.wav" data-start="14.5" data-duration="0.16" data-volume="0.45"></audio>
+      <audio id="sfx-13" src="sfx/snap.wav" data-start="14.86" data-duration="0.16" data-volume="0.45"></audio>
+      <audio id="sfx-14" src="sfx/snap.wav" data-start="15.24" data-duration="0.16" data-volume="0.45"></audio>
+      <audio id="sfx-15" src="sfx/pop.wav" data-start="15.5" data-duration="0.17" data-volume="0.45"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const spring = "back.out(1.3)";
+
+      // HUD: timecode + progress run the whole 16s; frame snaps in on "Hello" (0.6)
+      const tcEl = document.getElementById("tc");
+      const pad = (n) => String(n).padStart(2, "0");
+      const tc = { v: 0 };
+      tl.fromTo(tc, { v: 0 }, { v: 16, duration: 16, ease: "none", onUpdate: () => {
+        const f = Math.floor(tc.v * 30 + 1e-6);
+        tcEl.textContent = "00:00:" + pad(Math.floor(f / 30)) + ":" + pad(f % 30);
+      } }, 0);
+      tl.fromTo("#prog", { scaleX: 0 }, { scaleX: 1, duration: 16, ease: "none" }, 0);
+      tl.fromTo(".br", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out", stagger: 0.03 }, 0.6);
+      tl.fromTo("#hl-tl, #hl-tr, #hl-bl, #hl-br, #prog-track, #prog", { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.04 }, 0.68);
+      // chapter label swaps
+      tl.set("#c1", { opacity: 1 }, 0.6);
+      tl.set("#c1", { opacity: 0 }, 4.18); tl.set("#c2", { opacity: 1 }, 4.18);
+      tl.set("#c2", { opacity: 0 }, 7.08); tl.set("#c3", { opacity: 1 }, 7.08);
+      tl.set("#c3", { opacity: 0 }, 12.84); tl.set("#c4", { opacity: 1 }, 12.84);
+      // HUD colour follows what's under it
+      tl.set("#hud", { className: "on-dark" }, 7.08);
+      tl.set("#hud", { className: "on-footage" }, 7.82);
+      tl.set("#hud", { className: "on-dark" }, 13.82);
+      tl.set("#hud", { className: "on-light" }, 14.5);
+      tl.set("#hud", { className: "on-dark" }, 14.86);
+
+      // 01 / HELLO — "Yousef" 1.16, "from RezFlo" 1.5
+      tl.fromTo("#orbit-path", { attr: { "stroke-dashoffset": 1000 } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.7, ease: "power2.inOut" }, 1.0);
+      const rot = [-80, 60, -45, 90, -60, 45];
+      tl.fromTo("#name span", { y: -80, x: (i) => (i - 2.5) * 46, rotation: (i) => rot[i], opacity: 0 },
+        { y: 0, x: 0, rotation: 0, opacity: 1, duration: 0.5, ease: spring, stagger: 0.05 }, 1.16);
+      tl.fromTo("#from", { yPercent: 140 }, { yPercent: 0, duration: 0.45, ease: "power4.out" }, 1.5);
+      tl.fromTo("#o-ring", { scale: 0 }, { scale: 1, duration: 0.3, ease: spring }, 1.6);
+      // the "o" in RezFlo becomes the purple dot (2.28)
+      tl.to("#o-ring", { scale: 0.4, opacity: 0, duration: 0.14, ease: "power2.in" }, 2.28);
+      tl.set("#shape", { x: 1771.5, y: 451.5 }, 0);
+      tl.fromTo("#shape", { scale: 0 }, { scale: 1, duration: 0.3, ease: spring }, 2.3);
+      // three rings at 2.6, 3.2, 3.8
+      tl.fromTo("#dr1", { scale: 1, opacity: 0.8 }, { scale: 2.6, opacity: 0, duration: 0.6, ease: "power2.out", repeat: 2, immediateRender: false }, 2.6);
+      tl.fromTo("#dr2", { scale: 1, opacity: 0.6 }, { scale: 1.9, opacity: 0, duration: 0.5, ease: "power2.out", repeat: 2, repeatDelay: 0.1, immediateRender: false }, 2.72);
+      // lockup leaves, dot stays (3.7)
+      tl.to("#name span", { y: 40, opacity: 0, duration: 0.28, ease: "power2.in", stagger: 0.025 }, 3.7);
+      tl.to("#orbit-path", { attr: { "stroke-dashoffset": -1000 }, duration: 0.45, ease: "power2.in" }, 3.66);
+      tl.to("#from", { yPercent: -140, duration: 0.3, ease: "power3.in" }, 3.72);
+
+      // 02 / BOOKED — dot morphs into the card on "you've" (4.18)
+      tl.to("#shape", { x: 1465, y: 300, width: 400, height: 232, borderRadius: 26, backgroundColor: "#0b0a12", duration: 0.42, ease: "power3.inOut" }, 4.18);
+      tl.fromTo("#card-inner", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 4.44);
+      // cursor glides in, clicks the toggle on "booked" (4.66)
+      tl.fromTo("#cursor", { x: 1900, y: 940, opacity: 0 }, { x: 1812, y: 476, opacity: 1, duration: 0.36, ease: "power3.out" }, 4.28);
+      tl.to("#cursor", { scale: 0.82, duration: 0.06, ease: "power2.out" }, 4.64);
+      tl.to("#cursor", { scale: 1, duration: 0.12, ease: "power2.out" }, 4.7);
+      tl.to("#knob", { x: 26, duration: 0.24, ease: spring }, 4.66);
+      tl.to("#toggle", { backgroundColor: "#5b41da", duration: 0.2 }, 4.66);
+      // green stamp on "call" (5.04)
+      tl.fromTo("#booked", { opacity: 0, scale: 1.5, rotation: -14 }, { opacity: 1, scale: 1, rotation: -6, duration: 0.24, ease: spring }, 5.04);
+      tl.to("#cursor", { x: 1960, y: 760, opacity: 0, duration: 0.4, ease: "power2.in" }, 5.5);
+      // card collapses to a dot (6.5), the dot floods the frame into the purple OVERVIEW cut (7.08)
+      tl.to("#card-inner, #booked", { opacity: 0, duration: 0.15 }, 6.45);
+      tl.to("#shape", { x: 1652, y: 402, width: 26, height: 26, borderRadius: 13, backgroundColor: "#5b41da", duration: 0.32, ease: "power3.inOut" }, 6.5);
+      tl.to("#shape", { x: -135, y: -1385, width: 3600, height: 3600, borderRadius: 1800, boxShadow: "0 0 0 rgba(0,0,0,0)", duration: 0.26, ease: "power3.in" }, 6.84);
+
+      // 03 / OVERVIEW — slam on "overview" (7.1)
+      tl.fromTo("#ov-word", { scale: 1.18, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.18, ease: "power3.out" }, 7.08);
+      tl.fromTo("#ov-sub", { yPercent: 110 }, { yPercent: 0, duration: 0.3, ease: "power4.out" }, 7.28);
+
+      // 03 / what · how · why — slow 5% punch-in on Yousef while the list builds
+      tl.fromTo("#vid-wrap", { scale: 1 }, { scale: 1.05, duration: 4.8, ease: "sine.inOut" }, 7.82);
+      tl.set("#vid-wrap", { scale: 1 }, 13.82);
+      // dot grid that ripples behind the words
+      const dotsEl = document.getElementById("dots");
+      for (let r = 0; r < 12; r++) for (let c = 0; c < 12; c++) {
+        const d = document.createElement("i");
+        d.style.left = (c * 35 + 15) + "px"; d.style.top = (r * 35 + 15) + "px";
+        dotsEl.appendChild(d);
+      }
+      tl.fromTo("#dots i", { opacity: 0, scale: 0 }, { opacity: 0.55, scale: 1, duration: 0.3, stagger: { grid: [12, 12], from: "start", amount: 0.5 } }, 7.84);
+      tl.fromTo("#dots i", { scale: 1 }, { scale: 2, duration: 0.55, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false, stagger: { grid: [12, 12], from: "start", amount: 1.1 } }, 8.3);
+      const land = (row, t) => {
+        tl.fromTo(row + " .w", { yPercent: 110 }, { yPercent: 0, duration: 0.38, ease: "power4.out" }, t);
+        tl.fromTo(row + " .n", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.25 }, t + 0.06);
+      };
+      land("#r-what", 7.84);
+      land("#r-how", 9.34);
+      tl.to("#r-what .w", { opacity: 0.28, duration: 0.25 }, 9.34);
+      land("#r-why", 10.28);
+      tl.to("#r-how .w", { opacity: 0.28, duration: 0.25 }, 10.28);
+      // "before we speak" (10.94): all three light back up
+      tl.to("#r-what .w, #r-how .w", { opacity: 1, duration: 0.3 }, 10.94);
+      tl.fromTo("#speak", { yPercent: 140 }, { yPercent: 0, duration: 0.4, ease: "power4.out" }, 10.94);
+      // clear the wall before "Restaurants" (12.84)
+      tl.to(".row3 .w", { yPercent: -110, duration: 0.28, ease: "power3.in", stagger: 0.05 }, 12.25);
+      tl.to(".row3 .n", { opacity: 0, duration: 0.2 }, 12.25);
+      tl.to("#speak", { yPercent: -140, duration: 0.28, ease: "power3.in" }, 12.35);
+      tl.to("#dots i", { scale: 0, opacity: 0, duration: 0.25, stagger: { grid: [12, 12], from: "end", amount: 0.3 } }, 12.2);
+
+      // 04 / THE PROBLEM — "same" 13.82, "problem" 14.04, "every" 14.5, "single" 14.86, "day" 15.24
+      tl.fromTo("#cut-same", { backgroundPosition: "0px 0px" }, { backgroundPosition: "452px 0px", duration: 0.68, ease: "none" }, 13.82);
+      tl.fromTo("#same-a", { scale: 1.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.16, ease: "power3.out" }, 13.82);
+      tl.fromTo("#same-b", { scale: 1.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.16, ease: "power3.out" }, 14.04);
+      tl.fromTo("#w-every", { scale: 1.15 }, { scale: 1, duration: 0.16, ease: "power3.out" }, 14.5);
+      tl.fromTo("#w-single", { scale: 1.15 }, { scale: 1, duration: 0.16, ease: "power3.out" }, 14.86);
+      tl.fromTo("#w-day", { scale: 1.15 }, { scale: 1, duration: 0.16, ease: "power3.out" }, 15.24);
+      // the full stop after DAY becomes a red ringing phone (15.5), handing over to "Your phone rings"
+      tl.to("#day-dot", { scale: 2.6, backgroundColor: "#ff5a5f", duration: 0.26, ease: spring }, 15.5);
+      tl.to("#w-day", { x: -80, duration: 0.26, ease: spring }, 15.5);
+      tl.fromTo("#day-dot svg", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 15.6);
+      // two rings at 15.62 and 15.82
+      tl.fromTo("#dp1", { scale: 1, opacity: 0.8 }, { scale: 1.7, opacity: 0, duration: 0.19, ease: "power2.out", repeat: 1, repeatDelay: 0.01, immediateRender: false }, 15.62);
+      tl.fromTo("#dp2", { scale: 1, opacity: 0.6 }, { scale: 1.35, opacity: 0, duration: 0.15, ease: "power2.out", repeat: 1, repeatDelay: 0.05, immediateRender: false }, 15.68);
+      [15.66, 15.88].forEach((t) => {
+        tl.to("#day-dot", { x: -5, duration: 0.04 }, t);
+        tl.to("#day-dot", { x: 5, duration: 0.04 }, t + 0.04);
+        tl.to("#day-dot", { x: -3, duration: 0.04 }, t + 0.08);
+        tl.to("#day-dot", { x: 0, duration: 0.04 }, t + 0.12);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
