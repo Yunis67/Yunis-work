@@ -339,19 +339,19 @@ Make a new folder next to `opener/` (for example `precall/`), copy `kit/fonts` a
 ```
 Add motion graphics to the first 15 seconds of source.mp4 with HyperFrames. Keep its original size and frame rate (it's landscape). Only the first 15 seconds: render that clip, not the whole video.
 
-It's me (Yunis, founder of RezFlo) talking at a desk, framed wide, with empty space on both sides of me. Use that empty space for the graphics. Never cover my face.
+It's Yousef from RezFlo talking at a desk, framed wide, with empty space on both sides of him. Use that empty space for the graphics. Never cover his face.
 
 Style: modern product motion. One card at a time that morphs into its next state (size, corner radius, colour change, content swaps with a short blur) instead of new things popping in. A cursor clicks things to make them change. Springs with a tiny overshoot at most. No glows, particles, bouncy easing or gradients on the cards. Brand: dark cards #0b0a12, purple #5b41da for fills and #8f7bff for purple text, green #34c759 only for booked/answered, red #ff5a5f only for missed calls. Space Grotesk Bold for headlines, Inter for UI text, JetBrains Mono for small labels and times. Fonts and sounds are in fonts/ and sfx/.
 
 First transcribe the clip with word timings. Every graphic lands on the spoken word, not a guessed timestamp. Then do this:
 
-1. "Hi, it's Yunis from RezFlo" — a small dot grows into a name tag beside me: YUNIS · FOUNDER, RezFlo. Soft pop sound.
+1. "Hello, it's Yousef from RezFlo" — a small dot grows into a name tag beside him: YOUSEF · RezFlo. Soft pop sound.
 2. "you've already booked a call with us" — the name tag morphs into a booking card (Call with RezFlo · your time). The cursor clicks it and a green ✓ Booked appears. Chime sound.
-3. "what RezFlo is, how it works, and why we built it" — the card morphs into a 3-item list: 01 What it is · 02 How it works · 03 Why we built it. Each line lights up on its word. Tick sound per line. Slow punch-in on me (5% max) while the list builds.
-4. "Restaurants deal with the same problem every single day" — cut to a full-screen dark frame (1.5 seconds max) with big kinetic type: SAME PROBLEM. / EVERY. SINGLE. DAY. One word at a time, on the words. Then back to me.
-5. Captions: short white captions low in the frame, 2–4 words at a time, synced to my words.
+3. "what RezFlo is, how it works, and why we built it" — the card morphs into a 3-item list: 01 What it is · 02 How it works · 03 Why we built it. Each line lights up on its word. Tick sound per line. Slow punch-in on him (5% max) while the list builds.
+4. "Restaurants deal with the same problem every single day" — cut to a full-screen dark frame (1.5 seconds max) with big kinetic type: SAME PROBLEM. / EVERY. SINGLE. DAY. One word at a time, on the words. Then back to him.
+5. Captions: short white captions low in the frame, 2–4 words at a time, synced to his words. Spell it Yousef and RezFlo, whatever the transcript says.
 
-Use only words I actually say. No made-up stats.
+Use only words he actually says. No made-up stats.
 
 Show me the plan with timings first and wait for my OK. Then build it, run npx hyperframes check, pull a frame at each of the 4 moments and look at it, and render a draft to renders/precall-15s-draft.mp4.
 ```
