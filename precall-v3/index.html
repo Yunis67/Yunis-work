@@ -56,9 +56,9 @@
       /* 02 · dot → glowing pill → notification */
       #shape { position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 13px; background: var(--brand); overflow: hidden; }
       #notif { position: absolute; left: 0; top: 0; width: 420px; height: 96px; padding: 20px 22px; display: flex; gap: 16px; align-items: center; color: var(--cream); opacity: 0; }
-      #notif .ic { width: 56px; height: 56px; border-radius: 15px; background: var(--brand); display: flex; align-items: center; justify-content: center; gap: 4px; flex: none; }
-      #notif .ic b { display: block; width: 5px; border-radius: 3px; background: #fff; }
-      #notif .tx { flex: 1; min-width: 0; }
+      #notif .ic { width: 56px; height: 56px; border-radius: 15px; background: var(--cream); display: flex; align-items: center; justify-content: center; flex: none; }
+      #notif .ic .rm { width: 38px; height: 38px; }
+            #notif .tx { flex: 1; min-width: 0; }
       #notif .l1 { display: flex; justify-content: space-between; font-weight: 700; font-size: 20px; line-height: 24px; }
       #notif .l1 span { font-weight: 400; font-size: 16px; color: var(--muted); }
       #notif .l2 { font-size: 18px; line-height: 24px; margin-top: 4px; color: #d9d5e8; white-space: nowrap; }
@@ -124,6 +124,7 @@
       #prog-track { position: absolute; left: 76px; right: 76px; bottom: 44px; height: 1px; background: currentColor; opacity: 0.3; }
       #prog { position: absolute; left: 76px; right: 76px; bottom: 43px; height: 3px; background: currentColor; transform-origin: 0 50%; transform: scaleX(0); }
       @font-face { font-family: "Space Grotesk"; src: url("fonts/SpaceGrotesk-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "Poppins"; src: url("fonts/Poppins-SemiBold.ttf") format("truetype"); font-weight: 600; }
 
       /* 05 · incoming call card (16.0 to 18.9s) */
       #call-card { position: absolute; left: 1455px; top: 330px; width: 420px; height: 196px; border-radius: 26px; background: rgba(11,10,18,0.95); box-shadow: 0 24px 60px rgba(11,10,18,0.35); transform-origin: 60px 60px; opacity: 0; }
@@ -205,9 +206,9 @@
       #cut-logo .fg { gap: 26px; }
       #lockup { display: flex; align-items: center; gap: 36px; }
       #mark { width: 136px; height: 136px; border-radius: 36px; background: var(--cream); display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 0 120px 30px rgba(243,239,230,0.22); }
-      #mark b { display: block; width: 13px; border-radius: 7px; background: var(--brand); transform-origin: 50% 50%; }
+      #mark .rm { width: 96px; height: 96px; overflow: visible; }
       #wm-mask { overflow: hidden; padding-bottom: 10px; }
-      #wordmark { display: block; font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 176px; line-height: 1; letter-spacing: -0.05em; }
+      #wordmark { display: block; font-family: "Poppins", sans-serif; font-weight: 600; font-size: 168px; line-height: 1.1; letter-spacing: 0; }
       #tagline { font-size: 58px; color: rgba(243,239,230,0.88); }
 
       /* 07 · dictionary card (44.62 to 46s) */
@@ -219,6 +220,19 @@
       #dict .def .num { font-size: 14px; color: var(--peri); margin-right: 10px; }
       #dict .def .wd { display: inline-block; opacity: 0; }
       #dict .def .ai { color: var(--peri); border-bottom: 3px solid var(--peri); }
+      /* 07 · option C hero moment */
+      #optC .tx { z-index: 1; transition: none; }
+      #hiC { position: absolute; left: 62px; top: -7px; width: 204px; height: 42px; border-radius: 9px; background: var(--brand); transform-origin: 0 50%; box-shadow: 0 10px 30px rgba(91,65,218,0.45); }
+      #tkC { left: 15px; top: 15px; }
+      #tkC i { width: 2.5px; height: 9px; margin: -4.5px 0 0 -1.25px; background: var(--brand); border-radius: 2px; }
+      #tkC i.maj { height: 14px; margin-top: -7px; }
+      #dotsC { position: absolute; left: 15px; top: 15px; width: 0; height: 0; }
+      #dotsC i { position: absolute; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; }
+      #seal { position: absolute; left: 141px; top: 604px; width: 150px; height: 150px; opacity: 0; }
+      #seal .disc { position: absolute; inset: 0; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px var(--brand), 0 18px 40px rgba(11,10,18,0.35); }
+      #seal .ring { position: absolute; inset: 0; width: 150px; height: 150px; }
+      #seal .ring text { font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: 0.18em; fill: var(--cream); }
+      #seal .rm { position: absolute; left: 40px; top: 40px; width: 70px; height: 70px; }
     </style>
   </head>
   <body>
@@ -242,7 +256,7 @@
       <div id="ch2" class="clip" data-start="2.2" data-duration="5.0" style="z-index:20">
         <div id="shape">
           <div id="notif">
-            <div class="ic"><b style="height:12px"></b><b style="height:24px"></b><b style="height:18px"></b><b style="height:9px"></b></div>
+            <div class="ic"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div>
             <div class="tx">
               <div class="l1">RezFlo <span>now</span></div>
               <div class="l2">Call booked · intro call with Yousef</div>
@@ -348,7 +362,8 @@
           <div class="opt" id="optB"><span class="bx"></span><span class="x1"></span><span class="x2"></span><span class="lt mono">B</span>
             <div class="tx" id="txB">Let it ring</div><span id="strike"></span></div>
           <div class="opt" id="optC"><span class="bx"></span><span class="fill" id="fillC"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lt mono">C</span>
-            <div class="tx" id="txC">RezFlo answers</div></div>
+            <span id="hiC"></span><div class="ticks" id="tkC"></div><span id="dotsC"></span><div class="tx" id="txC">RezFlo answers</div></div>
+          <div id="seal"><div class="disc"></div><svg class="ring" id="sealring" viewBox="0 0 150 150"><defs><path id="sealpath" d="M75,75 m-58,0 a58,58 0 1,1 116,0 a58,58 0 1,1 -116,0"/></defs><text><textPath href="#sealpath" textLength="362" lengthAdjust="spacing">REZFLO · ANSWERS EVERY CALL · REZFLO · ANSWERS EVERY CALL · </textPath></text></svg><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#B9B7C6"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#B9B7C6"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#6D5CF0"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#6D5CF0"/></g></svg></div>
           <div class="ft mono">RezFlo · pre-call '26 · page 1/1</div>
         </div>
         <div id="flood2"></div>
@@ -358,7 +373,7 @@
       <div id="cut-logo" class="clip cut" data-start="43.1" data-duration="1.52">
         <div class="fg">
           <div id="lockup">
-            <div id="mark"><b style="height:30px"></b><b style="height:62px"></b><b style="height:46px"></b><b style="height:22px"></b></div>
+            <div id="mark"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div>
             <div id="wm-mask"><span id="wordmark">RezFlo</span></div>
           </div>
           <div class="mask"><span class="serif" id="tagline">AI phone receptionist.</span></div>
@@ -425,6 +440,9 @@
       <audio id="sfx-34" src="sfx/fill.wav" data-start="42.62" data-duration="0.5" data-volume="0.22" data-fade-out="0.2"></audio>
       <audio id="sfx-35" src="sfx/chime.wav" data-start="43.42" data-duration="0.95" data-volume="0.32"></audio>
       <audio id="sfx-36" src="sfx/pop.wav" data-start="44.62" data-duration="0.17" data-volume="0.35"></audio>
+      <audio id="sfx-37" src="sfx/pop.wav" data-start="39.86" data-duration="0.17" data-volume="0.4"></audio>
+      <audio id="sfx-38" src="sfx/snap.wav" data-start="40.3" data-duration="0.16" data-volume="0.5"></audio>
+      <audio id="sfx-39" src="sfx/star.wav" data-start="43.46" data-duration="0.07" data-volume="0.4"></audio>
     </div>
 
     <script>
@@ -693,7 +711,6 @@
       tl.fromTo("#optA .x2, #optB .x2", { scaleX: 0, rotation: -45 }, { scaleX: 1, rotation: -45, duration: 0.14, ease: "power2.out", stagger: 0.1 }, 38.76);
       // "RezFlo" (39.76): option C writes on and gets a purple tick
       tl.set("#optC", { opacity: 1 }, 39.76); write("#txC", 39.76, 0.4);
-      tl.fromTo("#fillC", { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2)" }, 39.86);
       // "remove" (42.04): A and B erase right to left
       tl.fromTo("#optA, #optB", { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 100% 0% 0%)", duration: 0.4, ease: "power2.in", stagger: 0.08, immediateRender: false }, 42.04);
       // "problem" (42.62 → 43.1): the purple tick box floods the frame
@@ -703,7 +720,10 @@
 
       // --- 07 / REZFLO — logo sting in the silence (43.1) ---
       tl.fromTo("#mark", { y: 90, scale: 0.6, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.45, ease: spring }, 43.12);
-      tl.fromTo("#mark b", { scaleY: 1 }, { scaleY: 0.45, duration: 0.16, ease: "sine.inOut", yoyo: true, repeat: 3, stagger: 0.05, immediateRender: false }, 43.42);
+      // the R assembles: grey lane from the top right, purple lane from the bottom left, the slash snaps in last
+      tl.fromTo("#mark .lane-g", { x: 14, y: -14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, 43.2);
+      tl.fromTo("#mark .lane-p", { x: -14, y: 14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, 43.26);
+      tl.fromTo("#mark .slash-g, #mark .slash-p", { x: -22, opacity: 0 }, { x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }, 43.46);
       tl.fromTo("#wordmark", { yPercent: 110 }, { yPercent: 0, duration: 0.45, ease: "power4.out" }, 43.34);
       tl.fromTo("#tagline", { yPercent: 110 }, { yPercent: 0, duration: 0.4, ease: "power4.out" }, 43.62);
       tl.fromTo("#cut-logo .fg", { scale: 1 }, { scale: 1.04, duration: 1.52, ease: "none" }, 43.1);
@@ -713,6 +733,33 @@
       [["#d1", 45.22], ["#d2", 45.36], ["#d3", 45.56], ["#d4", 45.86]].forEach(([sel, t]) => {
         tl.fromTo(sel, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" }, t);
       });
+
+      // --- 07 · "RezFlo" (39.76): option C becomes the hero ---
+      buildTicks("tkC", 28, 30);
+      const dC = document.getElementById("dotsC");
+      ["#5B4BCE", "#8f7bff", "#0b0a12", "#5B4BCE", "#8f7bff", "#0b0a12", "#5B4BCE", "#8f7bff", "#0b0a12", "#5B4BCE"].forEach((c, k) => {
+        const d = document.createElement("i"); d.style.background = c; dC.appendChild(d);
+      });
+      // focus shifts: A and B fall back, the form glows purple, row C lifts
+      tl.to("#optA, #optB", { opacity: 0.28, duration: 0.3, ease: "power2.out" }, 39.76);
+      tl.to("#form", { boxShadow: "0 30px 80px rgba(11,10,18,0.28), 0 0 0 4px rgba(91,65,218,0.95), 0 0 110px 16px rgba(91,65,218,0.5)", duration: 0.35, ease: "power2.out" }, 39.8);
+      tl.fromTo("#optC", { scale: 1 }, { scale: 1.07, transformOrigin: "0% 50%", duration: 0.45, ease: spring }, 39.82);
+      // highlighter sweeps behind the words, text flips to cream as it passes
+      tl.fromTo("#hiC", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "expo.out" }, 39.84);
+      tl.to("#txC", { color: "#F3EFE6", duration: 0.12 }, 39.92);
+      // the tick bursts: tick ring flies outward and fades, dots spray out
+      tl.fromTo("#tkC i", { opacity: 0 }, { opacity: (i) => (i % 6 === 0 ? 1 : 0.7), duration: 0.01 }, 39.86);
+      tl.fromTo("#tkC", { scale: 0.5, opacity: 1 }, { scale: 1.9, opacity: 0, duration: 0.55, ease: "power3.out" }, 39.86);
+      tl.fromTo("#dotsC i", { x: 0, y: 0, scale: 1, opacity: 1 },
+        { x: (i) => Math.cos(i * 0.628 + 0.3) * (44 + (i % 3) * 14), y: (i) => Math.sin(i * 0.628 + 0.3) * (44 + (i % 3) * 14), scale: 0.3, opacity: 0, duration: 0.6, ease: "expo.out" }, 39.86);
+      tl.fromTo("#fillC", { scale: 0 }, { scale: 1, duration: 0.36, ease: "back.out(3)" }, 39.86);
+      // the RezFlo seal stamps onto the form, the form jolts on impact, the ring text keeps turning
+      tl.fromTo("#seal", { scale: 2.5, rotation: -32, opacity: 0 }, { scale: 1, rotation: -8, opacity: 1, duration: 0.26, ease: "power4.in" }, 40.04);
+      [[-7, 4], [6, -3], [-3, 2], [0, 0]].forEach(([x, y], k) => tl.to("#form", { x, y, duration: 0.045 }, 40.3 + k * 0.045));
+      tl.to("#form .ft", { opacity: 0, duration: 0.2 }, 40.0);
+      tl.fromTo("#sealring", { rotation: 0 }, { rotation: 110, duration: 2.8, ease: "none" }, 40.04);
+      tl.fromTo("#seal .rm .lane-g", { x: 6, y: -6 }, { x: 0, y: 0, duration: 0.3, ease: "expo.out" }, 40.3);
+      tl.fromTo("#seal .rm .lane-p", { x: -6, y: 6 }, { x: 0, y: 0, duration: 0.3, ease: "expo.out" }, 40.3);
 
       window.__timelines["main"] = tl;
     </script>
