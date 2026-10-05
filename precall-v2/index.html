@@ -41,7 +41,7 @@
       .ticks i { position: absolute; left: 0; top: 0; display: block; opacity: 0; }
 
       /* 01 · name lockup */
-      #orbit { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+      #name-ul { position: absolute; left: 1421px; top: 402px; width: 378px; height: 8px; border-radius: 4px; background: var(--brand-deep); transform-origin: 0 50%; }
       #name { position: absolute; left: 1420px; top: 318px; width: 380px; text-align: center; font-size: 84px; color: var(--ink); white-space: nowrap; }
       #name span { display: inline-block; }
       #from-mask { position: absolute; right: 209px; top: 438px; height: 78px; overflow: hidden; }
@@ -132,11 +132,9 @@
         <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="16" data-has-audio="true" playsinline></video>
       </div>
 
-      <!-- 01 / HELLO (0.6 to 4.2s): name on an orbit line; the "o" in RezFlo becomes a dot with a tick ring -->
+      <!-- 01 / HELLO (0.6 to 4.2s): name with an underline sweep; the "o" in RezFlo becomes a dot with a tick ring -->
       <div id="ch1" class="clip" data-start="0" data-duration="4.3" style="z-index:10">
-        <svg id="orbit" viewBox="0 0 1920 1080">
-          <ellipse id="orbit-path" cx="1610" cy="360" rx="268" ry="74" transform="rotate(-5 1610 360)" fill="none" stroke="#0b0a12" stroke-width="1.5" stroke-dasharray="1200" stroke-dashoffset="1200" />
-        </svg>
+        <div id="name-ul"></div>
         <div id="name" class="heavy"><span>Y</span><span>O</span><span>U</span><span>S</span><span>E</span><span>F</span></div>
         <div id="from-mask"><span id="from" class="serif">from RezFl</span></div>
         <div id="o-ring"></div>
@@ -299,7 +297,8 @@
       tl.set("#hud", { className: "on-dark" }, 14.86);
 
       // --- 01 / HELLO — "Yousef" 1.16, "from RezFlo" 1.5 ---
-      tl.fromTo("#orbit-path", { attr: { "stroke-dashoffset": 1200 } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.7, ease: "power2.inOut" }, 1.0);
+      // underline sweeps in left to right once the letters have landed (1.42)
+      tl.fromTo("#name-ul", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 1.42);
       const rot = [-80, 60, -45, 90, -60, 45];
       tl.fromTo("#name span", { y: -80, x: (i) => (i - 2.5) * 46, rotation: (i) => rot[i], opacity: 0 },
         { y: 0, x: 0, rotation: 0, opacity: 1, duration: 0.5, ease: spring, stagger: 0.05 }, 1.16);
@@ -314,7 +313,7 @@
       tl.fromTo("#shape", { scale: 1 }, { scale: 1.25, duration: 0.18, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }, 2.66);
       // lockup leaves, ticks retract, dot stays
       tl.to("#name span", { y: 40, opacity: 0, duration: 0.28, ease: "power2.in", stagger: 0.025 }, 3.7);
-      tl.to("#orbit-path", { attr: { "stroke-dashoffset": -1200 }, duration: 0.45, ease: "power2.in" }, 3.66);
+      tl.to("#name-ul", { scaleX: 0, transformOrigin: "100% 50%", duration: 0.32, ease: "power3.in" }, 3.66);
       tl.to("#from", { yPercent: -140, duration: 0.3, ease: "power3.in" }, 3.72);
       tl.to("#tk1 i", { opacity: 0, duration: 0.04, stagger: { each: 0.005, from: "end" } }, 3.86);
 
