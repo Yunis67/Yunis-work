@@ -361,8 +361,6 @@
       #tkS { left: 32px; top: 32px; }
       #tkS i { width: 2px; height: 6px; margin: -3px 0 0 -1px; background: var(--peri); border-radius: 1px; opacity: 0; }
       #tkS i.maj { height: 10px; margin-top: -5px; }
-      #sring { position: absolute; left: -34px; top: -34px; width: 132px; height: 132px; opacity: 0; }
-      #sring text { font-family: "JetBrains Mono", monospace; font-size: 9px; letter-spacing: 0.18em; fill: #a99bff; }
       #staff .st1 { position: absolute; left: 112px; top: 28px; font-weight: 700; font-size: 20px; }
       #staff .st2 { position: absolute; left: 112px; top: 56px; font-size: 12px; color: var(--muted); }
       #staff .st3 { position: absolute; left: 112px; top: 82px; font-size: 12px; }
@@ -371,24 +369,38 @@
       #wave3 i { display: block; width: 5px; height: 24px; border-radius: 3px; background: var(--green); }
 
       /* 12 · particles: storefront → RezFlo R */
-      #cut-build { background: radial-gradient(900px 700px at 50% 50%, #1d1638 0%, var(--ink) 72%); }
+      #cut-build { background: radial-gradient(760px 620px at 50% 50%, #6c53ee 0%, #4a33c9 45%, #23166e 80%, #140c40 100%); }
+      #bglow { position: absolute; left: 560px; top: 130px; width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(184,169,255,0.55), rgba(184,169,255,0) 65%); }
+      #bflood { position: absolute; left: 960px; top: 530px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; background: #5b41da; opacity: 0; }
       #swarm { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 530px; }
-      #swarm i { position: absolute; left: 0; top: 0; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; }
+      #swarm i { position: absolute; left: 0; top: 0; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; box-shadow: 0 0 10px rgba(243,239,230,0.45); }
       #bdial { position: absolute; left: 960px; top: 530px; width: 0; height: 0; }
-      #tkB i { width: 2px; height: 10px; margin: -5px 0 0 -1px; background: rgba(243,239,230,0.4); border-radius: 1px; opacity: 0; }
-      #tkB i.maj { height: 20px; margin-top: -10px; background: var(--peri); }
+      #tkB i { width: 2px; height: 10px; margin: -5px 0 0 -1px; background: rgba(243,239,230,0.6); border-radius: 1px; opacity: 0; }
+      #tkB i.maj { height: 20px; margin-top: -10px; background: #f3efe6; }
       #bring { position: absolute; left: 610px; top: 180px; width: 700px; height: 700px; opacity: 0; }
       #bring text { font-family: "JetBrains Mono", monospace; font-size: 22px; letter-spacing: 0.3em; fill: var(--cream); }
       #ptsrc { position: absolute; left: 0; top: 0; width: 0; height: 0; overflow: hidden; visibility: hidden; }
 
       /* 12 · bento grid with a camera */
-      #panel3 { position: absolute; left: 1160px; top: 0; width: 760px; height: 1080px; border-radius: 32px 0 0 32px; overflow: hidden; z-index: 15;
-        background: radial-gradient(560px 480px at 50% 52%, rgba(91,65,218,0.34), rgba(91,65,218,0) 70%), #0b0a12; }
-      #p3title { position: absolute; left: 60px; top: 112px; font-size: 14px; color: var(--peri); z-index: 2; }
+      #stage3 { background: radial-gradient(900px 700px at 30% 45%, #7a62ff 0%, #5b41da 55%, #4630c4 100%); }
+      #stage3::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px) 0 0 / 48px 48px, linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px) 0 0 / 48px 48px; }
+      #panel3 { position: absolute; inset: 0; width: 1920px; height: 1080px; z-index: 15; background: var(--cream); clip-path: inset(40px 40px 40px 1150px round 32px); }
+      #p3in { position: absolute; left: 1150px; top: 40px; width: 730px; height: 1000px; overflow: hidden; }
+      #p3title { position: absolute; left: 52px; top: 70px; z-index: 2; font-size: 52px; line-height: 1; color: var(--ink); }
+      #p3title em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; color: var(--brand); font-size: 60px; }
+      #p3kick { position: absolute; left: 54px; top: 46px; z-index: 2; font-size: 13px; color: #55526a; }
       #bw { position: absolute; left: 0; top: 0; width: 1308px; height: 624px; transform-origin: 0 0; }
       .bt { position: absolute; width: 420px; height: 300px; border-radius: 24px; background: #16141f; border: 1px solid #2a2738; padding: 26px 28px; color: var(--cream); overflow: hidden; }
       .bt .bl { font-size: 12px; color: var(--peri); }
       .bt .bh { font-size: 34px; line-height: 1; margin-top: 12px; }
+      .bt .bh em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; font-size: 36px; margin-right: 8px; }
+      /* vibrant tiles, all in brand colours */
+      #bt1 { background: var(--brand); border-color: var(--brand); } #bt1 .bl, #bt1 .ck { color: rgba(243,239,230,0.85); } #bt1 .ld { border-bottom-color: rgba(243,239,230,0.45); }
+      #bt2 { background: var(--ink); border-color: var(--ink); } #bt2 .bh em { color: var(--peri); }
+      #bt3 { background: var(--peri); border-color: var(--peri); color: var(--ink); } #bt3 .bl { color: rgba(11,10,18,0.75); } #bt3 .cb { border-color: var(--ink); }
+      #bt4 { background: #fbfaf6; border-color: #e2ddd0; color: var(--ink); } #bt4 .bl { color: var(--brand-deep); } #bt4 .bh em { color: var(--brand); } #bt4 .tg { background: #d8d3c6; }
+      #bt5 { background: var(--brand); border-color: var(--brand); } #bt5 .bl, #bt5 .slab { color: rgba(243,239,230,0.85); } #bt5 #tonebub { background: rgba(255,255,255,0.18); } #bt5 #slider { background: rgba(255,255,255,0.25); } #bt5 #sfill { background: var(--cream); }
+      #bt6 { background: var(--ink); border-color: var(--ink); } #bt6 .bh em { color: var(--peri); }
       #bt1 { left: 0; top: 0; } #bt2 { left: 444px; top: 0; } #bt3 { left: 888px; top: 0; }
       #bt4 { left: 0; top: 324px; } #bt5 { left: 444px; top: 324px; } #bt6 { left: 888px; top: 324px; }
       .mrow { display: flex; align-items: baseline; gap: 10px; margin-top: 16px; font-size: 21px; }
@@ -435,6 +447,9 @@
     <div id="root" data-composition-id="main" data-start="0" data-duration="98.1" data-width="1920" data-height="1080">
 
       <!-- FOOTAGE (0 to 98.1s), sound stays on the clip -->
+      <!-- 12 · vibrant stage behind the split screen (86.9 to 95.7s) -->
+      <div id="stage3" class="clip" data-start="86.9" data-duration="8.8"></div>
+
       <div id="vid-wrap">
         <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="98.1" data-has-audio="true" playsinline></video>
       </div>
@@ -661,7 +676,6 @@
         <div id="trail"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <div id="staff">
           <div id="sav"><div class="ticks" id="tkS"></div>
-            <svg id="sring" viewBox="0 0 132 132"><defs><path id="spath" d="M66,66 m-56,0 a56,56 0 1,1 112,0 a56,56 0 1,1 -112,0"/></defs><text><textPath href="#spath" textLength="350" lengthAdjust="spacing">LIVE · ON-SITE · TRANSFER · LIVE · ON-SITE · TRANSFER · </textPath></text></svg>
             <div id="sface"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.9-3.6 3.8-5.6 7.2-5.6s6.3 2 7.2 5.6"/></svg></div></div>
           <div class="st1">Front of house</div><div class="st2 mono">On-site staff</div>
           <div class="st3 mono"><span id="sst1">Waiting…</span><span id="sst2">● Live call</span></div>
@@ -672,43 +686,46 @@
       </div>
 
       <!-- 12 · particles: storefront → RezFlo R (84.42 to 86.3s) -->
-      <div id="cut-build" class="clip cut" data-start="84.42" data-duration="1.88">
+      <div id="cut-build" class="clip cut" data-start="83.34" data-duration="3.76">
+        <div id="bglow"></div>
         <div id="bdial"><div class="ticks" id="tkB"></div></div>
         <svg id="bring" viewBox="0 0 700 700"><defs><path id="bpath" d="M350,350 m-318,0 a318,318 0 1,1 636,0 a318,318 0 1,1 -636,0"/></defs><text><textPath href="#bpath" textLength="1990" lengthAdjust="spacing">BUILT AROUND YOUR RESTAURANT · BUILT AROUND YOUR RESTAURANT · </textPath></text></svg>
         <div id="swarm"></div>
+        <div id="bflood"></div>
       </div>
       <div id="ptsrc"><svg viewBox="0 0 100 100" width="100" height="100"><path id="ps-sign" d="M20 10 H80 V22 H20 Z"/><path id="ps-awn" d="M8 25 H92 V38 H8 Z"/><path id="ps-bld" fill-rule="evenodd" d="M15 40 H85 V95 H15 Z M42 62 H58 V95 H42 Z M22 52 H36 V70 H22 Z M64 52 H78 V70 H64 Z"/></svg>
         <svg viewBox="23.15 10.56 50.59 50.44" width="51" height="51"><path id="pr-g" d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z"/><path id="pr-gs" d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z"/><path id="pr-p" d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z"/><path id="pr-ps" d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z"/></svg></div>
 
       <!-- 12 / built for you (86.9 to 95.3s): six tiles, the camera moves to each -->
-      <div id="ch12" class="clip" data-start="86.9" data-duration="8.4" style="z-index:15">
-        <div id="panel3">
-          <div id="p3title" class="mono">12 / Built for you</div>
+      <div id="ch12" class="clip" data-start="86.9" data-duration="8.8" style="z-index:15">
+        <div id="panel3"><div id="p3in">
+          <div id="p3kick" class="mono">12 / Built for you</div>
+          <div id="p3title" class="heavy">Built around <em>you.</em></div>
           <div id="bw" data-layout-ignore>
-            <div class="bt" id="bt1"><div class="bl mono">01 · Menu</div><div class="bh heavy">Menu</div>
+            <div class="bt" id="bt1"><div class="bl mono">01 · Menu</div><div class="bh heavy"><em>Your</em>Menu</div>
               <div class="mrow"><span>Starters</span><span class="ld"></span><span class="ck mono">✓</span></div>
               <div class="mrow"><span>Mains</span><span class="ld"></span><span class="ck mono">✓</span></div>
               <div class="mrow"><span>Desserts</span><span class="ld"></span><span class="ck mono">✓</span></div></div>
-            <div class="bt" id="bt2"><div class="bl mono">02 · Hours</div><div class="bh heavy">Hours</div>
+            <div class="bt" id="bt2"><div class="bl mono">02 · Hours</div><div class="bh heavy"><em>Your</em>Hours</div>
               <div class="hrow"><span class="hl2 mono">Open</span><div class="odo" id="odo1"><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="sep">:</div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div></div></div>
               <div class="hrow"><span class="hl2 mono">Close</span><div class="odo" id="odo2"><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="sep">:</div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div></div></div></div>
-            <div class="bt" id="bt3"><div class="bl mono">03 · Policies</div><div class="bh heavy">Policies</div>
-              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#8f7bff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Deposits for large groups</div>
-              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#8f7bff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Allergy notes on file</div>
-              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#8f7bff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Cancellation window</div></div>
-            <div class="bt" id="bt4"><div class="bl mono">04 · Reservation rules</div><div class="bh heavy">Rules</div>
+            <div class="bt" id="bt3"><div class="bl mono">03 · Policies</div><div class="bh heavy"><em>Your</em>Policies</div>
+              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#0b0a12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Deposits for large groups</div>
+              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#0b0a12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Allergy notes on file</div>
+              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#0b0a12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Cancellation window</div></div>
+            <div class="bt" id="bt4"><div class="bl mono">04 · Reservation rules</div><div class="bh heavy"><em>Your</em>Rules</div>
               <div class="trow"><span>Max party size</span><span class="tg"><i></i></span></div>
               <div class="trow"><span>Hold tables 15 min</span><span class="tg"><i></i></span></div>
               <div class="trow"><span>Patio bookings</span><span class="tg"><i></i></span></div></div>
-            <div class="bt" id="bt5"><div class="bl mono">05 · Tone</div><div class="bh heavy">Tone</div>
+            <div class="bt" id="bt5"><div class="bl mono">05 · Tone</div><div class="bh heavy"><em>Your</em>Tone</div>
               <div id="tonebub">Hey, thanks for calling!</div>
               <div id="slider"><div id="sfill"></div><div id="sknob"></div></div>
               <div class="slab mono"><span>Friendly</span><span>Formal</span></div></div>
-            <div class="bt" id="bt6"><div class="bl mono">06 · Upsells</div><div class="bh heavy">Upsells</div>
+            <div class="bt" id="bt6"><div class="bl mono">06 · Upsells</div><div class="bh heavy"><em>Your</em>Upsells</div>
               <div id="upq">Can I get a large pizza?</div>
               <div id="uppill"><div id="upchip"><b>+</b>Add garlic knots?</div></div></div>
           </div>
-        </div>
+        </div></div>
       </div>
 
       <!-- 12 · not some generic chatbot (95.68 to 97.9s) -->
@@ -1253,8 +1270,8 @@
       // ================= 76.5 → 98.1s =================
       tl.set("#c10", { opacity: 0 }, 76.74); tl.set("#c11", { opacity: 1 }, 76.74);
       tl.set("#c11", { opacity: 0 }, 83.34); tl.set("#c12", { opacity: 1 }, 83.34);
-      tl.set("#hud", { className: "on-dark" }, 84.42);
-      tl.set("#hud", { className: "on-footage" }, 86.3);
+      tl.set("#hud", { className: "on-dark" }, 83.34);
+      tl.set("#hud", { className: "on-footage" }, 86.95);
       tl.set("#hud", { className: "on-light" }, 95.68);
       tl.set("#hud", { className: "on-footage" }, 97.9);
 
@@ -1264,7 +1281,6 @@
       tl.fromTo("#staff", { y: 70, opacity: 0, rotationY: -42 }, { y: 0, opacity: 1, rotationY: -16, duration: 0.55, ease: spring }, 79.02);
       // the signature ring: ticks wipe on, labels orbit while it connects
       tl.fromTo("#tkS i", { opacity: 0 }, { opacity: (i) => (i % 6 === 0 ? 1 : 0.55), duration: 0.02, stagger: 0.012 }, 79.3);
-      tl.fromTo("#sring", { opacity: 0, rotation: 0 }, { opacity: 1, rotation: 160, duration: 2.4, ease: "none" }, 79.4);
       tl.fromTo("#tkS", { rotation: 0 }, { rotation: -90, duration: 2.4, ease: "none" }, 79.4);
       // "transfer": the phone screen switches, the camera dollies down, the call rides the line with a comet trail
       fsOut("#scr2", 80.6);
@@ -1282,7 +1298,6 @@
         });
       } }, 80.8);
       // "live": the ring locks green, status flips, waveform runs
-      tl.to("#sring", { opacity: 0, duration: 0.2 }, 81.72);
       tl.to("#tkS i", { backgroundColor: "#34c759", opacity: 1, duration: 0.2 }, 81.72);
       tl.to("#sface", { backgroundColor: "#34c759", duration: 0.2 }, 81.72);
       tl.fromTo("#sav", { scale: 1 }, { scale: 1.12, duration: 0.14, yoyo: true, repeat: 1 }, 81.72);
@@ -1303,15 +1318,15 @@
       const sSign = document.getElementById("ps-sign"), sAwn = document.getElementById("ps-awn"), sBld = document.getElementById("ps-bld");
       for (let v = 8; v <= 96; v += 2.6) for (let u = 6; u <= 94; u += 2.6) {
         let c = null;
-        if (inFill(sSign, u, v)) c = "#6D5CF0";
-        else if (inFill(sAwn, u, v)) c = (Math.floor(u / 10) % 2) ? "#6D5CF0" : "#F3EFE6";
-        else if (inFill(sBld, u, v)) c = "#F3EFE6";
+        if (inFill(sSign, u, v)) c = "#c9bdff";
+        else if (inFill(sAwn, u, v)) c = (Math.floor(u / 10) % 2) ? "#c9bdff" : "#FFFFFF";
+        else if (inFill(sBld, u, v)) c = "#FFFFFF";
         if (c) store.push({ x: 960 + (u - 50) * 4.6, y: 530 + (v - 52) * 4.6, c });
       }
       const rg = ["pr-g", "pr-gs"].map((id) => document.getElementById(id)), rp = ["pr-p", "pr-ps"].map((id) => document.getElementById(id));
       for (let v = 10.6; v <= 61; v += 0.95) for (let u = 23.2; u <= 73.7; u += 0.95) {
         let c = null;
-        if (rp.some((el) => inFill(el, u, v))) c = "#6D5CF0"; else if (rg.some((el) => inFill(el, u, v))) c = "#B9B7C6";
+        if (rp.some((el) => inFill(el, u, v))) c = "#FFFFFF"; else if (rg.some((el) => inFill(el, u, v))) c = "#b8a9ff";
         if (c) R.push({ x: 960 + (u - 48.45) * 8.4, y: 530 + (v - 35.78) * 8.4, c });
       }
       const pick = (arr, k) => arr[Math.floor(k * arr.length / PN)] || arr[arr.length - 1];
@@ -1322,31 +1337,44 @@
         const d = document.createElement("i"); d.style.background = pick(store, k).c; swarm.appendChild(d);
         const a = rnd() * Math.PI * 2, r = 380 + rnd() * 700; SP.push({ x: 960 + Math.cos(a) * r, y: 530 + Math.sin(a) * r * 0.62 });
       }
-      tl.fromTo("#swarm i", { x: (i) => SP[i].x, y: (i) => SP[i].y, opacity: 0, scale: 0.4 },
-        { x: (i) => pick(store, i).x, y: (i) => pick(store, i).y, opacity: 1, scale: 1, duration: 0.8, ease: "power3.inOut", stagger: { each: 0.0006, from: "random" } }, 84.42);
-      tl.fromTo("#swarm", { rotation: -70, scale: 1.25 }, { rotation: 0, scale: 1, duration: 0.95, ease: "power3.out" }, 84.42);
-      tl.fromTo("#swarm i", { scale: 1 }, { scale: 0.7, duration: 0.25, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false, stagger: { each: 0.0008, from: "center" } }, 85.25);
-      tl.to("#swarm i", { x: (i) => pick(R, i).x, y: (i) => pick(R, i).y, backgroundColor: (i) => pick(R, i).c, duration: 0.5, ease: "expo.inOut", stagger: { each: 0.0005, from: "center" } }, 85.62);
+      // "At RezFlo" 83.34: a drifting galaxy of particles fades up
+      tl.fromTo("#swarm i", { x: (i) => SP[i].x, y: (i) => SP[i].y, opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out", stagger: { each: 0.0008, from: "center" } }, 83.34);
+      tl.fromTo("#swarm", { rotation: -120, scale: 1.35 }, { rotation: -70, scale: 1.25, duration: 1.08, ease: "none" }, 83.34);
+      tl.fromTo("#bglow", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.0, ease: "power2.out" }, 83.34);
+      // "build" 84.42: they swirl into a storefront
+      tl.to("#swarm i", { x: (i) => pick(store, i).x, y: (i) => pick(store, i).y, duration: 0.8, ease: "power3.inOut", stagger: { each: 0.0006, from: "random" } }, 84.42);
+      tl.fromTo("#swarm", { rotation: -70, scale: 1.25 }, { rotation: 0, scale: 1, duration: 0.95, ease: "power3.out", immediateRender: false }, 84.42);
+      tl.fromTo("#swarm i", { scale: 1 }, { scale: 0.7, duration: 0.2, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false, stagger: { each: 0.0008, from: "center" } }, 84.95);
+      // "around your restaurant" 85.22: re-form into the RezFlo R, locked by "restaurant" 85.88
+      tl.to("#swarm i", { x: (i) => pick(R, i).x, y: (i) => pick(R, i).y, backgroundColor: (i) => pick(R, i).c, duration: 0.55, ease: "expo.inOut", stagger: { each: 0.0005, from: "center" } }, 85.22);
+      // hand-off: the R bursts outward and a purple flood carries us straight into the split screen
+      tl.to("#swarm i", { x: (i) => 960 + (SP[i].x - 960) * 1.4, y: (i) => 530 + (SP[i].y - 530) * 1.4, opacity: 0, duration: 0.5, ease: "power3.in", stagger: { each: 0.0004, from: "center" } }, 86.42);
+      tl.to("#bdial, #bring", { scale: 1.6, opacity: 0, duration: 0.45, ease: "power3.in" }, 86.45);
+      tl.fromTo("#bflood", { scale: 0, opacity: 1 }, { scale: 60, opacity: 1, duration: 0.45, ease: "power3.in" }, 86.5);
+      tl.to("#bflood", { opacity: 0, duration: 0.15 }, 86.95);
       buildTicks("tkB", 96, 286);
-      tl.fromTo("#tkB i", { opacity: 0 }, { opacity: 1, duration: 0.02, stagger: 0.005 }, 84.6);
-      tl.fromTo("#bdial", { rotation: -30 }, { rotation: 0, duration: 1.6, ease: "power2.out" }, 84.6);
-      tl.fromTo("#bring", { opacity: 0, rotation: -40, scale: 0.92 }, { opacity: 1, rotation: 0, scale: 1, duration: 0.9, ease: "power3.out" }, 84.7);
+      tl.fromTo("#tkB i", { opacity: 0 }, { opacity: 1, duration: 0.02, stagger: 0.005 }, 83.5);
+      tl.fromTo("#bdial", { rotation: -60 }, { rotation: 0, duration: 2.6, ease: "power2.out" }, 83.5);
+      tl.fromTo("#bring", { opacity: 0, rotation: -40, scale: 0.92 }, { opacity: 1, rotation: 0, scale: 1, duration: 0.9, ease: "power3.out" }, 84.42);
+      tl.to("#bring", { rotation: 25, duration: 1.1, ease: "none" }, 85.32);
       tl.fromTo("#cut-build .ticks, #bring", { scale: 1 }, { scale: 1.05, duration: 0.14, yoyo: true, repeat: 1, immediateRender: false }, 85.88);
 
       // --- 12 / built for you — the camera moves to each tile on its word ---
-      tl.fromTo("#vid-wrap", { x: 0 }, { x: -330, duration: 0.55, ease: "power3.inOut", immediateRender: false }, 86.9);
-      tl.fromTo("#panel3", { x: 800 }, { x: 0, duration: 0.55, ease: "power3.inOut" }, 86.92);
-      tl.fromTo("#p3title", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 87.3);
-      tl.to("#p3title", { opacity: 0, duration: 0.25 }, 88.3);
+      tl.set("#vid-wrap", { clipPath: "inset(0px 0px 0px 0px round 0px)" }, 0);
+      tl.set("#vid-wrap", { x: -412, y: 14, scale: 0.8, clipPath: "inset(0px 270px 0px 300px round 50px)" }, 86.9);
+      tl.fromTo("#vid-wrap", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power2.out", immediateRender: false }, 86.95);
+      tl.fromTo("#panel3", { x: 820 }, { x: 0, duration: 0.55, ease: "power3.out" }, 86.98);
+      tl.fromTo("#p3title, #p3kick", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 87.25);
+      tl.to("#p3title, #p3kick", { opacity: 0, y: -20, duration: 0.25 }, 88.3);
       const slots = [[0, 0], [444, 0], [888, 0], [0, 324], [444, 324], [888, 324]];
-      const cam = (k) => ({ x: 380 - (slots[k][0] + 210), y: 560 - (slots[k][1] + 150) });
+      const cam = (k) => ({ x: 365 - (slots[k][0] + 210), y: 540 - (slots[k][1] + 150) });
       tl.set("#bw", { x: cam(0).x + 200, y: cam(0).y, scale: 1 }, 0);
-      tl.set(".bt", { opacity: 0.4, scale: 0.93, filter: "blur(4px)" }, 0);
+      tl.set(".bt", { opacity: 0.55, scale: 0.93, filter: "blur(4px)" }, 0);
       const focus = (k, t) => {
         tl.to("#bw", { x: cam(k).x, y: cam(k).y, duration: 0.55, ease: "power3.inOut" }, t - 0.2);
         [0, 1, 2, 3, 4, 5].forEach((j) => tl.to("#bt" + (j + 1), j === k
-          ? { opacity: 1, scale: 1, filter: "blur(0px)", boxShadow: "0 0 0 2px #5b41da, 0 30px 70px rgba(91,65,218,0.35)", duration: 0.35 }
-          : { opacity: 0.4, scale: 0.93, filter: "blur(4px)", boxShadow: "0 0 0 0px rgba(91,65,218,0)", duration: 0.35 }, t - 0.1));
+          ? { opacity: 1, scale: 1.04, filter: "blur(0px)", boxShadow: "0 0 0 3px #0b0a12, 0 34px 70px rgba(11,10,18,0.32)", duration: 0.35 }
+          : { opacity: 0.55, scale: 0.93, filter: "blur(4px)", boxShadow: "0 0 0 0px rgba(11,10,18,0)", duration: 0.35 }, t - 0.1));
       };
       focus(0, 87.74);
       tl.fromTo("#bt1 .ld", { scaleX: 0 }, { scaleX: 1, duration: 0.3, stagger: 0.12, ease: "power2.out" }, 87.8);
@@ -1357,7 +1385,7 @@
       });
       roll("#odo1", [1, 1, 0, 0], 88.75); roll("#odo2", [2, 2, 0, 0], 88.9);
       focus(2, 89.62);
-      tl.to("#bt3 .cb", { borderColor: "#8f7bff", duration: 0.1, stagger: 0.16 }, 89.7);
+      tl.to("#bt3 .cb", { backgroundColor: "rgba(243,239,230,0.6)", duration: 0.1, stagger: 0.16 }, 89.7);
       tl.to("#bt3 .cb svg", { opacity: 1, duration: 0.1, stagger: 0.16 }, 89.7);
       focus(3, 90.9);
       tl.to("#bt4 .tg", { backgroundColor: "#5b41da", duration: 0.2, stagger: 0.18 }, 91.0);
@@ -1372,12 +1400,11 @@
       tl.to("#uppill", { width: 300, height: 56, borderRadius: 28, backgroundColor: "#5b41da", boxShadow: "0 12px 30px rgba(91,65,218,0.45)", duration: 0.3, ease: "power3.inOut" }, 94.06);
       tl.fromTo("#upchip", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 94.24);
       // pull back to all six, everything sharp, then reshuffle once and leave
-      tl.to("#bw", { x: 40, y: 398, scale: 0.52, duration: 0.45, ease: "power3.inOut" }, 94.42);
+      tl.to("#bw", { x: 25, y: 338, scale: 0.52, duration: 0.45, ease: "power3.inOut" }, 94.42);
       tl.to(".bt", { opacity: 1, scale: 1, filter: "blur(0px)", boxShadow: "0 0 0 0px rgba(91,65,218,0)", duration: 0.3 }, 94.42);
-      const perm = [4, 0, 5, 1, 3, 2];
-      perm.forEach((to, j) => tl.to("#bt" + (j + 1), { x: slots[to][0] - slots[j][0], y: slots[to][1] - slots[j][1], duration: 0.35, ease: "power3.inOut" }, 94.82 + j * 0.03));
-      tl.to("#panel3", { x: 800, duration: 0.4, ease: "power3.in" }, 95.28);
-      tl.to("#vid-wrap", { x: 0, duration: 0.4, ease: "power3.inOut" }, 95.28);
+      tl.to(".bt", { x: (i) => [-260, 0, 260, -260, 0, 260][i], y: (i) => (i < 3 ? -240 : 240), scale: 0.6, opacity: 0, filter: "blur(10px)", duration: 0.4, ease: "power3.in", stagger: 0.025 }, 94.98);
+      tl.to("#panel3", { clipPath: "inset(0px 0px 0px 0px round 0px)", duration: 0.5, ease: "expo.inOut" }, 95.18);
+      tl.set("#vid-wrap", { x: 0, y: 0, scale: 1, opacity: 1, filter: "blur(0px)", clipPath: "inset(0px 0px 0px 0px round 0px)" }, 95.68);
 
       // --- 12 · "generic" 95.68, "chatbot" 96.06, "dropped" 96.92 ---
       tl.fromTo("#echo", { y: 0 }, { y: -180, duration: 2.22, ease: "none" }, 95.68);
