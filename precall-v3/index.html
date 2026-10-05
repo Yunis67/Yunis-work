@@ -342,14 +342,101 @@
       #coins { position: absolute; left: 0; top: 0; width: 120px; height: 40px; }
       .coin { position: absolute; top: 2px; width: 34px; height: 34px; border-radius: 50%; background: #efe9da; border: 2.5px solid var(--ink); color: var(--ink);
         font-family: "Archivo Black", sans-serif; font-size: 18px; line-height: 29px; text-align: center; }
+      /* 11 · live transfer, in 3D */
+      #rig { position: absolute; inset: 0; perspective: 1400px; perspective-origin: 1650px 420px; }
+      #scr3 .av { top: 52px; width: 70px; height: 70px; margin-left: -35px; border-radius: 20px; background: var(--cream); }
+      #scr3 .av .rm { width: 48px; height: 48px; }
+      #scr3 .c1 { top: 132px; color: var(--peri); }
+      #scr3 .c2 { top: 150px; font-size: 20px; }
+      #tr2 { color: var(--green); opacity: 0; position: absolute; left: 0; right: 0; }
+      #tdots { position: absolute; left: 0; right: 0; top: 196px; display: flex; justify-content: center; gap: 8px; }
+      #tdots i { display: block; width: 9px; height: 9px; border-radius: 50%; background: var(--peri); }
+      #comet { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+      #trail { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+      #trail i { position: absolute; left: 0; top: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--brand); opacity: 0; box-shadow: 0 0 18px 4px rgba(91,65,218,0.6); }
+      #staff { position: absolute; left: 1500px; top: 500px; width: 320px; height: 150px; border-radius: 22px; background: rgba(11,10,18,0.95); box-shadow: 0 24px 60px rgba(11,10,18,0.35); color: var(--cream); opacity: 0; }
+      #sav { position: absolute; left: 20px; top: 43px; width: 64px; height: 64px; }
+      #sface { position: absolute; inset: 0; border-radius: 50%; background: #2a2738; display: flex; align-items: center; justify-content: center; }
+      #sface svg { width: 34px; height: 34px; }
+      #tkS { left: 32px; top: 32px; }
+      #tkS i { width: 2px; height: 6px; margin: -3px 0 0 -1px; background: var(--peri); border-radius: 1px; opacity: 0; }
+      #tkS i.maj { height: 10px; margin-top: -5px; }
+      #sring { position: absolute; left: -34px; top: -34px; width: 132px; height: 132px; opacity: 0; }
+      #sring text { font-family: "JetBrains Mono", monospace; font-size: 9px; letter-spacing: 0.18em; fill: #a99bff; }
+      #staff .st1 { position: absolute; left: 112px; top: 28px; font-weight: 700; font-size: 20px; }
+      #staff .st2 { position: absolute; left: 112px; top: 56px; font-size: 12px; color: var(--muted); }
+      #staff .st3 { position: absolute; left: 112px; top: 82px; font-size: 12px; }
+      #sst1 { color: var(--peri); } #sst2 { color: var(--green); opacity: 0; position: absolute; left: 0; white-space: nowrap; }
+      #wave3 { position: absolute; left: 112px; top: 106px; height: 26px; display: flex; align-items: center; gap: 4px; opacity: 0; }
+      #wave3 i { display: block; width: 5px; height: 24px; border-radius: 3px; background: var(--green); }
+
+      /* 12 · particles: storefront → RezFlo R */
+      #cut-build { background: radial-gradient(900px 700px at 50% 50%, #1d1638 0%, var(--ink) 72%); }
+      #swarm { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 530px; }
+      #swarm i { position: absolute; left: 0; top: 0; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; }
+      #bdial { position: absolute; left: 960px; top: 530px; width: 0; height: 0; }
+      #tkB i { width: 2px; height: 10px; margin: -5px 0 0 -1px; background: rgba(243,239,230,0.4); border-radius: 1px; opacity: 0; }
+      #tkB i.maj { height: 20px; margin-top: -10px; background: var(--peri); }
+      #bring { position: absolute; left: 610px; top: 180px; width: 700px; height: 700px; opacity: 0; }
+      #bring text { font-family: "JetBrains Mono", monospace; font-size: 22px; letter-spacing: 0.3em; fill: var(--cream); }
+      #ptsrc { position: absolute; left: 0; top: 0; width: 0; height: 0; overflow: hidden; visibility: hidden; }
+
+      /* 12 · bento grid with a camera */
+      #panel3 { position: absolute; left: 1160px; top: 0; width: 760px; height: 1080px; border-radius: 32px 0 0 32px; overflow: hidden; z-index: 15;
+        background: radial-gradient(560px 480px at 50% 52%, rgba(91,65,218,0.34), rgba(91,65,218,0) 70%), #0b0a12; }
+      #p3title { position: absolute; left: 60px; top: 112px; font-size: 14px; color: var(--peri); z-index: 2; }
+      #bw { position: absolute; left: 0; top: 0; width: 1308px; height: 624px; transform-origin: 0 0; }
+      .bt { position: absolute; width: 420px; height: 300px; border-radius: 24px; background: #16141f; border: 1px solid #2a2738; padding: 26px 28px; color: var(--cream); overflow: hidden; }
+      .bt .bl { font-size: 12px; color: var(--peri); }
+      .bt .bh { font-size: 34px; line-height: 1; margin-top: 12px; }
+      #bt1 { left: 0; top: 0; } #bt2 { left: 444px; top: 0; } #bt3 { left: 888px; top: 0; }
+      #bt4 { left: 0; top: 324px; } #bt5 { left: 444px; top: 324px; } #bt6 { left: 888px; top: 324px; }
+      .mrow { display: flex; align-items: baseline; gap: 10px; margin-top: 16px; font-size: 21px; }
+      .mrow .ld { flex: 1; border-bottom: 2px dotted #3a3748; transform-origin: 0 50%; }
+      .mrow .ck { font-size: 13px; color: var(--peri); }
+      .hrow { display: flex; align-items: center; gap: 18px; margin-top: 18px; }
+      .hrow .hl2 { width: 64px; font-size: 13px; color: var(--muted); }
+      .odo { display: flex; font-family: "Archivo Black", sans-serif; font-size: 50px; line-height: 60px; height: 60px; }
+      .odo .col { height: 60px; overflow: hidden; }
+      .odo .col div { height: 60px; }
+      .odo .sep { width: 18px; text-align: center; }
+      .prow2 { display: flex; align-items: center; gap: 14px; margin-top: 16px; font-size: 19px; }
+      .cb { width: 24px; height: 24px; border-radius: 6px; border: 2px solid #3a3748; display: flex; align-items: center; justify-content: center; flex: none; }
+      .cb svg { width: 16px; height: 16px; opacity: 0; }
+      .trow { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; font-size: 18px; }
+      .tg { position: relative; width: 52px; height: 30px; border-radius: 15px; background: #2a2738; flex: none; }
+      .tg i { position: absolute; left: 4px; top: 4px; width: 22px; height: 22px; border-radius: 50%; background: #fff; }
+      #tonebub { display: inline-block; margin-top: 18px; padding: 10px 16px; border-radius: 16px; border-bottom-left-radius: 4px; background: #1d1638; font-size: 19px; }
+      #slider { position: relative; margin-top: 30px; height: 6px; border-radius: 3px; background: #2a2738; }
+      #sfill { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; border-radius: 3px; background: var(--brand); transform-origin: 0 50%; }
+      #sknob { position: absolute; left: 0; top: -9px; width: 24px; height: 24px; margin-left: -12px; border-radius: 50%; background: var(--cream); box-shadow: 0 0 0 5px rgba(91,65,218,0.45); }
+      .slab { display: flex; justify-content: space-between; margin-top: 16px; font-size: 12px; color: var(--muted); }
+      #upq { display: inline-block; margin-top: 18px; padding: 10px 16px; border-radius: 16px; border-bottom-left-radius: 4px; background: #2a2738; font-size: 18px; }
+      #uppill { position: absolute; left: 28px; top: 196px; width: 220px; height: 16px; border-radius: 8px; background: var(--peri); box-shadow: 0 0 34px 8px rgba(143,123,255,0.8); opacity: 0; overflow: hidden; }
+      #upchip { position: absolute; left: 0; top: 0; width: 300px; height: 56px; display: flex; align-items: center; gap: 10px; padding: 0 18px; font-weight: 700; font-size: 19px; color: var(--cream); white-space: nowrap; opacity: 0; }
+      #upchip b { width: 30px; height: 30px; border-radius: 50%; background: rgba(243,239,230,0.2); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+      /* 12 · not some generic chatbot */
+      #cut-gen { background: var(--cream); color: var(--ink); }
+      #echo { position: absolute; left: 0; right: 0; top: -120px; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+      #echo div { font-family: "Archivo Black", sans-serif; text-transform: uppercase; font-size: 190px; line-height: 0.92; color: transparent; -webkit-text-stroke: 2px rgba(11,10,18,0.1); white-space: nowrap; }
+      #ng1 { font-size: 96px; }
+      #ng2 { font-size: 186px; line-height: 0.95; }
+      #ng3wrap { position: relative; }
+      #ng3 { font-size: 186px; line-height: 0.95; color: #8f8c9e; }
+      #ng3 span { display: inline-block; }
+      #gstrike { position: absolute; left: -16px; right: -16px; top: 50%; height: 16px; margin-top: -8px; border-radius: 8px; background: var(--paper-red); transform-origin: 0 50%; }
+      #gbub { position: absolute; left: 1330px; top: 760px; display: flex; align-items: center; gap: 14px; padding: 16px 22px; border-radius: 20px; border-bottom-left-radius: 6px; background: #d8d5dd; color: #55526a; font-size: 26px; opacity: 0; }
+      #gbub b { width: 40px; height: 40px; border-radius: 10px; background: #b7b3c2; display: flex; align-items: center; justify-content: center; gap: 5px; }
+      #gbub b i { display: block; width: 6px; height: 6px; border-radius: 50%; background: #f3efe6; }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="76.5" data-width="1920" data-height="1080">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="98.1" data-width="1920" data-height="1080">
 
-      <!-- FOOTAGE (0 to 76.5s), sound stays on the clip -->
+      <!-- FOOTAGE (0 to 98.1s), sound stays on the clip -->
       <div id="vid-wrap">
-        <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="76.5" data-has-audio="true" playsinline></video>
+        <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="98.1" data-has-audio="true" playsinline></video>
       </div>
 
       <!-- 01 / HELLO (0.6 to 4.2s): name with an underline sweep; the "o" in RezFlo becomes a dot with a tick ring -->
@@ -556,7 +643,8 @@
       </div>
 
       <!-- 10 / the caller (68.12 to 76.5s): a phone on the wall -->
-      <div id="ch10" class="clip" data-start="68.12" data-duration="8.38" style="z-index:12">
+      <div id="ch10" class="clip" data-start="68.12" data-duration="15.0" style="z-index:12">
+        <div id="rig">
         <div id="phone">
           <div class="notch"></div><div class="sb mono"><span>9:41</span><span>5G</span></div>
           <div class="scr" id="scr1"><div class="pulse" id="pr1"></div><div class="pulse" id="pr2"></div><div class="av"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></div><div class="c1 mono">Calling…</div><div class="c2">Your restaurant</div></div>
@@ -565,8 +653,70 @@
             <div id="tags"><span class="mono">Reservation</span><span class="mono">Party of 4</span><span class="mono">8:00 PM</span></div>
             <div class="bb" id="bb1">Table for 4 at 8?</div><div class="bb" id="bb2">You're booked. See you at 8.</div>
             <div class="okpill" id="ok5"><svg viewBox="0 0 24 24" fill="none" stroke="#0b0a12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>BOOKED</div></div>
+
+          <div class="scr" id="scr3"><div class="av"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div><div class="c1 mono"><span id="tr1">Transferring…</span><span id="tr2">✓ Transferred</span></div><div class="c2">Front of house</div>
+            <div id="tdots"><i></i><i></i><i></i></div></div>
+        </div>
+        <svg id="comet" viewBox="0 0 1920 1080"><path id="cpath" d="M1656,452 C1700,500 1620,525 1556,560" fill="none" stroke="#3f2ba6" stroke-width="2.5" stroke-dasharray="6 7" stroke-dashoffset="0" opacity="0"/></svg>
+        <div id="trail"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div id="staff">
+          <div id="sav"><div class="ticks" id="tkS"></div>
+            <svg id="sring" viewBox="0 0 132 132"><defs><path id="spath" d="M66,66 m-56,0 a56,56 0 1,1 112,0 a56,56 0 1,1 -112,0"/></defs><text><textPath href="#spath" textLength="350" lengthAdjust="spacing">LIVE · ON-SITE · TRANSFER · LIVE · ON-SITE · TRANSFER · </textPath></text></svg>
+            <div id="sface"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.9-3.6 3.8-5.6 7.2-5.6s6.3 2 7.2 5.6"/></svg></div></div>
+          <div class="st1">Front of house</div><div class="st2 mono">On-site staff</div>
+          <div class="st3 mono"><span id="sst1">Waiting…</span><span id="sst2">● Live call</span></div>
+          <div id="wave3"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
         </div>
         <div id="simple-mask"><span class="serif" id="simple">simple.</span></div>
+      </div>
+
+      <!-- 12 · particles: storefront → RezFlo R (84.42 to 86.3s) -->
+      <div id="cut-build" class="clip cut" data-start="84.42" data-duration="1.88">
+        <div id="bdial"><div class="ticks" id="tkB"></div></div>
+        <svg id="bring" viewBox="0 0 700 700"><defs><path id="bpath" d="M350,350 m-318,0 a318,318 0 1,1 636,0 a318,318 0 1,1 -636,0"/></defs><text><textPath href="#bpath" textLength="1990" lengthAdjust="spacing">BUILT AROUND YOUR RESTAURANT · BUILT AROUND YOUR RESTAURANT · </textPath></text></svg>
+        <div id="swarm"></div>
+      </div>
+      <div id="ptsrc"><svg viewBox="0 0 100 100" width="100" height="100"><path id="ps-sign" d="M20 10 H80 V22 H20 Z"/><path id="ps-awn" d="M8 25 H92 V38 H8 Z"/><path id="ps-bld" fill-rule="evenodd" d="M15 40 H85 V95 H15 Z M42 62 H58 V95 H42 Z M22 52 H36 V70 H22 Z M64 52 H78 V70 H64 Z"/></svg>
+        <svg viewBox="23.15 10.56 50.59 50.44" width="51" height="51"><path id="pr-g" d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z"/><path id="pr-gs" d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z"/><path id="pr-p" d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z"/><path id="pr-ps" d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z"/></svg></div>
+
+      <!-- 12 / built for you (86.9 to 95.3s): six tiles, the camera moves to each -->
+      <div id="ch12" class="clip" data-start="86.9" data-duration="8.4" style="z-index:15">
+        <div id="panel3">
+          <div id="p3title" class="mono">12 / Built for you</div>
+          <div id="bw" data-layout-ignore>
+            <div class="bt" id="bt1"><div class="bl mono">01 · Menu</div><div class="bh heavy">Menu</div>
+              <div class="mrow"><span>Starters</span><span class="ld"></span><span class="ck mono">✓</span></div>
+              <div class="mrow"><span>Mains</span><span class="ld"></span><span class="ck mono">✓</span></div>
+              <div class="mrow"><span>Desserts</span><span class="ld"></span><span class="ck mono">✓</span></div></div>
+            <div class="bt" id="bt2"><div class="bl mono">02 · Hours</div><div class="bh heavy">Hours</div>
+              <div class="hrow"><span class="hl2 mono">Open</span><div class="odo" id="odo1"><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="sep">:</div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div></div></div>
+              <div class="hrow"><span class="hl2 mono">Close</span><div class="odo" id="odo2"><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="sep">:</div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div></div></div></div>
+            <div class="bt" id="bt3"><div class="bl mono">03 · Policies</div><div class="bh heavy">Policies</div>
+              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#8f7bff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Deposits for large groups</div>
+              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#8f7bff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Allergy notes on file</div>
+              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#8f7bff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Cancellation window</div></div>
+            <div class="bt" id="bt4"><div class="bl mono">04 · Reservation rules</div><div class="bh heavy">Rules</div>
+              <div class="trow"><span>Max party size</span><span class="tg"><i></i></span></div>
+              <div class="trow"><span>Hold tables 15 min</span><span class="tg"><i></i></span></div>
+              <div class="trow"><span>Patio bookings</span><span class="tg"><i></i></span></div></div>
+            <div class="bt" id="bt5"><div class="bl mono">05 · Tone</div><div class="bh heavy">Tone</div>
+              <div id="tonebub">Hey, thanks for calling!</div>
+              <div id="slider"><div id="sfill"></div><div id="sknob"></div></div>
+              <div class="slab mono"><span>Friendly</span><span>Formal</span></div></div>
+            <div class="bt" id="bt6"><div class="bl mono">06 · Upsells</div><div class="bh heavy">Upsells</div>
+              <div id="upq">Can I get a large pizza?</div>
+              <div id="uppill"><div id="upchip"><b>+</b>Add garlic knots?</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12 · not some generic chatbot (95.68 to 97.9s) -->
+      <div id="cut-gen" class="clip cut" data-start="95.68" data-duration="2.22">
+        <div id="echo" data-layout-ignore><div>Chatbot.</div><div>Chatbot.</div><div>Chatbot.</div><div>Chatbot.</div><div>Chatbot.</div><div>Chatbot.</div><div>Chatbot.</div><div>Chatbot.</div><div>Chatbot.</div></div>
+        <div class="fg"><div class="heavy" id="ng1">Not some</div><div class="heavy" id="ng2">Generic</div>
+          <div id="ng3wrap" data-layout-ignore><div class="heavy" id="ng3"><span>C</span><span>H</span><span>A</span><span>T</span><span>B</span><span>O</span><span>T</span><span class="pdot"></span></div><span id="gstrike"></span></div></div>
+        <div id="gbub"><b><i></i><i></i></b>How can I help you?</div>
       </div>
 
       <!-- HUD frame -->
@@ -577,8 +727,8 @@
         <div class="br hud-in" id="br-br"></div>
         <div class="hl mono hud-in" id="hl-tl">RezFlo / Pre-call '26</div>
         <div class="hl mono hud-in" id="hl-tr"><span id="rec"></span><span>TC <span id="tc">00:00:00:00</span></span></div>
-        <div class="hl mono hud-in" id="hl-bl"><span id="c1">01 / 10<em>Hello</em></span><span id="c2">02 / 10<em>Booked</em></span><span id="c3">03 / 10<em>Overview</em></span><span id="c4">04 / 10<em>The problem</em></span><span id="c5">05 / 10<em>The rush</em></span><span id="c6">06 / 10<em>Two choices</em></span><span id="c7">07 / 10<em>RezFlo</em></span><span id="c8">08 / 10<em>What it does</em></span><span id="c9">09 / 10<em>POS sync</em></span><span id="c10">10 / 10<em>The caller</em></span></div>
-        <div class="hl mono hud-in" id="hl-br"><span>Bar <span id="bar">01</span>/39</span><span id="beats"><i></i><i></i><i></i><i></i></span></div>
+        <div class="hl mono hud-in" id="hl-bl"><span id="c1">01 / 12<em>Hello</em></span><span id="c2">02 / 12<em>Booked</em></span><span id="c3">03 / 12<em>Overview</em></span><span id="c4">04 / 12<em>The problem</em></span><span id="c5">05 / 12<em>The rush</em></span><span id="c6">06 / 12<em>Two choices</em></span><span id="c7">07 / 12<em>RezFlo</em></span><span id="c8">08 / 12<em>What it does</em></span><span id="c9">09 / 12<em>POS sync</em></span><span id="c10">10 / 12<em>The caller</em></span><span id="c11">11 / 12<em>Live transfer</em></span><span id="c12">12 / 12<em>Built for you</em></span></div>
+        <div class="hl mono hud-in" id="hl-br"><span>Bar <span id="bar">01</span>/50</span><span id="beats"><i></i><i></i><i></i><i></i></span></div>
         <div class="hud-in" id="prog-track"></div>
         <div class="hud-in" id="prog"></div>
       </div>
@@ -643,6 +793,20 @@
       <audio id="sfx-60" src="sfx/pop.wav" data-start="74.04" data-duration="0.17" data-volume="0.35"></audio>
       <audio id="sfx-61" src="sfx/chime.wav" data-start="76.1" data-duration="0.4" data-volume="0.25"></audio>
       <audio id="sfx-62" src="sfx/counter.wav" data-start="38.2" data-duration="0.6" data-volume="0.2" data-fade-out="0.2"></audio>
+      <audio id="sfx-63" src="sfx/pop.wav" data-start="79.02" data-duration="0.17" data-volume="0.35"></audio>
+      <audio id="sfx-64" src="sfx/switch.wav" data-start="80.64" data-duration="0.14" data-volume="0.4"></audio>
+      <audio id="sfx-65" src="sfx/success.wav" data-start="81.72" data-duration="0.75" data-volume="0.3"></audio>
+      <audio id="sfx-66" src="sfx/fill.wav" data-start="84.42" data-duration="0.9" data-volume="0.22" data-fade-out="0.3"></audio>
+      <audio id="sfx-67" src="sfx/chime.wav" data-start="85.88" data-duration="0.95" data-volume="0.3"></audio>
+      <audio id="sfx-68" src="sfx/tick.wav" data-start="87.74" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-69" src="sfx/counter.wav" data-start="88.7" data-duration="0.8" data-volume="0.2" data-fade-out="0.2"></audio>
+      <audio id="sfx-70" src="sfx/tick.wav" data-start="89.62" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-71" src="sfx/switch.wav" data-start="90.9" data-duration="0.14" data-volume="0.35"></audio>
+      <audio id="sfx-72" src="sfx/tick.wav" data-start="92.68" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-73" src="sfx/pop.wav" data-start="93.9" data-duration="0.17" data-volume="0.4"></audio>
+      <audio id="sfx-74" src="sfx/snap.wav" data-start="95.68" data-duration="0.16" data-volume="0.45"></audio>
+      <audio id="sfx-75" src="sfx/snap.wav" data-start="96.06" data-duration="0.16" data-volume="0.4"></audio>
+      <audio id="sfx-76" src="sfx/counter.wav" data-start="96.92" data-duration="0.6" data-volume="0.2" data-fade-out="0.2"></audio>
     </div>
 
     <script>
@@ -695,15 +859,15 @@
       const beatEls = document.querySelectorAll("#beats i");
       const pad = (n) => String(n).padStart(2, "0");
       const clock = { v: 0 };
-      tl.fromTo(clock, { v: 0 }, { v: 76.5, duration: 76.5, ease: "none", onUpdate: () => {
+      tl.fromTo(clock, { v: 0 }, { v: 98.1, duration: 98.1, ease: "none", onUpdate: () => {
         const f = Math.floor(clock.v * 30 + 1e-6);
         tcEl.textContent = "00:00:" + pad(Math.floor(f / 30)) + ":" + pad(f % 30);
         const beat = Math.floor(clock.v * 2 + 1e-6);
-        barEl.textContent = pad(Math.min(39, Math.floor(beat / 4) + 1));
+        barEl.textContent = pad(Math.min(50, Math.floor(beat / 4) + 1));
         beatEls.forEach((b, k) => { b.style.background = (k === beat % 4) ? "currentColor" : "transparent"; });
       } }, 0);
-      tl.fromTo("#prog", { scaleX: 0 }, { scaleX: 1, duration: 76.5, ease: "none" }, 0);
-      tl.fromTo("#rec", { opacity: 1 }, { opacity: 0.15, duration: 0.5, ease: "steps(1)", repeat: 152, yoyo: true }, 0);
+      tl.fromTo("#prog", { scaleX: 0 }, { scaleX: 1, duration: 98.1, ease: "none" }, 0);
+      tl.fromTo("#rec", { opacity: 1 }, { opacity: 0.15, duration: 0.5, ease: "steps(1)", repeat: 195, yoyo: true }, 0);
       tl.fromTo(".br", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out", stagger: 0.03 }, 0.6);
       tl.fromTo("#hl-tl, #hl-tr, #hl-bl, #hl-br, #prog-track, #prog", { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.04 }, 0.68);
       tl.set("#c1", { opacity: 1 }, 0.6);
@@ -1085,6 +1249,147 @@
       tl.fromTo("#bb1", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.25, ease: "power3.out" }, 75.46);
       tl.fromTo("#bb2", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.25, ease: "power3.out" }, 75.86);
       tl.fromTo("#ok5", { opacity: 0, scale: 1.5, rotation: -10 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.24, ease: spring }, 76.1);
+
+      // ================= 76.5 → 98.1s =================
+      tl.set("#c10", { opacity: 0 }, 76.74); tl.set("#c11", { opacity: 1 }, 76.74);
+      tl.set("#c11", { opacity: 0 }, 83.34); tl.set("#c12", { opacity: 1 }, 83.34);
+      tl.set("#hud", { className: "on-dark" }, 84.42);
+      tl.set("#hud", { className: "on-footage" }, 86.3);
+      tl.set("#hud", { className: "on-light" }, 95.68);
+      tl.set("#hud", { className: "on-footage" }, 97.9);
+
+      // --- 11 / live transfer — "requires" 77.84, "staff member" 79.02, "transfer" 80.64, "live" 81.72, "on-site" 82.46 ---
+      tl.to("#phone", { scale: 0.72, y: -30, rotationY: -16, transformOrigin: "50% 0%", duration: 0.6, ease: "power3.inOut" }, 77.84);
+      buildTicks("tkS", 36, 40);
+      tl.fromTo("#staff", { y: 70, opacity: 0, rotationY: -42 }, { y: 0, opacity: 1, rotationY: -16, duration: 0.55, ease: spring }, 79.02);
+      // the signature ring: ticks wipe on, labels orbit while it connects
+      tl.fromTo("#tkS i", { opacity: 0 }, { opacity: (i) => (i % 6 === 0 ? 1 : 0.55), duration: 0.02, stagger: 0.012 }, 79.3);
+      tl.fromTo("#sring", { opacity: 0, rotation: 0 }, { opacity: 1, rotation: 160, duration: 2.4, ease: "none" }, 79.4);
+      tl.fromTo("#tkS", { rotation: 0 }, { rotation: -90, duration: 2.4, ease: "none" }, 79.4);
+      // "transfer": the phone screen switches, the camera dollies down, the call rides the line with a comet trail
+      fsOut("#scr2", 80.6);
+      fsIn("#scr3", 80.66);
+      tl.fromTo("#tdots i", { y: 0 }, { y: -7, duration: 0.18, ease: "sine.inOut", yoyo: true, repeat: 5, stagger: 0.08, immediateRender: false }, 80.8);
+      tl.fromTo("#rig", { y: 0 }, { y: -20, duration: 1.3, ease: "power2.inOut" }, 80.64);
+      tl.fromTo("#cpath", { opacity: 0, attr: { "stroke-dashoffset": 160 } }, { opacity: 0.8, attr: { "stroke-dashoffset": 0 }, duration: 0.4 }, 80.64);
+      const cp = document.getElementById("cpath"), cLen = cp.getTotalLength();
+      const trailEls = document.querySelectorAll("#trail i"); const comet = { t: 0 };
+      tl.fromTo(comet, { t: 0 }, { t: 1, duration: 0.9, ease: "power2.inOut", onUpdate: () => {
+        trailEls.forEach((el, k) => {
+          const tt = Math.max(0, comet.t - k * 0.05), pt = cp.getPointAtLength(tt * cLen);
+          el.style.transform = "translate(" + pt.x + "px," + pt.y + "px) scale(" + (1 - k * 0.12) + ")";
+          el.style.opacity = (comet.t > 0 && comet.t < 1) ? String(1 - k * 0.14) : "0";
+        });
+      } }, 80.8);
+      // "live": the ring locks green, status flips, waveform runs
+      tl.to("#sring", { opacity: 0, duration: 0.2 }, 81.72);
+      tl.to("#tkS i", { backgroundColor: "#34c759", opacity: 1, duration: 0.2 }, 81.72);
+      tl.to("#sface", { backgroundColor: "#34c759", duration: 0.2 }, 81.72);
+      tl.fromTo("#sav", { scale: 1 }, { scale: 1.12, duration: 0.14, yoyo: true, repeat: 1 }, 81.72);
+      tl.to("#sst1", { opacity: 0, duration: 0.1 }, 81.72); tl.to("#sst2", { opacity: 1, duration: 0.15 }, 81.76);
+      tl.to("#tr1", { opacity: 0, duration: 0.1 }, 81.72); tl.to("#tr2", { opacity: 1, duration: 0.15 }, 81.76);
+      tl.to("#tdots", { opacity: 0, duration: 0.15 }, 81.72);
+      tl.to("#wave3", { opacity: 1, duration: 0.2 }, 81.8);
+      tl.set("#wave3 i", { scaleY: 0.25 }, 0);
+      tl.fromTo("#wave3 i", { scaleY: 0.25 }, { scaleY: (i) => 0.35 + det(i, 7) * 0.65, duration: 0.2, ease: "sine.inOut", yoyo: true, repeat: 4, stagger: (i) => det(i, 5) * 0.1, immediateRender: false }, 81.85);
+      tl.fromTo("#staff", { scale: 1 }, { scale: 1.04, duration: 0.15, yoyo: true, repeat: 1 }, 82.46);
+      // leave
+      tl.to("#rig", { x: 520, opacity: 0, filter: "blur(8px)", duration: 0.4, ease: "power3.in" }, 82.9);
+
+      // --- 12 · "build" 84.42: particles swirl into a storefront, re-form into the R on "restaurant" 85.88 ---
+      const PN = 440;
+      const inFill = (el, x, y) => el.isPointInFill(new DOMPoint(x, y));
+      const store = [], R = [];
+      const sSign = document.getElementById("ps-sign"), sAwn = document.getElementById("ps-awn"), sBld = document.getElementById("ps-bld");
+      for (let v = 8; v <= 96; v += 2.6) for (let u = 6; u <= 94; u += 2.6) {
+        let c = null;
+        if (inFill(sSign, u, v)) c = "#6D5CF0";
+        else if (inFill(sAwn, u, v)) c = (Math.floor(u / 10) % 2) ? "#6D5CF0" : "#F3EFE6";
+        else if (inFill(sBld, u, v)) c = "#F3EFE6";
+        if (c) store.push({ x: 960 + (u - 50) * 4.6, y: 530 + (v - 52) * 4.6, c });
+      }
+      const rg = ["pr-g", "pr-gs"].map((id) => document.getElementById(id)), rp = ["pr-p", "pr-ps"].map((id) => document.getElementById(id));
+      for (let v = 10.6; v <= 61; v += 0.95) for (let u = 23.2; u <= 73.7; u += 0.95) {
+        let c = null;
+        if (rp.some((el) => inFill(el, u, v))) c = "#6D5CF0"; else if (rg.some((el) => inFill(el, u, v))) c = "#B9B7C6";
+        if (c) R.push({ x: 960 + (u - 48.45) * 8.4, y: 530 + (v - 35.78) * 8.4, c });
+      }
+      const pick = (arr, k) => arr[Math.floor(k * arr.length / PN)] || arr[arr.length - 1];
+      const swarm = document.getElementById("swarm"); let seed = 7;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+      const SP = [];
+      for (let k = 0; k < PN; k++) {
+        const d = document.createElement("i"); d.style.background = pick(store, k).c; swarm.appendChild(d);
+        const a = rnd() * Math.PI * 2, r = 380 + rnd() * 700; SP.push({ x: 960 + Math.cos(a) * r, y: 530 + Math.sin(a) * r * 0.62 });
+      }
+      tl.fromTo("#swarm i", { x: (i) => SP[i].x, y: (i) => SP[i].y, opacity: 0, scale: 0.4 },
+        { x: (i) => pick(store, i).x, y: (i) => pick(store, i).y, opacity: 1, scale: 1, duration: 0.8, ease: "power3.inOut", stagger: { each: 0.0006, from: "random" } }, 84.42);
+      tl.fromTo("#swarm", { rotation: -70, scale: 1.25 }, { rotation: 0, scale: 1, duration: 0.95, ease: "power3.out" }, 84.42);
+      tl.fromTo("#swarm i", { scale: 1 }, { scale: 0.7, duration: 0.25, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false, stagger: { each: 0.0008, from: "center" } }, 85.25);
+      tl.to("#swarm i", { x: (i) => pick(R, i).x, y: (i) => pick(R, i).y, backgroundColor: (i) => pick(R, i).c, duration: 0.5, ease: "expo.inOut", stagger: { each: 0.0005, from: "center" } }, 85.62);
+      buildTicks("tkB", 96, 286);
+      tl.fromTo("#tkB i", { opacity: 0 }, { opacity: 1, duration: 0.02, stagger: 0.005 }, 84.6);
+      tl.fromTo("#bdial", { rotation: -30 }, { rotation: 0, duration: 1.6, ease: "power2.out" }, 84.6);
+      tl.fromTo("#bring", { opacity: 0, rotation: -40, scale: 0.92 }, { opacity: 1, rotation: 0, scale: 1, duration: 0.9, ease: "power3.out" }, 84.7);
+      tl.fromTo("#cut-build .ticks, #bring", { scale: 1 }, { scale: 1.05, duration: 0.14, yoyo: true, repeat: 1, immediateRender: false }, 85.88);
+
+      // --- 12 / built for you — the camera moves to each tile on its word ---
+      tl.fromTo("#vid-wrap", { x: 0 }, { x: -330, duration: 0.55, ease: "power3.inOut", immediateRender: false }, 86.9);
+      tl.fromTo("#panel3", { x: 800 }, { x: 0, duration: 0.55, ease: "power3.inOut" }, 86.92);
+      tl.fromTo("#p3title", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 87.3);
+      tl.to("#p3title", { opacity: 0, duration: 0.25 }, 88.3);
+      const slots = [[0, 0], [444, 0], [888, 0], [0, 324], [444, 324], [888, 324]];
+      const cam = (k) => ({ x: 380 - (slots[k][0] + 210), y: 560 - (slots[k][1] + 150) });
+      tl.set("#bw", { x: cam(0).x + 200, y: cam(0).y, scale: 1 }, 0);
+      tl.set(".bt", { opacity: 0.4, scale: 0.93, filter: "blur(4px)" }, 0);
+      const focus = (k, t) => {
+        tl.to("#bw", { x: cam(k).x, y: cam(k).y, duration: 0.55, ease: "power3.inOut" }, t - 0.2);
+        [0, 1, 2, 3, 4, 5].forEach((j) => tl.to("#bt" + (j + 1), j === k
+          ? { opacity: 1, scale: 1, filter: "blur(0px)", boxShadow: "0 0 0 2px #5b41da, 0 30px 70px rgba(91,65,218,0.35)", duration: 0.35 }
+          : { opacity: 0.4, scale: 0.93, filter: "blur(4px)", boxShadow: "0 0 0 0px rgba(91,65,218,0)", duration: 0.35 }, t - 0.1));
+      };
+      focus(0, 87.74);
+      tl.fromTo("#bt1 .ld", { scaleX: 0 }, { scaleX: 1, duration: 0.3, stagger: 0.12, ease: "power2.out" }, 87.8);
+      tl.fromTo("#bt1 .ck", { opacity: 0 }, { opacity: 1, duration: 0.1, stagger: 0.12 }, 88.05);
+      focus(1, 88.7);
+      const roll = (id, digits, t) => document.querySelectorAll(id + " .dig").forEach((el, k) => {
+        tl.fromTo(el, { y: 0 }, { y: -60 * digits[k], duration: 0.6 + k * 0.08, ease: "power3.out" }, t);
+      });
+      roll("#odo1", [1, 1, 0, 0], 88.75); roll("#odo2", [2, 2, 0, 0], 88.9);
+      focus(2, 89.62);
+      tl.to("#bt3 .cb", { borderColor: "#8f7bff", duration: 0.1, stagger: 0.16 }, 89.7);
+      tl.to("#bt3 .cb svg", { opacity: 1, duration: 0.1, stagger: 0.16 }, 89.7);
+      focus(3, 90.9);
+      tl.to("#bt4 .tg", { backgroundColor: "#5b41da", duration: 0.2, stagger: 0.18 }, 91.0);
+      tl.to("#bt4 .tg i", { x: 22, duration: 0.25, ease: spring, stagger: 0.18 }, 91.0);
+      focus(4, 92.68);
+      tl.fromTo("#tonebub", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3 }, 92.2);
+      tl.fromTo("#sknob", { x: 0 }, { x: 109, duration: 0.6, ease: "power3.inOut" }, 92.75);
+      tl.fromTo("#sfill", { scaleX: 0 }, { scaleX: 0.3, duration: 0.6, ease: "power3.inOut" }, 92.75);
+      focus(5, 93.9);
+      tl.fromTo("#upq", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3 }, 93.5);
+      tl.fromTo("#uppill", { opacity: 0, scaleX: 0.2 }, { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out" }, 93.9);
+      tl.to("#uppill", { width: 300, height: 56, borderRadius: 28, backgroundColor: "#5b41da", boxShadow: "0 12px 30px rgba(91,65,218,0.45)", duration: 0.3, ease: "power3.inOut" }, 94.06);
+      tl.fromTo("#upchip", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 94.24);
+      // pull back to all six, everything sharp, then reshuffle once and leave
+      tl.to("#bw", { x: 40, y: 398, scale: 0.52, duration: 0.45, ease: "power3.inOut" }, 94.42);
+      tl.to(".bt", { opacity: 1, scale: 1, filter: "blur(0px)", boxShadow: "0 0 0 0px rgba(91,65,218,0)", duration: 0.3 }, 94.42);
+      const perm = [4, 0, 5, 1, 3, 2];
+      perm.forEach((to, j) => tl.to("#bt" + (j + 1), { x: slots[to][0] - slots[j][0], y: slots[to][1] - slots[j][1], duration: 0.35, ease: "power3.inOut" }, 94.82 + j * 0.03));
+      tl.to("#panel3", { x: 800, duration: 0.4, ease: "power3.in" }, 95.28);
+      tl.to("#vid-wrap", { x: 0, duration: 0.4, ease: "power3.inOut" }, 95.28);
+
+      // --- 12 · "generic" 95.68, "chatbot" 96.06, "dropped" 96.92 ---
+      tl.fromTo("#echo", { y: 0 }, { y: -180, duration: 2.22, ease: "none" }, 95.68);
+      slam("#ng1", 95.68, { y: -40, opacity: 0, skewX: -10 });
+      slam("#ng2", 95.72, { scale: 1.3, skewX: -12, opacity: 0 });
+      tl.fromTo("#ng3 span", { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.22, ease: "expo.out", stagger: 0.03 }, 96.06);
+      tl.fromTo("#gstrike", { scaleX: 0 }, { scaleX: 1, duration: 0.24, ease: "power2.out" }, 96.3);
+      tl.fromTo("#gbub", { opacity: 0, y: 20, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.25, ease: spring }, 96.3);
+      tl.to("#ng3 span", { y: (i) => 700 + det(i, 5) * 160, rotation: (i) => (i % 2 ? 1 : -1) * (25 + det(i, 7) * 60), opacity: 0, duration: 0.65, ease: "power2.in", stagger: 0.045 }, 96.92);
+      tl.to("#gstrike", { y: 620, rotation: 8, opacity: 0, duration: 0.6, ease: "power2.in" }, 96.98);
+      tl.to("#gbub", { y: 560, rotation: 18, opacity: 0, duration: 0.6, ease: "power2.in" }, 97.0);
+      tl.to("#echo", { opacity: 0, duration: 0.4 }, 97.3);
 
       window.__timelines["main"] = tl;
     </script>

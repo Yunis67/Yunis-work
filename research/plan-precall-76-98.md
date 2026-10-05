@@ -42,3 +42,10 @@ The tile being spoken about glows purple; the others sit back. At 94.3 the grid 
 ## Notes
 - Times, menu sections and rules are illustrative UI, not claims. No numbers presented as stats.
 - Same motion-blur render as the rest.
+
+## Upgrades agreed before building (premium techniques from the reels)
+- Live transfer: phone and staff card in 3D perspective (Shopify Live View cards), a camera dolly between them, the call travelling as a dot with a comet trail, and the Saad Altamari signature ring with orbiting labels around the staff avatar.
+- "Built around your restaurant": a swirl of particles settles into a storefront, then re-forms into the RezFlo R (Grafigator particle sphere → CLAUDE).
+- Bento grid: bigger than the panel, the camera pans so each tile centres on its word; active tile sharp and lifted, others blurred back (Shopify depth of field); rolling-digit hours (odometer); upsell chip expands from a glowing pill; at the end the camera pulls back to all six and the grid reshuffles.
+- "Generic chatbot": echo stack of outlined CHATBOT rows (Darkvex NEVER), red strike, and on "dropped" the letters break apart and fall with the grey chat bubble (Saad Altamari letter break, same fall as the coins). Back to Yousef at 97.9.
+- Decisions: end at 1:38.1; HUD counts to /12.
