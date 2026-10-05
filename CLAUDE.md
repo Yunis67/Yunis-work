@@ -20,6 +20,7 @@ Use the PROMPT 15 style block in `prompts.md` for every video. Short version:
 - Background #0b0a12, purple glow #1d1638. Brand purple #5b41da for fills; #8f7bff for purple text on dark.
 - Red #ff5a5f only for missed calls / lost money. Green #34c759 only for answered calls / ticks.
 - Fonts in `kit/fonts`: Space Grotesk Bold (headlines), Inter (UI), JetBrains Mono (labels, times, numbers).
+- Logo: use the files in `brand/` (SVG preferred, `*-on-dark` versions for dark frames). Never redraw it or use a placeholder mark. See `brand/README.md`.
 - Vertical 1080x1920, 30 fps. Text inside the middle 80% of the width. Bottom 20% stays clear for captions and app UI.
 
 ## Folder map
@@ -28,6 +29,7 @@ Use the PROMPT 15 style block in `prompts.md` for every video. Short version:
 - `opener/`: finished 15-second RezFlo cold open (HyperFrames project). `index.html` holds the whole timeline; scenes are commented with their time ranges.
 - `renders/rezflo-opener.mp4`: the current render of the opener.
 - `kit/`: fonts, sfx (9 code-made sounds, free to use in ads), practice clip and practice screenshots.
+- `brand/`: the RezFlo logo (vector remake, light and dark versions).
 - `raw/`: Yunis drops raw phone recordings here. Git ignores its contents, so recordings stay local.
 - `.claude/skills/brag` and `brag-slim`: the /brag skill, vendored from latent-spaces/brag v0.4.0. See `.claude/skills/VENDORED.md` to update it.
 
