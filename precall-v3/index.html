@@ -389,7 +389,8 @@
       #p3title { position: absolute; left: 52px; top: 70px; z-index: 2; font-size: 52px; line-height: 1; color: var(--ink); }
       #p3title em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; color: var(--brand); font-size: 60px; }
       #p3kick { position: absolute; left: 54px; top: 46px; z-index: 2; font-size: 13px; color: #55526a; }
-      #bw { position: absolute; left: 0; top: 0; width: 1308px; height: 624px; transform-origin: 0 0; }
+      #carousel { position: absolute; left: 0; top: 0; width: 730px; height: 1000px; perspective: 1500px; perspective-origin: 365px 470px; }
+      #bw { position: absolute; left: 155px; top: 320px; width: 420px; height: 300px; transform-style: preserve-3d; }
       .bt { position: absolute; width: 420px; height: 300px; border-radius: 24px; background: #16141f; border: 1px solid #2a2738; padding: 26px 28px; color: var(--cream); overflow: hidden; }
       .bt .bl { font-size: 12px; color: var(--peri); }
       .bt .bh { font-size: 34px; line-height: 1; margin-top: 12px; }
@@ -401,8 +402,18 @@
       #bt4 { background: #fbfaf6; border-color: #e2ddd0; color: var(--ink); } #bt4 .bl { color: var(--brand-deep); } #bt4 .bh em { color: var(--brand); } #bt4 .tg { background: #d8d3c6; }
       #bt5 { background: var(--brand); border-color: var(--brand); } #bt5 .bl, #bt5 .slab { color: rgba(243,239,230,0.85); } #bt5 #tonebub { background: rgba(255,255,255,0.18); } #bt5 #slider { background: rgba(255,255,255,0.25); } #bt5 #sfill { background: var(--cream); }
       #bt6 { background: var(--ink); border-color: var(--ink); } #bt6 .bh em { color: var(--peri); }
-      #bt1 { left: 0; top: 0; } #bt2 { left: 444px; top: 0; } #bt3 { left: 888px; top: 0; }
-      #bt4 { left: 0; top: 324px; } #bt5 { left: 444px; top: 324px; } #bt6 { left: 888px; top: 324px; }
+      .bt { left: 0; top: 0; backface-visibility: hidden; }
+      #train { position: absolute; left: 52px; right: 52px; top: 742px; height: 190px; border-radius: 24px; background: var(--ink); color: var(--cream); padding: 26px 28px; }
+      #train .tr { width: 58px; height: 58px; border-radius: 16px; background: #1d1638; display: flex; align-items: center; justify-content: center; float: left; margin-right: 18px; }
+      #train .tr .rm { width: 40px; height: 40px; }
+      #train .t1 { font-weight: 700; font-size: 22px; line-height: 28px; }
+      #train .t2 { position: relative; height: 18px; margin-top: 6px; margin-left: 76px; font-size: 13px; color: var(--peri); }
+      #train .t2 span { position: absolute; left: 0; top: 0; white-space: nowrap; opacity: 0; }
+      #segs { clear: both; display: flex; gap: 8px; padding-top: 22px; }
+      #segs i { flex: 1; height: 12px; border-radius: 6px; background: #2a2738; overflow: hidden; position: relative; }
+      #segs i b { position: absolute; inset: 0; background: var(--brand); transform-origin: 0 50%; }
+      #segs i b { box-shadow: 0 0 14px rgba(143,123,255,0.8); }
+      #tready { color: var(--green) !important; }
       .mrow { display: flex; align-items: baseline; gap: 10px; margin-top: 16px; font-size: 21px; }
       .mrow .ld { flex: 1; border-bottom: 2px dotted #3a3748; transform-origin: 0 50%; }
       .mrow .ck { font-size: 13px; color: var(--peri); }
@@ -701,7 +712,7 @@
         <div id="panel3"><div id="p3in">
           <div id="p3kick" class="mono">12 / Built for you</div>
           <div id="p3title" class="heavy">Built around <em>you.</em></div>
-          <div id="bw" data-layout-ignore>
+          <div id="carousel" data-layout-ignore><div id="bw">
             <div class="bt" id="bt1"><div class="bl mono">01 · Menu</div><div class="bh heavy"><em>Your</em>Menu</div>
               <div class="mrow"><span>Starters</span><span class="ld"></span><span class="ck mono">✓</span></div>
               <div class="mrow"><span>Mains</span><span class="ld"></span><span class="ck mono">✓</span></div>
@@ -724,7 +735,10 @@
             <div class="bt" id="bt6"><div class="bl mono">06 · Upsells</div><div class="bh heavy"><em>Your</em>Upsells</div>
               <div id="upq">Can I get a large pizza?</div>
               <div id="uppill"><div id="upchip"><b>+</b>Add garlic knots?</div></div></div>
-          </div>
+          </div></div>
+          <div id="train"><div class="tr"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#B9B7C6"/><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#B9B7C6"/><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#6D5CF0"/><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#6D5CF0"/></svg></div><div class="t1">Training your agent</div>
+            <div class="t2 mono"><span id="tl1">01 / 06 · your menu</span><span id="tl2">02 / 06 · your hours</span><span id="tl3">03 / 06 · your policies</span><span id="tl4">04 / 06 · your rules</span><span id="tl5">05 / 06 · your tone</span><span id="tl6">06 / 06 · your upsells</span><span id="tready">✓ Agent ready</span></div>
+            <div id="segs"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div></div>
         </div></div>
       </div>
 
@@ -1365,16 +1379,21 @@
       tl.fromTo("#vid-wrap", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power2.out", immediateRender: false }, 86.95);
       tl.fromTo("#panel3", { x: 820 }, { x: 0, duration: 0.55, ease: "power3.out" }, 86.98);
       tl.fromTo("#p3title, #p3kick", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 87.25);
-      tl.to("#p3title, #p3kick", { opacity: 0, y: -20, duration: 0.25 }, 88.3);
-      const slots = [[0, 0], [444, 0], [888, 0], [0, 324], [444, 324], [888, 324]];
-      const cam = (k) => ({ x: 365 - (slots[k][0] + 210), y: 540 - (slots[k][1] + 150) });
-      tl.set("#bw", { x: cam(0).x + 200, y: cam(0).y, scale: 1 }, 0);
-      tl.set(".bt", { opacity: 0.55, scale: 0.93, filter: "blur(4px)" }, 0);
+      // 3D carousel: six cards on a ring; the ring turns so the spoken card faces front
+      const RAD = 400;
+      [0, 1, 2, 3, 4, 5].forEach((j) => tl.set("#bt" + (j + 1), { rotationY: j * 60, z: RAD, transformOrigin: "50% 50% " + (-RAD) + "px", opacity: 0.5, scale: 0.92, filter: "blur(4px)" }, 0));
+      tl.set("#bw", { z: -RAD, rotationY: 40 }, 0);
+      tl.fromTo("#bw", { rotationY: 40, opacity: 0 }, { rotationY: 0, opacity: 1, duration: 0.7, ease: "power3.out", immediateRender: false }, 87.15);
+      tl.set("#segs i b", { scaleX: 0 }, 0);
+      tl.fromTo("#train", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: spring }, 87.4);
       const focus = (k, t) => {
-        tl.to("#bw", { x: cam(k).x, y: cam(k).y, duration: 0.55, ease: "power3.inOut" }, t - 0.2);
+        tl.to("#bw", { rotationY: -k * 60, duration: 0.6, ease: "power3.inOut" }, t - 0.25);
         [0, 1, 2, 3, 4, 5].forEach((j) => tl.to("#bt" + (j + 1), j === k
-          ? { opacity: 1, scale: 1.04, filter: "blur(0px)", boxShadow: "0 0 0 3px #0b0a12, 0 34px 70px rgba(11,10,18,0.32)", duration: 0.35 }
-          : { opacity: 0.55, scale: 0.93, filter: "blur(4px)", boxShadow: "0 0 0 0px rgba(11,10,18,0)", duration: 0.35 }, t - 0.1));
+          ? { opacity: 1, scale: 1, filter: "blur(0px)", boxShadow: "0 0 0 3px #0b0a12, 0 34px 70px rgba(11,10,18,0.32)", duration: 0.35 }
+          : { opacity: 0.5, scale: 0.92, filter: "blur(4px)", boxShadow: "0 0 0 0px rgba(11,10,18,0)", duration: 0.35 }, t - 0.1));
+        tl.fromTo("#segs i:nth-child(" + (k + 1) + ") b", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, t);
+        if (k > 0) tl.to("#tl" + k, { opacity: 0, y: -8, duration: 0.15 }, t);
+        tl.fromTo("#tl" + (k + 1), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, immediateRender: false }, t + 0.05);
       };
       focus(0, 87.74);
       tl.fromTo("#bt1 .ld", { scaleX: 0 }, { scaleX: 1, duration: 0.3, stagger: 0.12, ease: "power2.out" }, 87.8);
@@ -1399,10 +1418,14 @@
       tl.fromTo("#uppill", { opacity: 0, scaleX: 0.2 }, { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out" }, 93.9);
       tl.to("#uppill", { width: 300, height: 56, borderRadius: 28, backgroundColor: "#5b41da", boxShadow: "0 12px 30px rgba(91,65,218,0.45)", duration: 0.3, ease: "power3.inOut" }, 94.06);
       tl.fromTo("#upchip", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 94.24);
-      // pull back to all six, everything sharp, then reshuffle once and leave
-      tl.to("#bw", { x: 25, y: 338, scale: 0.52, duration: 0.45, ease: "power3.inOut" }, 94.42);
-      tl.to(".bt", { opacity: 1, scale: 1, filter: "blur(0px)", boxShadow: "0 0 0 0px rgba(91,65,218,0)", duration: 0.3 }, 94.42);
-      tl.to(".bt", { x: (i) => [-260, 0, 260, -260, 0, 260][i], y: (i) => (i < 3 ? -240 : 240), scale: 0.6, opacity: 0, filter: "blur(10px)", duration: 0.4, ease: "power3.in", stagger: 0.025 }, 94.98);
+      // agent ready: one fast full spin with motion blur, then the cards fly off
+      tl.to("#tl6", { opacity: 0, y: -8, duration: 0.15 }, 94.45);
+      tl.fromTo("#tready", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, immediateRender: false }, 94.5);
+      tl.to("#segs i b", { backgroundColor: "#34c759", boxShadow: "0 0 14px rgba(52,199,89,0.8)", duration: 0.2 }, 94.5);
+      tl.to(".bt", { opacity: 1, filter: "blur(0px)", boxShadow: "0 0 0 0px rgba(11,10,18,0)", duration: 0.2 }, 94.42);
+      tl.to("#bw", { rotationY: -300 - 360, duration: 0.6, ease: "power3.inOut" }, 94.42);
+      tl.to("#bw", { z: -RAD - 900, opacity: 0, duration: 0.35, ease: "power3.in" }, 94.98);
+      tl.to("#train", { y: 80, opacity: 0, duration: 0.3, ease: "power3.in" }, 95.0);
       tl.to("#panel3", { clipPath: "inset(0px 0px 0px 0px round 0px)", duration: 0.5, ease: "expo.inOut" }, 95.18);
       tl.set("#vid-wrap", { x: 0, y: 0, scale: 1, opacity: 1, filter: "blur(0px)", clipPath: "inset(0px 0px 0px 0px round 0px)" }, 95.68);
 
