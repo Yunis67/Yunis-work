@@ -447,14 +447,90 @@
       #gbub { position: absolute; left: 1330px; top: 760px; display: flex; align-items: center; gap: 14px; padding: 16px 22px; border-radius: 20px; border-bottom-left-radius: 6px; background: #d8d5dd; color: #55526a; font-size: 26px; opacity: 0; }
       #gbub b { width: 40px; height: 40px; border-radius: 10px; background: #b7b3c2; display: flex; align-items: center; justify-content: center; gap: 5px; }
       #gbub b i { display: block; width: 6px; height: 6px; border-radius: 50%; background: #f3efe6; }
+      /* 13 · designed around how you operate (on the wall) */
+      #ln98 { position: absolute; left: 1450px; top: 300px; width: 430px; font-size: 54px; line-height: 1.05; color: var(--ink); }
+      #ln98 .w { display: inline-block; opacity: 0; margin-right: 12px; }
+      #ln98 em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; color: var(--brand-deep); font-size: 62px; }
+      #ul98 { position: absolute; left: 1450px; top: 482px; width: 330px; height: 8px; border-radius: 4px; background: var(--brand-deep); transform-origin: 0 50%; }
+      /* 13 · rush hour cut */
+      #cut-rush { background: radial-gradient(900px 700px at 50% 60%, #1d1638 0%, var(--ink) 72%); color: var(--cream); }
+      #rbars { position: absolute; left: 160px; right: 160px; bottom: 120px; height: 560px; display: flex; align-items: flex-end; gap: 14px; }
+      #rbars i { flex: 1; height: 100%; border-radius: 8px 8px 0 0; transform-origin: 50% 100%; opacity: 0.55; }
+      #cut-rush .fg { flex-direction: row; gap: 40px; }
+      #rw1, #rw2 { font-size: 250px; }
+      #rw2 { color: var(--peri); }
+      /* 13 · one line, calls stack up (on the wall) */
+      #stf { position: absolute; left: 1470px; top: 560px; width: 390px; height: 112px; border-radius: 22px; background: rgba(11,10,18,0.95); color: var(--cream); box-shadow: 0 24px 60px rgba(11,10,18,0.35); }
+      #stf .av { position: absolute; left: 22px; top: 26px; width: 60px; height: 60px; border-radius: 50%; background: #2a2738; display: flex; align-items: center; justify-content: center; }
+      #stf .av svg { width: 32px; height: 32px; }
+      #stf .s1 { position: absolute; left: 100px; top: 28px; font-weight: 700; font-size: 20px; }
+      #stf .s2 { position: absolute; left: 100px; top: 60px; font-size: 13px; color: var(--green); }
+      #oneline { position: absolute; right: 18px; top: 18px; padding: 6px 10px; border: 2.5px solid var(--peri); border-radius: 6px; color: var(--peri); font-size: 13px; opacity: 0; }
+      .wpill { position: absolute; left: 1500px; width: 330px; height: 56px; border-radius: 28px; background: rgba(22,20,31,0.95); border: 1px solid #2a2738; color: var(--cream); display: flex; align-items: center; gap: 12px; padding: 0 16px 0 10px; font-size: 16px; opacity: 0; }
+      .wpill .pi { width: 38px; height: 38px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; flex: none; }
+      .wpill .pi svg { width: 18px; height: 18px; }
+      .wpill .wt { margin-left: auto; font-size: 12px; color: var(--muted); }
+      /* 13 · 2,000 calls at the same time (split screen) */
+      #panel4 { position: absolute; left: 1230px; top: 0; width: 690px; height: 1080px; border-radius: 32px 0 0 32px; overflow: hidden; z-index: 15;
+        background: radial-gradient(560px 480px at 50% 62%, rgba(91,65,218,0.38), rgba(91,65,218,0) 70%), #0b0a12; color: var(--cream); }
+      #p4kick { position: absolute; left: 60px; top: 104px; font-size: 13px; color: var(--peri); }
+      #p4up { position: absolute; left: 60px; top: 150px; font-size: 26px; color: #b9b7c6; }
+      .odo3 { position: absolute; left: 54px; top: 186px; display: flex; font-family: "Archivo Black", sans-serif; font-size: 150px; line-height: 160px; height: 160px; }
+      .odo3 .col { height: 160px; overflow: hidden; }
+      .odo3 .col div { height: 160px; }
+      .odo3 .sep { width: 44px; text-align: center; }
+      #p4same { position: absolute; left: 60px; top: 352px; font-size: 52px; color: var(--peri); }
+      #p4r { position: absolute; left: 60px; top: 438px; width: 44px; height: 44px; border-radius: 12px; background: var(--cream); display: flex; align-items: center; justify-content: center; }
+      #p4r .rm { width: 30px; height: 30px; }
+      #p4rl { position: absolute; left: 116px; top: 452px; font-size: 13px; color: var(--muted); }
+      #matrix { position: absolute; left: 60px; top: 508px; width: 570px; height: 456px; }
+      #matrix i { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: #2a2738; }
+      /* 13 · focus on the guest */
+      #vig { position: absolute; inset: 0; z-index: 11; background: radial-gradient(ellipse 60% 70% at 55% 48%, rgba(11,10,18,0) 55%, rgba(11,10,18,0.42) 100%); opacity: 0; pointer-events: none; }
+      #guest { position: absolute; left: 1470px; top: 330px; padding: 14px 20px; border-radius: 16px; background: rgba(11,10,18,0.92); color: var(--cream); font-size: 30px; opacity: 0; }
+      #guest b { display: block; font-family: "JetBrains Mono", monospace; font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: var(--peri); margin-bottom: 6px; }
+      /* 14 · the goal cut */
+      #cut-goal { background: var(--cream); color: var(--ink); }
+      #gw1 { font-size: 220px; }
+      #gw2 { font-size: 96px; color: var(--brand-deep); }
+      /* 14 · goal cards (on the wall) */
+      .gc { position: absolute; left: 1470px; width: 390px; height: 96px; border-radius: 20px; background: rgba(11,10,18,0.95); color: var(--cream); box-shadow: 0 20px 50px rgba(11,10,18,0.3); opacity: 0; }
+      #gc1 { top: 250px; } #gc2 { top: 362px; } #gc3 { top: 474px; }
+      .gc .ar { position: absolute; left: 18px; top: 22px; width: 52px; height: 52px; border-radius: 14px; background: var(--brand); display: flex; align-items: center; justify-content: center; }
+      .gc .ar svg { width: 26px; height: 26px; }
+      .gc .gl { position: absolute; left: 86px; top: 20px; font-weight: 700; font-size: 19px; }
+      .gc .gt { position: absolute; left: 86px; right: 22px; top: 58px; height: 10px; border-radius: 5px; background: #2a2738; overflow: hidden; }
+      .gc .gb { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; border-radius: 5px; background: var(--peri); transform-origin: 0 50%; }
+      /* 15 · on our call (callback to the 0:04 notification) */
+      #oc { position: absolute; left: 1455px; top: 300px; width: 420px; height: 96px; border-radius: 26px; background: #0b0a12; color: var(--cream); overflow: hidden; box-shadow: 0 22px 60px rgba(63,43,166,0.45); opacity: 0; }
+      #oc .nt { position: absolute; left: 20px; top: 20px; right: 20px; display: flex; gap: 16px; align-items: center; }
+      #oc .ic { width: 56px; height: 56px; border-radius: 15px; background: var(--cream); display: flex; align-items: center; justify-content: center; flex: none; }
+      #oc .ic .rm { width: 38px; height: 38px; }
+      #oc .l1 { display: flex; justify-content: space-between; font-weight: 700; font-size: 20px; line-height: 24px; }
+      #oc .l1 span { font-weight: 400; font-size: 16px; color: var(--muted); }
+      #oc .l2 { font-size: 18px; line-height: 24px; margin-top: 4px; color: #d9d5e8; white-space: nowrap; }
+      #ocx { position: absolute; left: 0; top: 96px; width: 420px; height: 230px; opacity: 0; }
+      #ocx .rule { position: absolute; left: 20px; right: 20px; top: 0; height: 1px; background: #2a2738; }
+      #ocx .h { position: absolute; left: 24px; top: 22px; font-size: 34px; }
+      #ocx .k { position: absolute; left: 26px; top: 70px; font-size: 12px; color: var(--peri); }
+      #ocx .st { position: absolute; left: 150px; top: 100px; width: 110px; height: 110px; border-radius: 26px; background: #1d1638; display: flex; align-items: center; justify-content: center; }
+      #ocx .st svg { width: 56px; height: 56px; }
+      #ocx .fr { position: absolute; left: 136px; top: 86px; width: 138px; height: 138px; }
+      #ocx .fr i { position: absolute; width: 22px; height: 22px; border-color: var(--peri); border-style: solid; border-width: 0; }
+      #ocx .fr i:nth-child(1) { left: 0; top: 0; border-top-width: 3px; border-left-width: 3px; }
+      #ocx .fr i:nth-child(2) { right: 0; top: 0; border-top-width: 3px; border-right-width: 3px; }
+      #ocx .fr i:nth-child(3) { left: 0; bottom: 0; border-bottom-width: 3px; border-left-width: 3px; }
+      #ocx .fr i:nth-child(4) { right: 0; bottom: 0; border-bottom-width: 3px; border-right-width: 3px; }
+      #ocx .yr { position: absolute; left: 290px; top: 142px; font-size: 13px; color: var(--cream); opacity: 0; }
+      #scan { position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, rgba(143,123,255,0), #8f7bff, rgba(143,123,255,0)); box-shadow: 0 0 18px rgba(143,123,255,0.9); opacity: 0; }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="98.1" data-width="1920" data-height="1080">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="129.1" data-width="1920" data-height="1080">
 
-      <!-- FOOTAGE (0 to 98.1s), sound stays on the clip -->
+      <!-- FOOTAGE (0 to 129.1s), sound stays on the clip -->
       <div id="vid-wrap">
-        <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="98.1" data-has-audio="true" playsinline></video>
+        <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="129.1" data-has-audio="true" playsinline></video>
       </div>
 
       <!-- 01 / HELLO (0.6 to 4.2s): name with an underline sweep; the "o" in RezFlo becomes a dot with a tick ring -->
@@ -743,6 +819,64 @@
         <div id="gbub"><b><i></i><i></i></b>How can I help you?</div>
       </div>
 
+      <!-- 13 · "designed around how you operate" on the wall (98.2 to 101.2s) -->
+      <div id="ch13a" class="clip" data-start="98.2" data-duration="3.0" style="z-index:12">
+        <div id="ln98" class="heavy"><span class="w">Designed</span><span class="w">around</span><span class="w">how</span><span class="w"><em>you</em></span><span class="w">operate.</span></div>
+        <div id="ul98"></div>
+      </div>
+
+      <!-- 13 · rush hour cut (104.94 to 105.6s) -->
+      <div id="cut-rush" class="clip cut" data-start="104.94" data-duration="0.66">
+        <div id="rbars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="fg"><span class="heavy" id="rw1">Rush</span><span class="heavy" id="rw2">Hour.</span></div>
+      </div>
+
+      <!-- 13 · one staff member, one line; calls stack up (105.6 to 110.3s) -->
+      <div id="ch13b" class="clip" data-start="105.6" data-duration="4.7" style="z-index:12">
+        <div class="wpill" id="wp1" style="top:490px"><span class="pi"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span>Incoming call<span class="wt mono">waiting</span></div><div class="wpill" id="wp2" style="top:424px"><span class="pi"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span>Incoming call<span class="wt mono">waiting</span></div><div class="wpill" id="wp3" style="top:358px"><span class="pi"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span>Incoming call<span class="wt mono">waiting</span></div><div class="wpill" id="wp4" style="top:292px"><span class="pi"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span>Incoming call<span class="wt mono">waiting</span></div><div class="wpill" id="wp5" style="top:226px"><span class="pi"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span>Incoming call<span class="wt mono">waiting</span></div>
+        <div id="stf"><div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.9-3.6 3.8-5.6 7.2-5.6s6.3 2 7.2 5.6"/></svg></div><div class="s1">Front of house</div><div class="s2 mono">● On a call · <span id="stft">0:42</span></div><div id="oneline" class="mono">1 line</div></div>
+      </div>
+
+      <!-- 13 · 2,000 calls at the same time (109.98 to 113.4s) -->
+      <div id="ch13c" class="clip" data-start="109.98" data-duration="3.4" style="z-index:15">
+        <div id="panel4">
+          <div id="p4kick" class="mono">13 / Rush hour</div>
+          <div id="p4up">Answers up to</div>
+          <div class="odo3" id="odo3" data-layout-ignore><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="sep">,</div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div></div>
+          <div id="p4same" class="serif">calls at the same time.</div>
+          <div id="p4r"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></svg></div><div id="p4rl" class="mono">RezFlo · live lines</div>
+          <div id="matrix" data-layout-ignore></div>
+        </div>
+      </div>
+
+      <!-- 13 · focus on the guest (113.1 to 117.0s) -->
+      <div id="ch13d" class="clip" data-start="113.1" data-duration="3.9" style="z-index:11">
+        <div id="vig"></div>
+        <div id="guest" style="z-index:12"><b>Your staff</b>Eyes on the guest<br>in front of you.</div>
+      </div>
+
+      <!-- 14 · the goal cut (117.52 to 119.0s) -->
+      <div id="cut-goal" class="clip cut" data-start="117.52" data-duration="1.48">
+        <div class="fg"><div class="heavy" id="gw1">The goal<span class="pdot"></span></div><div class="mask"><span class="serif" id="gw2">really simple.</span></div></div>
+      </div>
+
+      <!-- 14 · more calls, more orders, fewer distractions (119.7 to 125.1s) -->
+      <div id="ch14" class="clip" data-start="119.7" data-duration="5.4" style="z-index:12">
+        <div class="gc" id="gc1"><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></span><span class="gl">More calls answered</span><span class="gt"><i class="gb"></i></span></div>
+        <div class="gc" id="gc2"><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></span><span class="gl">More orders &amp; reservations</span><span class="gt"><i class="gb"></i></span></div>
+        <div class="gc" id="gc3"><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span><span class="gl">Fewer staff distractions</span><span class="gt"><i class="gb"></i></span></div>
+      </div>
+
+      <!-- 15 · on our call: the booking notification returns (125.64 to end) -->
+      <div id="ch15" class="clip" data-start="125.6" data-duration="3.50" style="z-index:12">
+        <div id="oc">
+          <div class="nt"><div class="ic"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></svg></div><div style="flex:1;min-width:0"><div class="l1">RezFlo <span>now</span></div><div class="l2">Call booked · intro call with Yousef</div></div></div>
+          <div id="ocx"><div class="rule"></div><div class="h heavy">On our call</div><div class="k mono">Looking at</div>
+            <div class="st"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="1.8" stroke-linejoin="round"><path d="M4 9.5h16l-1.5-5h-13z"/><path d="M5 9.5v10h14v-10"/><path d="M10 19.5v-5h4v5"/></svg></div><div class="fr"><i></i><i></i><i></i><i></i></div><div class="yr mono" id="ocyr">Your restaurant</div></div>
+          <div id="scan"></div>
+        </div>
+      </div>
+
       <!-- HUD frame -->
       <div id="hud" class="on-footage">
         <div class="br hud-in" id="br-tl"></div>
@@ -751,8 +885,8 @@
         <div class="br hud-in" id="br-br"></div>
         <div class="hl mono hud-in" id="hl-tl">RezFlo / Pre-call '26</div>
         <div class="hl mono hud-in" id="hl-tr"><span id="rec"></span><span>TC <span id="tc">00:00:00:00</span></span></div>
-        <div class="hl mono hud-in" id="hl-bl"><span id="c1">01 / 12<em>Hello</em></span><span id="c2">02 / 12<em>Booked</em></span><span id="c3">03 / 12<em>Overview</em></span><span id="c4">04 / 12<em>The problem</em></span><span id="c5">05 / 12<em>The rush</em></span><span id="c6">06 / 12<em>Two choices</em></span><span id="c7">07 / 12<em>RezFlo</em></span><span id="c8">08 / 12<em>What it does</em></span><span id="c9">09 / 12<em>POS sync</em></span><span id="c10">10 / 12<em>The caller</em></span><span id="c11">11 / 12<em>Live transfer</em></span><span id="c12">12 / 12<em>Built for you</em></span></div>
-        <div class="hl mono hud-in" id="hl-br"><span>Bar <span id="bar">01</span>/50</span><span id="beats"><i></i><i></i><i></i><i></i></span></div>
+        <div class="hl mono hud-in" id="hl-bl"><span id="c1">01 / 15<em>Hello</em></span><span id="c2">02 / 15<em>Booked</em></span><span id="c3">03 / 15<em>Overview</em></span><span id="c4">04 / 15<em>The problem</em></span><span id="c5">05 / 15<em>The rush</em></span><span id="c6">06 / 15<em>Two choices</em></span><span id="c7">07 / 15<em>RezFlo</em></span><span id="c8">08 / 15<em>What it does</em></span><span id="c9">09 / 15<em>POS sync</em></span><span id="c10">10 / 15<em>The caller</em></span><span id="c11">11 / 15<em>Live transfer</em></span><span id="c12">12 / 15<em>Built for you</em></span><span id="c13">13 / 15<em>Rush hour</em></span><span id="c14">14 / 15<em>The goal</em></span><span id="c15">15 / 15<em>Your call</em></span></div>
+        <div class="hl mono hud-in" id="hl-br"><span>Bar <span id="bar">01</span>/65</span><span id="beats"><i></i><i></i><i></i><i></i></span></div>
         <div class="hud-in" id="prog-track"></div>
         <div class="hud-in" id="prog"></div>
       </div>
@@ -831,6 +965,19 @@
       <audio id="sfx-74" src="sfx/snap.wav" data-start="95.68" data-duration="0.16" data-volume="0.45"></audio>
       <audio id="sfx-75" src="sfx/snap.wav" data-start="96.06" data-duration="0.16" data-volume="0.4"></audio>
       <audio id="sfx-76" src="sfx/counter.wav" data-start="96.92" data-duration="0.6" data-volume="0.2" data-fade-out="0.2"></audio>
+      <audio id="sfx-77" src="sfx/tick.wav" data-start="100.16" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-78" src="sfx/snap.wav" data-start="104.94" data-duration="0.16" data-volume="0.45"></audio>
+      <audio id="sfx-79" src="sfx/snap.wav" data-start="105.1" data-duration="0.16" data-volume="0.4"></audio>
+      <audio id="sfx-80" src="sfx/ring.wav" data-start="106.0" data-duration="1.0" data-volume="0.08"></audio>
+      <audio id="sfx-81" src="sfx/snap.wav" data-start="107.8" data-duration="0.16" data-volume="0.35"></audio>
+      <audio id="sfx-82" src="sfx/counter.wav" data-start="110.6" data-duration="1.05" data-volume="0.25"></audio>
+      <audio id="sfx-83" src="sfx/chime.wav" data-start="111.5" data-duration="0.95" data-volume="0.28"></audio>
+      <audio id="sfx-84" src="sfx/snap.wav" data-start="117.68" data-duration="0.16" data-volume="0.45"></audio>
+      <audio id="sfx-85" src="sfx/tick.wav" data-start="120.24" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-86" src="sfx/tick.wav" data-start="121.5" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-87" src="sfx/tick.wav" data-start="124.08" data-duration="0.09" data-volume="0.4"></audio>
+      <audio id="sfx-88" src="sfx/pop.wav" data-start="125.7" data-duration="0.17" data-volume="0.4"></audio>
+      <audio id="sfx-89" src="sfx/success.wav" data-start="128.4" data-duration="0.7" data-volume="0.25"></audio>
     </div>
 
     <script>
@@ -883,15 +1030,15 @@
       const beatEls = document.querySelectorAll("#beats i");
       const pad = (n) => String(n).padStart(2, "0");
       const clock = { v: 0 };
-      tl.fromTo(clock, { v: 0 }, { v: 98.1, duration: 98.1, ease: "none", onUpdate: () => {
+      tl.fromTo(clock, { v: 0 }, { v: 129.1, duration: 129.1, ease: "none", onUpdate: () => {
         const f = Math.floor(clock.v * 30 + 1e-6);
         tcEl.textContent = "00:00:" + pad(Math.floor(f / 30)) + ":" + pad(f % 30);
         const beat = Math.floor(clock.v * 2 + 1e-6);
-        barEl.textContent = pad(Math.min(50, Math.floor(beat / 4) + 1));
+        barEl.textContent = pad(Math.min(65, Math.floor(beat / 4) + 1));
         beatEls.forEach((b, k) => { b.style.background = (k === beat % 4) ? "currentColor" : "transparent"; });
       } }, 0);
-      tl.fromTo("#prog", { scaleX: 0 }, { scaleX: 1, duration: 98.1, ease: "none" }, 0);
-      tl.fromTo("#rec", { opacity: 1 }, { opacity: 0.15, duration: 0.5, ease: "steps(1)", repeat: 195, yoyo: true }, 0);
+      tl.fromTo("#prog", { scaleX: 0 }, { scaleX: 1, duration: 129.1, ease: "none" }, 0);
+      tl.fromTo("#rec", { opacity: 1 }, { opacity: 0.15, duration: 0.5, ease: "steps(1)", repeat: 257, yoyo: true }, 0);
       tl.fromTo(".br", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out", stagger: 0.03 }, 0.6);
       tl.fromTo("#hl-tl, #hl-tr, #hl-bl, #hl-br, #prog-track, #prog", { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.04 }, 0.68);
       tl.set("#c1", { opacity: 1 }, 0.6);
@@ -1431,6 +1578,84 @@
       tl.to("#gstrike", { y: 620, rotation: 8, opacity: 0, duration: 0.6, ease: "power2.in" }, 96.98);
       tl.to("#gbub", { y: 560, rotation: 18, opacity: 0, duration: 0.6, ease: "power2.in" }, 97.0);
       tl.to("#echo", { opacity: 0, duration: 0.4 }, 97.3);
+
+      // ================= 98.1 → 129.1s =================
+      tl.set("#c12", { opacity: 0 }, 104.94); tl.set("#c13", { opacity: 1 }, 104.94);
+      tl.set("#c13", { opacity: 0 }, 117.52); tl.set("#c14", { opacity: 1 }, 117.52);
+      tl.set("#c14", { opacity: 0 }, 125.64); tl.set("#c15", { opacity: 1 }, 125.64);
+      tl.set("#hud", { className: "on-dark" }, 104.94);
+      tl.set("#hud", { className: "on-footage" }, 105.6);
+      tl.set("#hud", { className: "on-light" }, 117.52);
+      tl.set("#hud", { className: "on-footage" }, 119.0);
+
+      // --- "designed" 98.90, "around" 99.36, "how" 99.82, "your" 100.16, "operates" 100.60 ---
+      [98.9, 99.36, 99.82, 100.16, 100.6].forEach((t, k) => tl.fromTo("#ln98 .w:nth-child(" + (k + 1) + ")", { opacity: 0, y: 24, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, t));
+      tl.fromTo("#ul98", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 100.7);
+      tl.to("#ln98 .w", { opacity: 0, y: -20, duration: 0.25, ease: "power2.in", stagger: 0.03 }, 100.95);
+      tl.to("#ul98", { scaleX: 0, transformOrigin: "100% 50%", duration: 0.25, ease: "power2.in" }, 100.95);
+
+      // --- "rush" 104.94, "hour" 105.10: bars spike in a wave behind the words ---
+      document.querySelectorAll("#rbars i").forEach((b, k) => { b.style.background = k % 3 === 0 ? "#8f7bff" : "#5b41da"; });
+      tl.fromTo("#rbars i", { scaleY: 0.05 }, { scaleY: (i) => 0.25 + det(i, 11) * 0.75, duration: 0.35, ease: "expo.out", stagger: { each: 0.012, from: "start" } }, 104.94);
+      slam("#rw1", 104.94, { scale: 1.3, skewX: -12, opacity: 0 });
+      slam("#rw2", 105.1, { x: 220, skewX: -16, opacity: 0 });
+
+      // --- one staff member, one line; calls stack up ---
+      tl.fromTo("#stf", { x: 80, opacity: 0, filter: "blur(8px)" }, { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, 105.62);
+      [106.0, 106.45, 106.9, 107.35, 107.8].forEach((t, k) => tl.fromTo("#wp" + (k + 1), { y: 40, opacity: 0, scale: 0.85 }, { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: spring }, t));
+      tl.fromTo("#oneline", { opacity: 0, scale: 1.6, rotation: -12 }, { opacity: 1, scale: 1, rotation: -6, duration: 0.22, ease: "expo.out" }, 107.8);
+      // overflow: the two nearest the card turn red and drop (missed)
+      tl.to("#wp1 .pi, #wp2 .pi", { backgroundColor: "#ff5a5f", duration: 0.12 }, 108.55);
+      tl.to("#wp1 .wt, #wp2 .wt", { color: "#ff5a5f", duration: 0.12 }, 108.55);
+      tl.set("#wp1 .wt, #wp2 .wt", { textContent: "missed" }, 108.55);
+      tl.to("#wp1, #wp2", { y: 380, rotation: (i) => (i ? -18 : 14), opacity: 0, duration: 0.55, ease: "power2.in", stagger: 0.1 }, 108.85);
+      tl.to("#stf, #wp3, #wp4, #wp5", { x: 120, opacity: 0, filter: "blur(8px)", duration: 0.3, ease: "power3.in", stagger: 0.03 }, 109.62);
+
+      // --- 2,000 calls at the same time ---
+      tl.fromTo("#vid-wrap", { x: 0 }, { x: -300, duration: 0.55, ease: "power3.inOut", immediateRender: false }, 110.0);
+      tl.fromTo("#panel4", { x: 720 }, { x: 0, duration: 0.55, ease: "power3.inOut" }, 110.02);
+      tl.fromTo("#p4kick, #p4up", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.06 }, 110.35);
+      document.querySelectorAll("#odo3 .dig").forEach((el, k) => {
+        tl.fromTo(el, { y: 0 }, { y: -160 * [2, 0, 0, 0][k], duration: 0.7 + k * 0.08, ease: "power3.out" }, 110.6);
+      });
+      tl.fromTo("#odo3 .col:nth-child(n+3)", { opacity: 0.35 }, { opacity: 1, duration: 0.3 }, 110.9);
+      const mx = document.getElementById("matrix");
+      for (let r = 0; r < 40; r++) for (let c = 0; c < 50; c++) {
+        const d = document.createElement("i"); d.style.left = (c * 11.4) + "px"; d.style.top = (r * 11.4) + "px"; mx.appendChild(d);
+      }
+      tl.fromTo("#p4r, #p4rl", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: spring }, 110.5);
+      tl.fromTo("#matrix i", { backgroundColor: "#2a2738", scale: 0.6 }, { backgroundColor: (i) => (i % 9 === 0 ? "#8f7bff" : "#5b41da"), scale: 1, duration: 0.25, stagger: { grid: [40, 50], from: "start", amount: 0.9 } }, 110.65);
+      tl.fromTo("#p4same", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 111.8);
+      tl.to("#panel4", { x: 720, duration: 0.45, ease: "power3.in" }, 112.9);
+      tl.to("#vid-wrap", { x: 0, duration: 0.45, ease: "power3.inOut" }, 112.9);
+
+      // --- focus on the guest: slow push-in with a vignette ---
+      tl.fromTo("#vid-wrap", { scale: 1 }, { scale: 1.06, duration: 3.9, ease: "sine.inOut", immediateRender: false }, 113.4);
+      tl.set("#vid-wrap", { scale: 1 }, 117.52);
+      tl.fromTo("#vig", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" }, 113.4);
+      tl.to("#vig", { opacity: 0, duration: 0.3 }, 116.7);
+      tl.fromTo("#guest", { opacity: 0, y: 16, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, 114.38);
+      tl.to("#guest", { opacity: 0, y: -14, duration: 0.25, ease: "power2.in" }, 116.7);
+
+      // --- "goal" 117.68, "simple" 118.84 ---
+      slam("#gw1", 117.68, { scale: 1.3, skewX: -12, opacity: 0 });
+      tl.fromTo("#gw2", { yPercent: 110 }, { yPercent: 0, duration: 0.35, ease: "power4.out" }, 118.62);
+
+      // --- "more calls" 120.24, "more orders" 121.50, "fewer" 124.08 ---
+      const gIn = (sel, t) => tl.fromTo(sel, { x: 90, opacity: 0, filter: "blur(8px)" }, { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, t);
+      gIn("#gc1", 120.1); tl.fromTo("#gc1 .gb", { scaleX: 0.25 }, { scaleX: 0.9, duration: 0.6, ease: "power3.out" }, 120.35);
+      gIn("#gc2", 121.36); tl.fromTo("#gc2 .gb", { scaleX: 0.25 }, { scaleX: 0.9, duration: 0.6, ease: "power3.out" }, 121.6);
+      gIn("#gc3", 123.9); tl.fromTo("#gc3 .gb", { scaleX: 0.9 }, { scaleX: 0.2, duration: 0.6, ease: "power3.out" }, 124.15);
+      tl.to(".gc", { x: 120, opacity: 0, filter: "blur(8px)", duration: 0.3, ease: "power3.in", stagger: 0.05 }, 124.85);
+
+      // --- "On our call" 125.64: the booking notification returns and opens up ---
+      tl.fromTo("#oc", { y: -60, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: spring }, 125.66);
+      tl.to("#oc", { height: 326, duration: 0.45, ease: "power3.inOut" }, 126.22);
+      tl.fromTo("#ocx", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3 }, 126.45);
+      tl.fromTo("#scan", { y: 96, opacity: 0 }, { y: 320, opacity: 1, duration: 0.9, ease: "sine.inOut" }, 127.2);
+      tl.to("#scan", { opacity: 0, duration: 0.15 }, 128.1);
+      tl.fromTo("#ocx .fr", { scale: 1.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "expo.out" }, 128.3);
+      tl.fromTo("#ocyr", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.25 }, 128.54);
 
       window.__timelines["main"] = tl;
     </script>
