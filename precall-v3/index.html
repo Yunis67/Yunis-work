@@ -1342,16 +1342,15 @@
       const SP = [];
       for (let k = 0; k < PN; k++) {
         const d = document.createElement("i"); d.style.background = pick(store, k).c; swarm.appendChild(d);
-        const a = rnd() * Math.PI * 2, r = 260 + rnd() * 420; SP.push({ x: 960 + Math.cos(a) * r, y: 530 + Math.sin(a) * r * 0.62 });
+        // evenly filled circle (golden-angle spacing), same footprint as the storefront and the R
+        const a = k * 2.39996, r = 215 * Math.sqrt((k + 0.5) / PN); SP.push({ x: 960 + Math.cos(a) * r, y: 530 + Math.sin(a) * r });
       }
       // "At RezFlo" 83.34: a drifting galaxy of particles fades up
-      tl.fromTo("#swarm i", { x: (i) => SP[i].x, y: (i) => SP[i].y, opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out", stagger: { each: 0.0008, from: "center" } }, 83.34);
-      tl.fromTo("#swarm", { rotation: -120, scale: 1.35 }, { rotation: -70, scale: 1.25, duration: 1.08, ease: "none" }, 83.34);
-      tl.fromTo("#bglow", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.0, ease: "power2.out" }, 83.34);
+      tl.fromTo("#swarm i", { x: (i) => SP[i].x, y: (i) => SP[i].y, opacity: 0, scale: 0 }, { opacity: 1, scale: 0.55, duration: 0.6, ease: "power2.out", stagger: { each: 0.0008, from: "center" } }, 83.34);
+            tl.fromTo("#bglow", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.0, ease: "power2.out" }, 83.34);
       // "build" 84.42: they swirl into a storefront
-      tl.to("#swarm i", { x: (i) => pick(store, i).x, y: (i) => pick(store, i).y, duration: 0.8, ease: "power3.inOut", stagger: { each: 0.0006, from: "random" } }, 84.42);
-      tl.fromTo("#swarm", { rotation: -70, scale: 1.25 }, { rotation: 0, scale: 1, duration: 0.95, ease: "power3.out", immediateRender: false }, 84.42);
-      tl.fromTo("#swarm i", { scale: 1 }, { scale: 0.7, duration: 0.2, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false, stagger: { each: 0.0008, from: "center" } }, 84.95);
+      tl.to("#swarm i", { x: (i) => pick(store, i).x, y: (i) => pick(store, i).y, scale: 1, duration: 0.8, ease: "power3.inOut", stagger: { each: 0.0006, from: "random" } }, 84.42);
+            tl.fromTo("#swarm i", { scale: 1 }, { scale: 0.7, duration: 0.2, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false, stagger: { each: 0.0008, from: "center" } }, 84.95);
       // "around your restaurant" 85.22: re-form into the RezFlo R, locked by "restaurant" 85.88
       tl.to("#swarm i", { x: (i) => pick(R, i).x, y: (i) => pick(R, i).y, backgroundColor: (i) => pick(R, i).c, duration: 0.55, ease: "expo.inOut", stagger: { each: 0.0005, from: "center" } }, 85.22);
       // hand-off: the R bursts outward and a purple flood carries us straight into the split screen
