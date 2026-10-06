@@ -369,41 +369,36 @@
       #wave3 i { display: block; width: 5px; height: 24px; border-radius: 3px; background: var(--green); }
 
       /* 12 · particles: storefront → RezFlo R */
-      #cut-build { background: radial-gradient(760px 620px at 50% 50%, #6c53ee 0%, #4a33c9 45%, #23166e 80%, #140c40 100%); }
-      #bglow { position: absolute; left: 560px; top: 130px; width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(184,169,255,0.55), rgba(184,169,255,0) 65%); }
-      #bflood { position: absolute; left: 960px; top: 530px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; background: #5b41da; opacity: 0; }
+      #cut-build { background: transparent; z-index: 12; }
+      /* the whole effect is scaled down and parked on the wall to the right of Yousef */
+      #bwrap { position: absolute; inset: 0; transform-origin: 960px 530px; transform: translate(660px, -90px) scale(0.5); }
+      #bglow { position: absolute; left: 560px; top: 130px; width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.55), rgba(255,255,255,0) 62%); }
       #swarm { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 530px; }
-      #swarm i { position: absolute; left: 0; top: 0; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; box-shadow: 0 0 10px rgba(243,239,230,0.45); }
+      #swarm i { position: absolute; left: 0; top: 0; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%; box-shadow: 0 0 10px rgba(91,65,218,0.35); }
       #bdial { position: absolute; left: 960px; top: 530px; width: 0; height: 0; }
-      #tkB i { width: 2px; height: 10px; margin: -5px 0 0 -1px; background: rgba(243,239,230,0.6); border-radius: 1px; opacity: 0; }
-      #tkB i.maj { height: 20px; margin-top: -10px; background: #f3efe6; }
+      #tkB i { width: 3px; height: 12px; margin: -6px 0 0 -1.5px; background: rgba(11,10,18,0.45); border-radius: 1px; opacity: 0; }
+      #tkB i.maj { height: 24px; margin-top: -12px; background: var(--brand); }
       #bring { position: absolute; left: 610px; top: 180px; width: 700px; height: 700px; opacity: 0; }
-      #bring text { font-family: "JetBrains Mono", monospace; font-size: 22px; letter-spacing: 0.3em; fill: var(--cream); }
+      #bring text { font-family: "JetBrains Mono", monospace; font-size: 26px; font-weight: 700; letter-spacing: 0.3em; fill: var(--ink); }
       #ptsrc { position: absolute; left: 0; top: 0; width: 0; height: 0; overflow: hidden; visibility: hidden; }
 
       /* 12 · bento grid with a camera */
-      #stage3 { background: radial-gradient(900px 700px at 30% 45%, #7a62ff 0%, #5b41da 55%, #4630c4 100%); }
-      #stage3::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px) 0 0 / 48px 48px, linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px) 0 0 / 48px 48px; }
-      #panel3 { position: absolute; inset: 0; width: 1920px; height: 1080px; z-index: 15; background: var(--cream); clip-path: inset(40px 40px 40px 1150px round 32px); }
-      #p3in { position: absolute; left: 1150px; top: 40px; width: 730px; height: 1000px; overflow: hidden; }
-      #p3title { position: absolute; left: 52px; top: 70px; z-index: 2; font-size: 52px; line-height: 1; color: var(--ink); }
-      #p3title em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; color: var(--brand); font-size: 60px; }
-      #p3kick { position: absolute; left: 54px; top: 46px; z-index: 2; font-size: 13px; color: #55526a; }
-      #carousel { position: absolute; left: 0; top: 0; width: 730px; height: 1000px; perspective: 1500px; perspective-origin: 365px 470px; }
-      #bw { position: absolute; left: 155px; top: 320px; width: 420px; height: 300px; transform-style: preserve-3d; }
+      #panel3 { position: absolute; inset: 0; width: 1920px; height: 1080px; z-index: 15; clip-path: inset(0px 0px 0px 1230px round 32px 0px 0px 32px);
+        background: radial-gradient(560px 480px at 1575px 470px, rgba(91,65,218,0.38), rgba(91,65,218,0) 70%), #0b0a12; }
+      #p3cream { position: absolute; inset: 0; background: var(--cream); opacity: 0; }
+      #p3in { position: absolute; left: 1230px; top: 0; width: 690px; height: 1080px; overflow: hidden; }
+      #p3title { position: absolute; left: 52px; top: 130px; z-index: 2; font-size: 50px; line-height: 1; color: var(--cream); }
+      #p3title em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; color: var(--peri); font-size: 58px; }
+      #p3kick { position: absolute; left: 54px; top: 104px; z-index: 2; font-size: 13px; color: var(--peri); }
+      #carousel { position: absolute; left: 0; top: 0; width: 690px; height: 1080px; perspective: 1500px; perspective-origin: 345px 520px; }
+      #bw { position: absolute; left: 135px; top: 370px; width: 420px; height: 300px; transform-style: preserve-3d; }
       .bt { position: absolute; width: 420px; height: 300px; border-radius: 24px; background: #16141f; border: 1px solid #2a2738; padding: 26px 28px; color: var(--cream); overflow: hidden; }
       .bt .bl { font-size: 12px; color: var(--peri); }
       .bt .bh { font-size: 34px; line-height: 1; margin-top: 12px; }
       .bt .bh em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; font-size: 36px; margin-right: 8px; }
       /* vibrant tiles, all in brand colours */
-      #bt1 { background: var(--brand); border-color: var(--brand); } #bt1 .bl, #bt1 .ck { color: rgba(243,239,230,0.85); } #bt1 .ld { border-bottom-color: rgba(243,239,230,0.45); }
-      #bt2 { background: var(--ink); border-color: var(--ink); } #bt2 .bh em { color: var(--peri); }
-      #bt3 { background: var(--peri); border-color: var(--peri); color: var(--ink); } #bt3 .bl { color: rgba(11,10,18,0.75); } #bt3 .cb { border-color: var(--ink); }
-      #bt4 { background: #fbfaf6; border-color: #e2ddd0; color: var(--ink); } #bt4 .bl { color: var(--brand-deep); } #bt4 .bh em { color: var(--brand); } #bt4 .tg { background: #d8d3c6; }
-      #bt5 { background: var(--brand); border-color: var(--brand); } #bt5 .bl, #bt5 .slab { color: rgba(243,239,230,0.85); } #bt5 #tonebub { background: rgba(255,255,255,0.18); } #bt5 #slider { background: rgba(255,255,255,0.25); } #bt5 #sfill { background: var(--cream); }
-      #bt6 { background: var(--ink); border-color: var(--ink); } #bt6 .bh em { color: var(--peri); }
       .bt { left: 0; top: 0; backface-visibility: hidden; }
-      #train { position: absolute; left: 52px; right: 52px; top: 742px; height: 190px; border-radius: 24px; background: var(--ink); color: var(--cream); padding: 26px 28px; }
+      #train { position: absolute; left: 52px; right: 52px; top: 800px; height: 190px; border-radius: 24px; background: #16141f; border: 1px solid #2a2738; color: var(--cream); padding: 26px 28px; }
       #train .tr { width: 58px; height: 58px; border-radius: 16px; background: #1d1638; display: flex; align-items: center; justify-content: center; float: left; margin-right: 18px; }
       #train .tr .rm { width: 40px; height: 40px; }
       #train .t1 { font-weight: 700; font-size: 22px; line-height: 28px; }
@@ -458,9 +453,6 @@
     <div id="root" data-composition-id="main" data-start="0" data-duration="98.1" data-width="1920" data-height="1080">
 
       <!-- FOOTAGE (0 to 98.1s), sound stays on the clip -->
-      <!-- 12 · vibrant stage behind the split screen (86.9 to 95.7s) -->
-      <div id="stage3" class="clip" data-start="86.9" data-duration="8.8"></div>
-
       <div id="vid-wrap">
         <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="98.1" data-has-audio="true" playsinline></video>
       </div>
@@ -698,18 +690,19 @@
 
       <!-- 12 · particles: storefront → RezFlo R (84.42 to 86.3s) -->
       <div id="cut-build" class="clip cut" data-start="83.34" data-duration="3.76">
+        <div id="bwrap">
         <div id="bglow"></div>
         <div id="bdial"><div class="ticks" id="tkB"></div></div>
         <svg id="bring" viewBox="0 0 700 700"><defs><path id="bpath" d="M350,350 m-318,0 a318,318 0 1,1 636,0 a318,318 0 1,1 -636,0"/></defs><text><textPath href="#bpath" textLength="1990" lengthAdjust="spacing">BUILT AROUND YOUR RESTAURANT · BUILT AROUND YOUR RESTAURANT · </textPath></text></svg>
         <div id="swarm"></div>
-        <div id="bflood"></div>
+      </div>
       </div>
       <div id="ptsrc"><svg viewBox="0 0 100 100" width="100" height="100"><path id="ps-sign" d="M20 10 H80 V22 H20 Z"/><path id="ps-awn" d="M8 25 H92 V38 H8 Z"/><path id="ps-bld" fill-rule="evenodd" d="M15 40 H85 V95 H15 Z M42 62 H58 V95 H42 Z M22 52 H36 V70 H22 Z M64 52 H78 V70 H64 Z"/></svg>
         <svg viewBox="23.15 10.56 50.59 50.44" width="51" height="51"><path id="pr-g" d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z"/><path id="pr-gs" d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z"/><path id="pr-p" d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z"/><path id="pr-ps" d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z"/></svg></div>
 
       <!-- 12 / built for you (86.9 to 95.3s): six tiles, the camera moves to each -->
       <div id="ch12" class="clip" data-start="86.9" data-duration="8.8" style="z-index:15">
-        <div id="panel3"><div id="p3in">
+        <div id="panel3"><div id="p3cream"></div><div id="p3in">
           <div id="p3kick" class="mono">12 / Built for you</div>
           <div id="p3title" class="heavy">Built around <em>you.</em></div>
           <div id="carousel" data-layout-ignore><div id="bw">
@@ -721,9 +714,9 @@
               <div class="hrow"><span class="hl2 mono">Open</span><div class="odo" id="odo1"><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="sep">:</div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div></div></div>
               <div class="hrow"><span class="hl2 mono">Close</span><div class="odo" id="odo2"><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="sep">:</div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div><div class="col"><div class="dig"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div></div></div></div></div></div>
             <div class="bt" id="bt3"><div class="bl mono">03 · Policies</div><div class="bh heavy"><em>Your</em>Policies</div>
-              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#0b0a12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Deposits for large groups</div>
-              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#0b0a12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Allergy notes on file</div>
-              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#0b0a12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Cancellation window</div></div>
+              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#8f7bff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Deposits for large groups</div>
+              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#8f7bff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Allergy notes on file</div>
+              <div class="prow2"><span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#8f7bff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Cancellation window</div></div>
             <div class="bt" id="bt4"><div class="bl mono">04 · Reservation rules</div><div class="bh heavy"><em>Your</em>Rules</div>
               <div class="trow"><span>Max party size</span><span class="tg"><i></i></span></div>
               <div class="trow"><span>Hold tables 15 min</span><span class="tg"><i></i></span></div>
@@ -1284,7 +1277,7 @@
       // ================= 76.5 → 98.1s =================
       tl.set("#c10", { opacity: 0 }, 76.74); tl.set("#c11", { opacity: 1 }, 76.74);
       tl.set("#c11", { opacity: 0 }, 83.34); tl.set("#c12", { opacity: 1 }, 83.34);
-      tl.set("#hud", { className: "on-dark" }, 83.34);
+      tl.set("#hud", { className: "on-footage" }, 83.34);
       tl.set("#hud", { className: "on-footage" }, 86.95);
       tl.set("#hud", { className: "on-light" }, 95.68);
       tl.set("#hud", { className: "on-footage" }, 97.9);
@@ -1332,15 +1325,15 @@
       const sSign = document.getElementById("ps-sign"), sAwn = document.getElementById("ps-awn"), sBld = document.getElementById("ps-bld");
       for (let v = 8; v <= 96; v += 2.6) for (let u = 6; u <= 94; u += 2.6) {
         let c = null;
-        if (inFill(sSign, u, v)) c = "#c9bdff";
-        else if (inFill(sAwn, u, v)) c = (Math.floor(u / 10) % 2) ? "#c9bdff" : "#FFFFFF";
-        else if (inFill(sBld, u, v)) c = "#FFFFFF";
+        if (inFill(sSign, u, v)) c = "#5b41da";
+        else if (inFill(sAwn, u, v)) c = (Math.floor(u / 10) % 2) ? "#5b41da" : "#0b0a12";
+        else if (inFill(sBld, u, v)) c = "#0b0a12";
         if (c) store.push({ x: 960 + (u - 50) * 4.6, y: 530 + (v - 52) * 4.6, c });
       }
       const rg = ["pr-g", "pr-gs"].map((id) => document.getElementById(id)), rp = ["pr-p", "pr-ps"].map((id) => document.getElementById(id));
       for (let v = 10.6; v <= 61; v += 0.95) for (let u = 23.2; u <= 73.7; u += 0.95) {
         let c = null;
-        if (rp.some((el) => inFill(el, u, v))) c = "#FFFFFF"; else if (rg.some((el) => inFill(el, u, v))) c = "#b8a9ff";
+        if (rp.some((el) => inFill(el, u, v))) c = "#5B4BCE"; else if (rg.some((el) => inFill(el, u, v))) c = "#737373";
         if (c) R.push({ x: 960 + (u - 48.45) * 8.4, y: 530 + (v - 35.78) * 8.4, c });
       }
       const pick = (arr, k) => arr[Math.floor(k * arr.length / PN)] || arr[arr.length - 1];
@@ -1349,7 +1342,7 @@
       const SP = [];
       for (let k = 0; k < PN; k++) {
         const d = document.createElement("i"); d.style.background = pick(store, k).c; swarm.appendChild(d);
-        const a = rnd() * Math.PI * 2, r = 380 + rnd() * 700; SP.push({ x: 960 + Math.cos(a) * r, y: 530 + Math.sin(a) * r * 0.62 });
+        const a = rnd() * Math.PI * 2, r = 260 + rnd() * 420; SP.push({ x: 960 + Math.cos(a) * r, y: 530 + Math.sin(a) * r * 0.62 });
       }
       // "At RezFlo" 83.34: a drifting galaxy of particles fades up
       tl.fromTo("#swarm i", { x: (i) => SP[i].x, y: (i) => SP[i].y, opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out", stagger: { each: 0.0008, from: "center" } }, 83.34);
@@ -1364,8 +1357,6 @@
       // hand-off: the R bursts outward and a purple flood carries us straight into the split screen
       tl.to("#swarm i", { x: (i) => 960 + (SP[i].x - 960) * 1.4, y: (i) => 530 + (SP[i].y - 530) * 1.4, opacity: 0, duration: 0.5, ease: "power3.in", stagger: { each: 0.0004, from: "center" } }, 86.42);
       tl.to("#bdial, #bring", { scale: 1.6, opacity: 0, duration: 0.45, ease: "power3.in" }, 86.45);
-      tl.fromTo("#bflood", { scale: 0, opacity: 1 }, { scale: 60, opacity: 1, duration: 0.45, ease: "power3.in" }, 86.5);
-      tl.to("#bflood", { opacity: 0, duration: 0.15 }, 86.95);
       buildTicks("tkB", 96, 286);
       tl.fromTo("#tkB i", { opacity: 0 }, { opacity: 1, duration: 0.02, stagger: 0.005 }, 83.5);
       tl.fromTo("#bdial", { rotation: -60 }, { rotation: 0, duration: 2.6, ease: "power2.out" }, 83.5);
@@ -1375,9 +1366,8 @@
 
       // --- 12 / built for you — the camera moves to each tile on its word ---
       tl.set("#vid-wrap", { clipPath: "inset(0px 0px 0px 0px round 0px)" }, 0);
-      tl.set("#vid-wrap", { x: -412, y: 14, scale: 0.8, clipPath: "inset(0px 270px 0px 300px round 50px)" }, 86.9);
-      tl.fromTo("#vid-wrap", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power2.out", immediateRender: false }, 86.95);
-      tl.fromTo("#panel3", { x: 820 }, { x: 0, duration: 0.55, ease: "power3.out" }, 86.98);
+      tl.fromTo("#vid-wrap", { x: 0 }, { x: -300, duration: 0.55, ease: "power3.inOut", immediateRender: false }, 86.9);
+      tl.fromTo("#panel3", { x: 720 }, { x: 0, duration: 0.55, ease: "power3.inOut" }, 86.92);
       tl.fromTo("#p3title, #p3kick", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 87.25);
       // 3D carousel: six cards on a ring; the ring turns so the spoken card faces front
       const RAD = 400;
@@ -1389,8 +1379,8 @@
       const focus = (k, t) => {
         tl.to("#bw", { rotationY: -k * 60, duration: 0.6, ease: "power3.inOut" }, t - 0.25);
         [0, 1, 2, 3, 4, 5].forEach((j) => tl.to("#bt" + (j + 1), j === k
-          ? { opacity: 1, scale: 1, filter: "blur(0px)", boxShadow: "0 0 0 3px #0b0a12, 0 34px 70px rgba(11,10,18,0.32)", duration: 0.35 }
-          : { opacity: 0.5, scale: 0.92, filter: "blur(4px)", boxShadow: "0 0 0 0px rgba(11,10,18,0)", duration: 0.35 }, t - 0.1));
+          ? { opacity: 1, scale: 1, filter: "blur(0px)", boxShadow: "0 0 0 2px #5b41da, 0 30px 70px rgba(91,65,218,0.4)", duration: 0.35 }
+          : { opacity: 0.45, scale: 0.92, filter: "blur(4px)", boxShadow: "0 0 0 0px rgba(91,65,218,0)", duration: 0.35 }, t - 0.1));
         tl.fromTo("#segs i:nth-child(" + (k + 1) + ") b", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, t);
         if (k > 0) tl.to("#tl" + k, { opacity: 0, y: -8, duration: 0.15 }, t);
         tl.fromTo("#tl" + (k + 1), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, immediateRender: false }, t + 0.05);
@@ -1404,7 +1394,7 @@
       });
       roll("#odo1", [1, 1, 0, 0], 88.75); roll("#odo2", [2, 2, 0, 0], 88.9);
       focus(2, 89.62);
-      tl.to("#bt3 .cb", { backgroundColor: "rgba(243,239,230,0.6)", duration: 0.1, stagger: 0.16 }, 89.7);
+      tl.to("#bt3 .cb", { borderColor: "#8f7bff", duration: 0.1, stagger: 0.16 }, 89.7);
       tl.to("#bt3 .cb svg", { opacity: 1, duration: 0.1, stagger: 0.16 }, 89.7);
       focus(3, 90.9);
       tl.to("#bt4 .tg", { backgroundColor: "#5b41da", duration: 0.2, stagger: 0.18 }, 91.0);
@@ -1427,7 +1417,8 @@
       tl.to("#bw", { z: -RAD - 900, opacity: 0, duration: 0.35, ease: "power3.in" }, 94.98);
       tl.to("#train", { y: 80, opacity: 0, duration: 0.3, ease: "power3.in" }, 95.0);
       tl.to("#p3title, #p3kick", { opacity: 0, y: -24, filter: "blur(6px)", duration: 0.28, ease: "power3.in" }, 95.0);
-      tl.to("#panel3", { clipPath: "inset(0px 0px 0px 0px round 0px)", duration: 0.5, ease: "expo.inOut" }, 95.18);
+      tl.to("#panel3", { clipPath: "inset(0px 0px 0px 0px round 0px 0px 0px 0px)", duration: 0.5, ease: "expo.inOut" }, 95.18);
+      tl.fromTo("#p3cream", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.inOut" }, 95.22);
       tl.set("#vid-wrap", { x: 0, y: 0, scale: 1, opacity: 1, filter: "blur(0px)", clipPath: "inset(0px 0px 0px 0px round 0px)" }, 95.68);
 
       // --- 12 · "generic" 95.68, "chatbot" 96.06, "dropped" 96.92 ---
