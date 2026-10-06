@@ -490,9 +490,6 @@
       #guest { position: absolute; left: 1470px; top: 330px; padding: 14px 20px; border-radius: 16px; background: rgba(11,10,18,0.92); color: var(--cream); font-size: 30px; opacity: 0; }
       #guest b { display: block; font-family: "JetBrains Mono", monospace; font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: var(--peri); margin-bottom: 6px; }
       /* 14 · the goal cut */
-      #cut-goal { background: var(--cream); color: var(--ink); }
-      #gw1 { font-size: 220px; }
-      #gw2 { font-size: 96px; color: var(--brand-deep); }
       /* 14 · goal cards (on the wall) */
       .gc { position: absolute; left: 1470px; width: 390px; height: 96px; border-radius: 20px; background: rgba(11,10,18,0.95); color: var(--cream); box-shadow: 0 20px 50px rgba(11,10,18,0.3); opacity: 0; }
       #gc1 { top: 250px; } #gc2 { top: 362px; } #gc3 { top: 474px; }
@@ -538,10 +535,10 @@
       #ftA { left: 1440px; background: var(--cream); color: var(--ink); border: 2px solid #e2ddd0; }
       #ftB { left: 1700px; background: var(--ink); color: var(--cream); border: 2px solid #2a2738; }
       #ftB .rm { width: 80px; height: 80px; }
-      #fplus { position: absolute; left: 1640px; top: 400px; width: 48px; height: 48px; border-radius: 50%; background: var(--ink); color: var(--cream); font-size: 30px; line-height: 46px; text-align: center; opacity: 0; }
-      #fchk { position: absolute; left: 1640px; top: 400px; width: 48px; height: 48px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; opacity: 0; box-shadow: 0 0 0 6px rgba(91,65,218,0.25); }
-      #fchk svg { width: 26px; height: 26px; }
-      #fring { position: absolute; left: 1664px; top: 424px; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; border: 3px solid var(--brand); opacity: 0; }
+      /* plus sits dead centre between the tiles (gap 1610-1700, tile centre y 425) */
+      #fplus { position: absolute; left: 1625px; top: 395px; width: 60px; height: 60px; z-index: 3; opacity: 0; }
+      #fplus svg, #fchk svg { display: block; width: 100%; height: 100%; }
+      #fchk { position: absolute; left: 1623px; top: 393px; width: 64px; height: 64px; z-index: 3; opacity: 0; }
       /* 17 · demo split screen */
       #panel5 { position: absolute; left: 1230px; top: 0; width: 690px; height: 1080px; border-radius: 32px 0 0 32px; overflow: hidden; z-index: 15;
         background: radial-gradient(560px 480px at 50% 62%, rgba(91,65,218,0.38), rgba(91,65,218,0) 70%), #0b0a12; color: var(--cream); }
@@ -933,11 +930,6 @@
         <div id="guest" style="z-index:12"><b>Your staff</b>Eyes on the guest<br>in front of you.</div>
       </div>
 
-      <!-- 14 · the goal cut (117.52 to 119.0s) -->
-      <div id="cut-goal" class="clip cut" data-start="117.52" data-duration="1.48">
-        <div class="fg"><div class="heavy" id="gw1">The goal<span class="pdot"></span></div><div class="mask"><span class="serif" id="gw2">really simple.</span></div></div>
-      </div>
-
       <!-- 14 · more calls, more orders, fewer distractions (119.7 to 125.1s) -->
       <div id="ch14" class="clip" data-start="119.7" data-duration="5.4" style="z-index:12">
         <div class="gc" id="gc1"><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></span><span class="gl">More calls answered</span><span class="gt"><i class="gb"></i></span></div>
@@ -961,9 +953,8 @@
         <div id="fitl2" class="serif">Let's find out.</div>
         <div class="ft" id="ftA"><svg viewBox="0 0 24 24" fill="none" stroke="#0b0a12" stroke-width="1.8" stroke-linejoin="round"><path d="M4 9.5h16l-1.5-5h-13z"/><path d="M5 9.5v10h14v-10"/><path d="M10 19.5v-5h4v5"/></svg><span class="mono">Your restaurant</span></div>
         <div class="ft" id="ftB"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#B9B7C6"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#B9B7C6"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#6D5CF0"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#6D5CF0"/></g></svg><span class="mono">RezFlo</span></div>
-        <div id="fplus" class="mono">+</div>
-        <div id="fchk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-        <div id="fring"></div>
+        <div id="fplus"><svg viewBox="0 0 48 48"><path d="M19 6h10v13h13v10H29v13H19V29H6V19h13z" fill="#5b41da" stroke="#f3efe6" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+        <div id="fchk"><svg viewBox="0 0 48 48"><path d="M9 25l10 10 20-21" fill="none" stroke="#f3efe6" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 25l10 10 20-21" fill="none" stroke="#5b41da" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       </div>
 
       <!-- 17 · your demo (139.2 to 143.8s): split screen with a phone in 3D -->
@@ -1731,8 +1722,6 @@
       tl.set("#c14", { opacity: 0 }, 125.64); tl.set("#c15", { opacity: 1 }, 125.64);
       tl.set("#hud", { className: "on-dark" }, 104.94);
       tl.set("#hud", { className: "on-footage" }, 105.6);
-      tl.set("#hud", { className: "on-light" }, 117.52);
-      tl.set("#hud", { className: "on-footage" }, 119.0);
 
       // --- "designed" 98.90, "around" 99.36, "how" 99.82, "your" 100.16, "operates" 100.60 ---
       [98.9, 99.36, 99.82, 100.16, 100.34, 100.6].forEach((t, k) => tl.fromTo("#ln98 .w:nth-child(" + (k + 1) + ")", { opacity: 0, y: 24, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, t));
@@ -1783,10 +1772,7 @@
       tl.fromTo("#guest", { opacity: 0, y: 16, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, 114.38);
       tl.to("#guest", { opacity: 0, y: -14, duration: 0.25, ease: "power2.in" }, 116.7);
 
-      // --- "goal" 117.68, "simple" 118.84 ---
-      slam("#gw1", 117.68, { scale: 1.3, skewX: -12, opacity: 0 });
-      tl.fromTo("#gw2", { yPercent: 110 }, { yPercent: 0, duration: 0.35, ease: "power4.out" }, 118.62);
-
+      
       // --- "more calls" 120.24, "more orders" 121.50, "fewer" 124.08 ---
       const gIn = (sel, t) => tl.fromTo(sel, { x: 90, opacity: 0, filter: "blur(8px)" }, { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, t);
       gIn("#gc1", 120.1); tl.fromTo("#gc1 .gb", { scaleX: 0.25 }, { scaleX: 0.9, duration: 0.6, ease: "power3.out" }, 120.35);
@@ -1825,13 +1811,12 @@
       tl.set("#fitl", { clipPath: "inset(0% 100% 0% 0%)" }, 0);
       tl.fromTo("#ftA", { x: -120, opacity: 0, rotation: -6 }, { x: 0, opacity: 1, rotation: 0, duration: 0.45, ease: spring }, 135.54);
       tl.fromTo("#ftB", { x: 120, opacity: 0, rotation: 6 }, { x: 0, opacity: 1, rotation: 0, duration: 0.45, ease: spring }, 136.16);
-      tl.fromTo("#fplus", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.25, ease: spring }, 136.3);
+      tl.fromTo("#fplus", { scale: 0, opacity: 0, rotation: -90 }, { scale: 1, opacity: 1, rotation: 0, duration: 0.4, ease: "power3.out" }, 136.3);
       tl.to("#ftB", { boxShadow: "0 0 0 3px #6d5cf0, 0 0 60px 10px rgba(109,92,240,0.55)", duration: 0.25 }, 136.68);
       tl.to("#ftA", { x: 46, duration: 0.3, ease: "power4.in" }, 137.7);
       tl.to("#ftB", { x: -46, duration: 0.3, ease: "power4.in" }, 137.7);
-      tl.to("#fplus", { scale: 0, opacity: 0, duration: 0.15 }, 137.85);
-      tl.fromTo("#fchk", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(3)" }, 137.98);
-      tl.fromTo("#fring", { scale: 1, opacity: 0.9 }, { scale: 9, opacity: 0, duration: 0.6, ease: "power2.out" }, 137.98);
+      tl.to("#fplus", { rotation: 90, scale: 0.4, opacity: 0, duration: 0.22, ease: "power2.in" }, 137.76);
+      tl.fromTo("#fchk", { scale: 0.4, opacity: 0, rotation: -45 }, { scale: 1, opacity: 1, rotation: 0, duration: 0.32, ease: "power3.out" }, 137.96);
       tl.fromTo(".ft", { scale: 1 }, { scale: 1.05, duration: 0.12, yoyo: true, repeat: 1, immediateRender: false }, 137.98);
       tl.to("#fitl", { opacity: 0, y: -12, duration: 0.2 }, 138.1);
       tl.fromTo("#fitl2", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 138.22);
@@ -1841,9 +1826,9 @@
       tl.fromTo("#vid-wrap", { x: 0 }, { x: -300, duration: 0.55, ease: "power3.inOut", immediateRender: false }, 139.24);
       tl.fromTo("#panel5", { x: 720 }, { x: 0, duration: 0.55, ease: "power3.inOut" }, 139.26);
       tl.fromTo("#p5kick, #p5h", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out", stagger: 0.07 }, 139.55);
-      tl.set("#dph", { rotationY: -16, rotationX: 6 }, 0);
-      tl.fromTo("#dph", { y: 140, opacity: 0, rotationY: -30 }, { y: 0, opacity: 1, rotationY: -16, duration: 0.6, ease: spring, immediateRender: false }, 139.6);
-      tl.to("#dph", { rotationY: -8, rotationX: 3, duration: 3.0, ease: "sine.inOut" }, 140.2);
+      // one smooth rise (no spring), then a slow continuous turn: separate properties, so the tweens never fight
+      tl.fromTo("#dph", { y: 150, opacity: 0 }, { y: 0, opacity: 1, duration: 0.75, ease: "power3.out" }, 139.55);
+      tl.fromTo("#dph", { rotationY: -24, rotationX: 7 }, { rotationY: -8, rotationX: 3, duration: 3.75, ease: "power2.out" }, 139.55);
       tl.set("#dbar i", { scaleX: 0 }, 0);
       tl.to("#dbar i", { scaleX: 1, duration: 0.85, ease: "power2.inOut" }, 140.26);
       const dp = document.getElementById("dpct"), dpo = { v: 0 };
