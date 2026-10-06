@@ -1372,7 +1372,9 @@
       const RAD = 400;
       [0, 1, 2, 3, 4, 5].forEach((j) => tl.set("#bt" + (j + 1), { rotationY: j * 60, z: RAD, transformOrigin: "50% 50% " + (-RAD) + "px", opacity: 0.5, scale: 0.92, filter: "blur(4px)" }, 0));
       tl.set("#bw", { z: -RAD, rotationY: 40 }, 0);
-      tl.fromTo("#bw", { rotationY: 40, opacity: 0 }, { rotationY: 0, opacity: 1, duration: 0.7, ease: "power3.out", immediateRender: false }, 87.15);
+      tl.fromTo("#bw", { rotationY: 40 }, { rotationY: 0, duration: 0.7, ease: "power3.out", immediateRender: false }, 87.15);
+      // fades go on the outer frame: fading the 3D ring itself flattens it and skews the cards
+      tl.fromTo("#carousel", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 87.15);
       tl.set("#segs i b", { scaleX: 0 }, 0);
       tl.fromTo("#train", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: spring }, 87.4);
       const focus = (k, t) => {
@@ -1407,13 +1409,11 @@
       tl.fromTo("#uppill", { opacity: 0, scaleX: 0.2 }, { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out" }, 93.9);
       tl.to("#uppill", { width: 300, height: 56, borderRadius: 28, backgroundColor: "#5b41da", boxShadow: "0 12px 30px rgba(91,65,218,0.45)", duration: 0.3, ease: "power3.inOut" }, 94.06);
       tl.fromTo("#upchip", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 94.24);
-      // agent ready: one fast full spin with motion blur, then the cards fly off
+      // agent ready: the carousel rests on the last card, then fades as the panel grows
       tl.to("#tl6", { opacity: 0, y: -8, duration: 0.15 }, 94.45);
       tl.fromTo("#tready", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, immediateRender: false }, 94.5);
       tl.to("#segs i b", { backgroundColor: "#34c759", boxShadow: "0 0 14px rgba(52,199,89,0.8)", duration: 0.2 }, 94.5);
-      tl.to(".bt", { opacity: 1, filter: "blur(0px)", boxShadow: "0 0 0 0px rgba(11,10,18,0)", duration: 0.2 }, 94.42);
-      tl.to("#bw", { rotationY: -300 - 360, duration: 0.6, ease: "power3.inOut" }, 94.42);
-      tl.to("#bw", { z: -RAD - 900, opacity: 0, duration: 0.35, ease: "power3.in" }, 94.98);
+      tl.to("#carousel", { opacity: 0, duration: 0.3, ease: "power2.in" }, 95.0);
       tl.to("#train", { y: 80, opacity: 0, duration: 0.3, ease: "power3.in" }, 95.0);
       tl.to("#p3title, #p3kick", { opacity: 0, y: -24, filter: "blur(6px)", duration: 0.28, ease: "power3.in" }, 95.0);
       tl.to("#panel3", { clipPath: "inset(0px 0px 0px 0px round 0px 0px 0px 0px)", duration: 0.5, ease: "expo.inOut" }, 95.18);
