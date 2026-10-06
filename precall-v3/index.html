@@ -392,7 +392,7 @@
       #p3kick { position: absolute; left: 54px; top: 104px; z-index: 2; font-size: 13px; color: var(--peri); }
       #carousel { position: absolute; left: 0; top: 0; width: 690px; height: 1080px; perspective: 1500px; perspective-origin: 345px 520px; }
       #bw { position: absolute; left: 135px; top: 370px; width: 420px; height: 300px; transform-style: preserve-3d; }
-      .bt { position: absolute; width: 420px; height: 300px; border-radius: 24px; background: #16141f; border: 1px solid #2a2738; padding: 26px 28px; color: var(--cream); overflow: hidden; }
+      .bt { position: absolute; width: 420px; height: 300px; border-radius: 24px; background: #16141f; border: 2px solid #2a2738; padding: 26px 28px; color: var(--cream); overflow: hidden; }
       .bt .bl { font-size: 12px; color: var(--peri); }
       .bt .bh { font-size: 34px; line-height: 1; margin-top: 12px; }
       .bt .bh em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; font-size: 36px; margin-right: 8px; }
@@ -448,10 +448,10 @@
       #gbub b { width: 40px; height: 40px; border-radius: 10px; background: #b7b3c2; display: flex; align-items: center; justify-content: center; gap: 5px; }
       #gbub b i { display: block; width: 6px; height: 6px; border-radius: 50%; background: #f3efe6; }
       /* 13 · designed around how you operate (on the wall) */
-      #ln98 { position: absolute; left: 1450px; top: 300px; width: 430px; font-size: 54px; line-height: 1.05; color: var(--ink); }
+      #ln98 { position: absolute; left: 1440px; top: 300px; width: 470px; font-size: 46px; line-height: 1.08; color: var(--ink); }
       #ln98 .w { display: inline-block; opacity: 0; margin-right: 12px; }
-      #ln98 em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; color: var(--brand-deep); font-size: 62px; }
-      #ul98 { position: absolute; left: 1450px; top: 482px; width: 330px; height: 8px; border-radius: 4px; background: var(--brand-deep); transform-origin: 0 50%; }
+      #ln98 em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; color: var(--brand-deep); font-size: 54px; }
+      #ul98 { position: absolute; left: 1440px; top: 512px; width: 330px; height: 8px; border-radius: 4px; background: var(--brand-deep); transform-origin: 0 50%; }
       /* 13 · rush hour cut */
       #cut-rush { background: radial-gradient(900px 700px at 50% 60%, #1d1638 0%, var(--ink) 72%); color: var(--cream); }
       #rbars { position: absolute; left: 160px; right: 160px; bottom: 120px; height: 560px; display: flex; align-items: flex-end; gap: 14px; }
@@ -523,14 +523,92 @@
       #ocx .fr i:nth-child(4) { right: 0; bottom: 0; border-bottom-width: 3px; border-right-width: 3px; }
       #ocx .yr { position: absolute; left: 290px; top: 142px; font-size: 13px; color: var(--cream); opacity: 0; }
       #scan { position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, rgba(143,123,255,0), #8f7bff, rgba(143,123,255,0)); box-shadow: 0 0 18px rgba(143,123,255,0.9); opacity: 0; }
+      /* 16 · agenda rows inside the On our call card */
+      .ag { position: absolute; left: 24px; right: 24px; height: 44px; display: flex; align-items: center; gap: 14px; border-top: 1px solid #2a2738; font-size: 18px; opacity: 0; }
+      .ag .an { width: 26px; font-size: 12px; color: var(--peri); }
+      .ag .ac { margin-left: auto; width: 26px; height: 26px; border-radius: 7px; background: var(--brand); display: flex; align-items: center; justify-content: center; transform: scale(0); }
+      .ag .ac svg { width: 16px; height: 16px; }
+      #ag4 .ac { background: var(--red); }
+      .ag .rd { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+      /* 16 · good fit? */
+      #fitl { position: absolute; left: 1470px; top: 250px; font-size: 22px; color: var(--ink); background: rgba(243,239,230,0.9); padding: 6px 12px; border-radius: 6px; letter-spacing: 0.14em; }
+      #fitl2 { position: absolute; left: 1470px; top: 250px; font-size: 44px; color: var(--brand-deep); opacity: 0; }
+      .ft { position: absolute; top: 330px; width: 170px; height: 190px; border-radius: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-size: 13px; box-shadow: 0 24px 60px rgba(11,10,18,0.3); opacity: 0; }
+      .ft svg { width: 70px; height: 70px; }
+      #ftA { left: 1440px; background: var(--cream); color: var(--ink); border: 2px solid #e2ddd0; }
+      #ftB { left: 1700px; background: var(--ink); color: var(--cream); border: 2px solid #2a2738; }
+      #ftB .rm { width: 80px; height: 80px; }
+      #fplus { position: absolute; left: 1640px; top: 400px; width: 48px; height: 48px; border-radius: 50%; background: var(--ink); color: var(--cream); font-size: 30px; line-height: 46px; text-align: center; opacity: 0; }
+      #fchk { position: absolute; left: 1640px; top: 400px; width: 48px; height: 48px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; opacity: 0; box-shadow: 0 0 0 6px rgba(91,65,218,0.25); }
+      #fchk svg { width: 26px; height: 26px; }
+      #fring { position: absolute; left: 1664px; top: 424px; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; border: 3px solid var(--brand); opacity: 0; }
+      /* 17 · demo split screen */
+      #panel5 { position: absolute; left: 1230px; top: 0; width: 690px; height: 1080px; border-radius: 32px 0 0 32px; overflow: hidden; z-index: 15;
+        background: radial-gradient(560px 480px at 50% 62%, rgba(91,65,218,0.38), rgba(91,65,218,0) 70%), #0b0a12; color: var(--cream); }
+      #p5kick { position: absolute; left: 60px; top: 104px; font-size: 13px; color: var(--peri); }
+      #p5h { position: absolute; left: 60px; top: 130px; width: 580px; font-size: 48px; line-height: 1.05; }
+      #p5h em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; color: var(--peri); font-size: 56px; }
+      #p5stage { position: absolute; left: 0; top: 0; width: 690px; height: 1080px; perspective: 1400px; perspective-origin: 345px 640px; }
+      #dph { position: absolute; left: 215px; top: 330px; width: 260px; height: 520px; border-radius: 44px; background: #16141f; box-shadow: 0 0 0 7px #22202c, 0 40px 90px rgba(0,0,0,0.55); overflow: hidden; }
+      #dph .nc { position: absolute; left: 50%; top: 12px; width: 70px; height: 20px; margin-left: -35px; border-radius: 12px; background: #000; }
+      #dph .tr { position: absolute; left: 50%; top: 64px; width: 70px; height: 70px; margin-left: -35px; border-radius: 20px; background: var(--cream); display: flex; align-items: center; justify-content: center; }
+      #dph .tr .rm { width: 48px; height: 48px; }
+      #dph .d1 { position: absolute; left: 0; right: 0; top: 146px; text-align: center; font-weight: 700; font-size: 20px; }
+      #dph .d2 { position: absolute; left: 0; right: 0; top: 174px; text-align: center; font-size: 11px; color: var(--peri); }
+      #dbld { position: absolute; left: 24px; right: 24px; top: 230px; }
+      #dbld .bl1 { font-size: 13px; color: #b9b7c6; display: flex; justify-content: space-between; }
+      #dbar { margin-top: 10px; height: 10px; border-radius: 5px; background: #2a2738; overflow: hidden; }
+      #dbar i { display: block; height: 100%; background: var(--brand); transform-origin: 0 50%; box-shadow: 0 0 14px rgba(143,123,255,0.8); }
+      #dpct { font-family: "JetBrains Mono", monospace; }
+      #dplay { position: absolute; left: 50%; top: 300px; width: 86px; height: 86px; margin-left: -43px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 10px rgba(91,65,218,0.25); opacity: 0; }
+      #dplay svg { width: 38px; height: 38px; margin-left: 5px; }
+      #dlive { position: absolute; left: 0; right: 0; top: 300px; opacity: 0; }
+      #dlive .lv { text-align: center; font-size: 12px; color: var(--green); }
+      #dwave { margin: 16px auto 0; width: 200px; height: 50px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+      #dwave i { display: block; width: 6px; height: 44px; border-radius: 3px; background: var(--peri); }
+      #dlive .bb { margin: 18px 22px 0; padding: 9px 12px; border-radius: 14px; border-bottom-left-radius: 4px; background: #2a2738; font-size: 13px; line-height: 17px; }
+      /* 18 · questions + FAQ videos */
+      #qh { position: absolute; left: 1460px; top: 150px; width: 420px; font-size: 44px; line-height: 1.04; color: var(--ink); }
+      #qh .w { display: inline-block; opacity: 0; margin-right: 10px; }
+      #qh em { font-family: "Instrument Serif", serif; font-style: italic; text-transform: none; color: var(--brand-deep); font-size: 52px; }
+      #below { position: absolute; left: 1460px; top: 268px; height: 52px; padding: 0 18px 0 8px; border-radius: 26px; background: var(--ink); color: var(--cream); display: flex; align-items: center; gap: 12px; font-size: 15px; opacity: 0; }
+      #below b { width: 38px; height: 38px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; }
+      #below b svg { width: 20px; height: 20px; }
+      .fq { position: absolute; left: 1460px; width: 400px; height: 104px; border-radius: 20px; background: rgba(11,10,18,0.95); color: var(--cream); box-shadow: 0 20px 50px rgba(11,10,18,0.3); opacity: 0; }
+      #fq1 { top: 352px; } #fq2 { top: 470px; } #fq3 { top: 588px; }
+      .fq .th { position: absolute; left: 14px; top: 14px; width: 128px; height: 76px; border-radius: 12px; background: linear-gradient(135deg, #2a2738, #1d1638); display: flex; align-items: center; justify-content: center; }
+      .fq .th i { width: 38px; height: 38px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; }
+      .fq .th svg { width: 18px; height: 18px; margin-left: 3px; }
+      .fq .fl { position: absolute; left: 160px; top: 22px; font-size: 12px; color: var(--peri); }
+      .fq .ft2 { position: absolute; left: 160px; top: 42px; font-weight: 700; font-size: 18px; }
+      .fq .pb { position: absolute; left: 160px; right: 20px; top: 78px; height: 6px; border-radius: 3px; background: #2a2738; overflow: hidden; }
+      .fq .pb b { display: block; height: 100%; background: var(--peri); transform-origin: 0 50%; }
+      #most { position: absolute; right: 14px; top: 14px; padding: 5px 10px; border-radius: 6px; background: var(--brand); color: var(--cream); font-size: 11px; letter-spacing: 0.12em; opacity: 0; }
+      /* 18 · sign-off name lockup (mirrors the opening) */
+      #nm2 { position: absolute; left: 1420px; top: 318px; width: 380px; text-align: center; font-size: 84px; color: var(--ink); white-space: nowrap; }
+      #nm2 span { display: inline-block; }
+      #nm2ul { position: absolute; left: 1421px; top: 402px; width: 378px; height: 8px; border-radius: 4px; background: var(--brand-deep); transform-origin: 0 50%; }
+      #fr2m { position: absolute; right: 209px; top: 438px; height: 78px; overflow: hidden; }
+      #fr2 { display: block; font-size: 60px; line-height: 60px; color: var(--brand-deep); white-space: nowrap; }
+      #dot2 { position: absolute; left: 1716.5px; top: 459.5px; width: 26px; height: 26px; border-radius: 50%; background: var(--brand); opacity: 0; }
+      /* end card */
+      #cut-end { background: radial-gradient(1000px 700px at 50% 45%, #6c53ee 0%, var(--brand) 62%); color: var(--cream); }
+      #cut-end .fg { gap: 18px; }
+      #eR { width: 190px; height: 190px; border-radius: 48px; background: var(--cream); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 120px 30px rgba(243,239,230,0.22); }
+      #eR .rm { width: 136px; height: 136px; overflow: visible; }
+      #ewm-m { overflow: hidden; padding-bottom: 8px; margin-top: 10px; }
+      #ewm { display: block; font-family: "Poppins", sans-serif; font-weight: 600; font-size: 120px; line-height: 1.1; }
+      #esee { font-size: 60px; color: rgba(243,239,230,0.92); }
+      #eurl { font-size: 20px; color: #f3efe6; margin-top: 6px; }
+      #efade { position: absolute; inset: 0; background: var(--ink); opacity: 0; }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="129.1" data-width="1920" data-height="1080">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="157.3" data-width="1920" data-height="1080">
 
-      <!-- FOOTAGE (0 to 129.1s), sound stays on the clip -->
+      <!-- FOOTAGE (0 to 154.3s, fading out under the end card), sound stays on the clip -->
       <div id="vid-wrap">
-        <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="129.1" data-has-audio="true" playsinline></video>
+        <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="154.3" data-fade-out="0.4" data-has-audio="true" playsinline></video>
       </div>
 
       <!-- 01 / HELLO (0.6 to 4.2s): name with an underline sweep; the "o" in RezFlo becomes a dot with a tick ring -->
@@ -820,8 +898,8 @@
       </div>
 
       <!-- 13 · "designed around how you operate" on the wall (98.2 to 101.2s) -->
-      <div id="ch13a" class="clip" data-start="98.2" data-duration="3.0" style="z-index:12">
-        <div id="ln98" class="heavy"><span class="w">Designed</span><span class="w">around</span><span class="w">how</span><span class="w"><em>you</em></span><span class="w">operate.</span></div>
+      <div id="ch13a" class="clip" data-start="98.2" data-duration="3.7" style="z-index:12">
+        <div id="ln98" class="heavy"><span class="w">Designed</span><span class="w">around</span><span class="w">how</span><span class="w"><em>your</em></span><span class="w">restaurant</span><span class="w">operates.</span></div>
         <div id="ul98"></div>
       </div>
 
@@ -868,13 +946,66 @@
       </div>
 
       <!-- 15 · on our call: the booking notification returns (125.64 to end) -->
-      <div id="ch15" class="clip" data-start="125.6" data-duration="3.50" style="z-index:12">
+      <div id="ch15" class="clip" data-start="125.6" data-duration="9.6" style="z-index:12">
         <div id="oc">
           <div class="nt"><div class="ic"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></svg></div><div style="flex:1;min-width:0"><div class="l1">RezFlo <span>now</span></div><div class="l2">Call booked · intro call with Yousef</div></div></div>
           <div id="ocx"><div class="rule"></div><div class="h heavy">On our call</div><div class="k mono">Looking at</div>
-            <div class="st"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="1.8" stroke-linejoin="round"><path d="M4 9.5h16l-1.5-5h-13z"/><path d="M5 9.5v10h14v-10"/><path d="M10 19.5v-5h4v5"/></svg></div><div class="fr"><i></i><i></i><i></i><i></i></div><div class="yr mono" id="ocyr">Your restaurant</div></div>
+            <div class="st"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="1.8" stroke-linejoin="round"><path d="M4 9.5h16l-1.5-5h-13z"/><path d="M5 9.5v10h14v-10"/><path d="M10 19.5v-5h4v5"/></svg></div><div class="fr"><i></i><i></i><i></i><i></i></div><div class="yr mono" id="ocyr">Your restaurant</div><div class="ag" id="ag1" style="top:90px"><span class="an mono">01</span>Your call types<span class="ac"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div><div class="ag" id="ag2" style="top:136px"><span class="an mono">02</span>Call volume<span class="ac"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div><div class="ag" id="ag3" style="top:182px"><span class="an mono">03</span>Your POS setup<span class="ac"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div><div class="ag" id="ag4" style="top:228px"><span class="an mono">04</span><span class="rd"></span>Where calls get missed<span class="ac"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div></div>
           <div id="scan"></div>
         </div>
+      </div>
+
+      <!-- 16 · good fit? (134.95 to 139.2s) -->
+      <div id="ch16" class="clip" data-start="134.95" data-duration="4.25" style="z-index:12">
+        <div id="fitl" class="mono">Good fit?</div>
+        <div id="fitl2" class="serif">Let's find out.</div>
+        <div class="ft" id="ftA"><svg viewBox="0 0 24 24" fill="none" stroke="#0b0a12" stroke-width="1.8" stroke-linejoin="round"><path d="M4 9.5h16l-1.5-5h-13z"/><path d="M5 9.5v10h14v-10"/><path d="M10 19.5v-5h4v5"/></svg><span class="mono">Your restaurant</span></div>
+        <div class="ft" id="ftB"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#B9B7C6"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#B9B7C6"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#6D5CF0"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#6D5CF0"/></g></svg><span class="mono">RezFlo</span></div>
+        <div id="fplus" class="mono">+</div>
+        <div id="fchk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <div id="fring"></div>
+      </div>
+
+      <!-- 17 · your demo (139.2 to 143.8s): split screen with a phone in 3D -->
+      <div id="ch17" class="clip" data-start="139.2" data-duration="4.6" style="z-index:15">
+        <div id="panel5">
+          <div id="p5kick" class="mono">17 / Your demo</div>
+          <div id="p5h" class="heavy">A demo built for <em>your</em> restaurant.</div>
+          <div id="p5stage"><div id="dph">
+            <div class="nc"></div><div class="tr"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div>
+            <div class="d1">Your restaurant</div><div class="d2 mono">RezFlo demo line</div>
+            <div id="dbld"><div class="bl1"><span id="dbl">Building your demo</span><span id="dpct">0%</span></div><div id="dbar"><i></i></div></div>
+            <div id="dplay"><svg viewBox="0 0 24 24" fill="#f3efe6"><path d="M8 5.5v13l10.5-6.5z"/></svg></div>
+            <div id="dlive"><div class="lv mono">● Demo call · <span id="dt">0:00</span></div><div id="dwave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="bb">Hi! Thanks for calling. Table for how many?</div></div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- 18 · questions before the meeting (143.5 to 151.9s) -->
+      <div id="ch18" class="clip" data-start="143.5" data-duration="8.4" style="z-index:12">
+        <div id="qh" class="heavy"><span class="w">Questions</span><span class="w">before</span><span class="w">we</span><span class="w"><em>meet?</em></span></div>
+        <div id="below" class="mono"><b><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></b>Below this video</div>
+        <div class="fq" id="fq1"><div class="th"><i><svg viewBox="0 0 24 24" fill="#f3efe6"><path d="M8 5.5v13l10.5-6.5z"/></svg></i></div><div class="fl mono">Owner FAQ · 01</div><div class="ft2">Common question</div><div class="pb"><b></b></div><div id="most" class="mono">MOST ASKED</div></div><div class="fq" id="fq2"><div class="th"><i><svg viewBox="0 0 24 24" fill="#f3efe6"><path d="M8 5.5v13l10.5-6.5z"/></svg></i></div><div class="fl mono">Owner FAQ · 02</div><div class="ft2">Common question</div><div class="pb"><b></b></div></div><div class="fq" id="fq3"><div class="th"><i><svg viewBox="0 0 24 24" fill="#f3efe6"><path d="M8 5.5v13l10.5-6.5z"/></svg></i></div><div class="fl mono">Owner FAQ · 03</div><div class="ft2">Common question</div><div class="pb"><b></b></div></div>
+      </div>
+
+      <!-- 18 · sign-off: the opening name lockup returns (151.9 to 154.0s) -->
+      <div id="ch19" class="clip" data-start="151.9" data-duration="2.1" style="z-index:12">
+        <div id="nm2ul"></div>
+        <div id="nm2" class="heavy"><span>Y</span><span>O</span><span>U</span><span>S</span><span>E</span><span>F</span></div>
+        <div id="fr2m"><span id="fr2" class="serif">from RezFl</span></div>
+        <div id="dot2"></div>
+      </div>
+
+      <!-- end card (153.95 to 157.3s) -->
+      <div id="cut-end" class="clip cut" data-start="153.95" data-duration="3.35">
+        <div class="fg">
+          <div id="eR"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div>
+          <div id="ewm-m"><span id="ewm">RezFlo</span></div>
+          <div class="mask"><span class="serif" id="esee">See you on the call.</span></div>
+          <div class="mono" id="eurl">rezflo.ca</div>
+        </div>
+        <div id="efade"></div>
       </div>
 
       <!-- HUD frame -->
@@ -885,8 +1016,8 @@
         <div class="br hud-in" id="br-br"></div>
         <div class="hl mono hud-in" id="hl-tl">RezFlo / Pre-call '26</div>
         <div class="hl mono hud-in" id="hl-tr"><span id="rec"></span><span>TC <span id="tc">00:00:00:00</span></span></div>
-        <div class="hl mono hud-in" id="hl-bl"><span id="c1">01 / 15<em>Hello</em></span><span id="c2">02 / 15<em>Booked</em></span><span id="c3">03 / 15<em>Overview</em></span><span id="c4">04 / 15<em>The problem</em></span><span id="c5">05 / 15<em>The rush</em></span><span id="c6">06 / 15<em>Two choices</em></span><span id="c7">07 / 15<em>RezFlo</em></span><span id="c8">08 / 15<em>What it does</em></span><span id="c9">09 / 15<em>POS sync</em></span><span id="c10">10 / 15<em>The caller</em></span><span id="c11">11 / 15<em>Live transfer</em></span><span id="c12">12 / 15<em>Built for you</em></span><span id="c13">13 / 15<em>Rush hour</em></span><span id="c14">14 / 15<em>The goal</em></span><span id="c15">15 / 15<em>Your call</em></span></div>
-        <div class="hl mono hud-in" id="hl-br"><span>Bar <span id="bar">01</span>/65</span><span id="beats"><i></i><i></i><i></i><i></i></span></div>
+        <div class="hl mono hud-in" id="hl-bl"><span id="c1">01 / 18<em>Hello</em></span><span id="c2">02 / 18<em>Booked</em></span><span id="c3">03 / 18<em>Overview</em></span><span id="c4">04 / 18<em>The problem</em></span><span id="c5">05 / 18<em>The rush</em></span><span id="c6">06 / 18<em>Two choices</em></span><span id="c7">07 / 18<em>RezFlo</em></span><span id="c8">08 / 18<em>What it does</em></span><span id="c9">09 / 18<em>POS sync</em></span><span id="c10">10 / 18<em>The caller</em></span><span id="c11">11 / 18<em>Live transfer</em></span><span id="c12">12 / 18<em>Built for you</em></span><span id="c13">13 / 18<em>Rush hour</em></span><span id="c14">14 / 18<em>The goal</em></span><span id="c15">15 / 18<em>Your call</em></span><span id="c16">16 / 18<em>On the call</em></span><span id="c17">17 / 18<em>Your demo</em></span><span id="c18">18 / 18<em>See you soon</em></span></div>
+        <div class="hl mono hud-in" id="hl-br"><span>Bar <span id="bar">01</span>/79</span><span id="beats"><i></i><i></i><i></i><i></i></span></div>
         <div class="hud-in" id="prog-track"></div>
         <div class="hud-in" id="prog"></div>
       </div>
@@ -978,6 +1109,21 @@
       <audio id="sfx-87" src="sfx/tick.wav" data-start="124.08" data-duration="0.09" data-volume="0.4"></audio>
       <audio id="sfx-88" src="sfx/pop.wav" data-start="125.7" data-duration="0.17" data-volume="0.4"></audio>
       <audio id="sfx-89" src="sfx/success.wav" data-start="128.4" data-duration="0.7" data-volume="0.25"></audio>
+      <audio id="sfx-90" src="sfx/tick.wav" data-start="129.84" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-91" src="sfx/tick.wav" data-start="130.9" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-92" src="sfx/tick.wav" data-start="131.94" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-93" src="sfx/pop.wav" data-start="134.28" data-duration="0.17" data-volume="0.35"></audio>
+      <audio id="sfx-94" src="sfx/snap.wav" data-start="137.98" data-duration="0.16" data-volume="0.45"></audio>
+      <audio id="sfx-95" src="sfx/success.wav" data-start="138.05" data-duration="0.75" data-volume="0.28"></audio>
+      <audio id="sfx-96" src="sfx/fill.wav" data-start="140.26" data-duration="1.0" data-volume="0.18" data-fade-out="0.3"></audio>
+      <audio id="sfx-97" src="sfx/switch.wav" data-start="142.16" data-duration="0.14" data-volume="0.4"></audio>
+      <audio id="sfx-98" src="sfx/pop.wav" data-start="145.32" data-duration="0.17" data-volume="0.35"></audio>
+      <audio id="sfx-99" src="sfx/tick.wav" data-start="146.48" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-100" src="sfx/tick.wav" data-start="146.88" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-101" src="sfx/tick.wav" data-start="147.18" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-102" src="sfx/snap.wav" data-start="150.26" data-duration="0.16" data-volume="0.4"></audio>
+      <audio id="sfx-103" src="sfx/star.wav" data-start="151.94" data-duration="0.07" data-volume="0.4"></audio>
+      <audio id="sfx-104" src="sfx/chime.wav" data-start="154.05" data-duration="0.95" data-volume="0.35"></audio>
     </div>
 
     <script>
@@ -1030,15 +1176,15 @@
       const beatEls = document.querySelectorAll("#beats i");
       const pad = (n) => String(n).padStart(2, "0");
       const clock = { v: 0 };
-      tl.fromTo(clock, { v: 0 }, { v: 129.1, duration: 129.1, ease: "none", onUpdate: () => {
+      tl.fromTo(clock, { v: 0 }, { v: 157.3, duration: 157.3, ease: "none", onUpdate: () => {
         const f = Math.floor(clock.v * 30 + 1e-6);
         tcEl.textContent = "00:00:" + pad(Math.floor(f / 30)) + ":" + pad(f % 30);
         const beat = Math.floor(clock.v * 2 + 1e-6);
-        barEl.textContent = pad(Math.min(65, Math.floor(beat / 4) + 1));
+        barEl.textContent = pad(Math.min(79, Math.floor(beat / 4) + 1));
         beatEls.forEach((b, k) => { b.style.background = (k === beat % 4) ? "currentColor" : "transparent"; });
       } }, 0);
-      tl.fromTo("#prog", { scaleX: 0 }, { scaleX: 1, duration: 129.1, ease: "none" }, 0);
-      tl.fromTo("#rec", { opacity: 1 }, { opacity: 0.15, duration: 0.5, ease: "steps(1)", repeat: 257, yoyo: true }, 0);
+      tl.fromTo("#prog", { scaleX: 0 }, { scaleX: 1, duration: 157.3, ease: "none" }, 0);
+      tl.fromTo("#rec", { opacity: 1 }, { opacity: 0.15, duration: 0.5, ease: "steps(1)", repeat: 313, yoyo: true }, 0);
       tl.fromTo(".br", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out", stagger: 0.03 }, 0.6);
       tl.fromTo("#hl-tl, #hl-tr, #hl-bl, #hl-br, #prog-track, #prog", { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.04 }, 0.68);
       tl.set("#c1", { opacity: 1 }, 0.6);
@@ -1527,8 +1673,8 @@
       const focus = (k, t) => {
         tl.to("#bw", { rotationY: -k * 60, duration: 0.6, ease: "power3.inOut" }, t - 0.25);
         [0, 1, 2, 3, 4, 5].forEach((j) => tl.to("#bt" + (j + 1), j === k
-          ? { opacity: 1, scale: 1, filter: "blur(0px)", boxShadow: "0 0 0 2px #5b41da, 0 30px 70px rgba(91,65,218,0.4)", duration: 0.35 }
-          : { opacity: 0.45, scale: 0.92, filter: "blur(4px)", boxShadow: "0 0 0 0px rgba(91,65,218,0)", duration: 0.35 }, t - 0.1));
+          ? { opacity: 1, scale: 1, filter: "blur(0px)", borderColor: "#6d5cf0", boxShadow: "0 30px 70px rgba(91,65,218,0.4)", duration: 0.35 }
+          : { opacity: 0.45, scale: 0.92, filter: "blur(4px)", borderColor: "#2a2738", boxShadow: "0 30px 70px rgba(91,65,218,0)", duration: 0.35 }, t - 0.1));
         tl.fromTo("#segs i:nth-child(" + (k + 1) + ") b", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, t);
         if (k > 0) tl.to("#tl" + k, { opacity: 0, y: -8, duration: 0.15 }, t);
         tl.fromTo("#tl" + (k + 1), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, immediateRender: false }, t + 0.05);
@@ -1589,10 +1735,10 @@
       tl.set("#hud", { className: "on-footage" }, 119.0);
 
       // --- "designed" 98.90, "around" 99.36, "how" 99.82, "your" 100.16, "operates" 100.60 ---
-      [98.9, 99.36, 99.82, 100.16, 100.6].forEach((t, k) => tl.fromTo("#ln98 .w:nth-child(" + (k + 1) + ")", { opacity: 0, y: 24, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, t));
-      tl.fromTo("#ul98", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 100.7);
-      tl.to("#ln98 .w", { opacity: 0, y: -20, duration: 0.25, ease: "power2.in", stagger: 0.03 }, 100.95);
-      tl.to("#ul98", { scaleX: 0, transformOrigin: "100% 50%", duration: 0.25, ease: "power2.in" }, 100.95);
+      [98.9, 99.36, 99.82, 100.16, 100.34, 100.6].forEach((t, k) => tl.fromTo("#ln98 .w:nth-child(" + (k + 1) + ")", { opacity: 0, y: 24, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, t));
+      tl.fromTo("#ul98", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 100.75);
+      tl.to("#ln98 .w", { opacity: 0, y: -20, duration: 0.25, ease: "power2.in", stagger: 0.03 }, 101.5);
+      tl.to("#ul98", { scaleX: 0, transformOrigin: "100% 50%", duration: 0.25, ease: "power2.in" }, 101.5);
 
       // --- "rush" 104.94, "hour" 105.10: bars spike in a wave behind the words ---
       document.querySelectorAll("#rbars i").forEach((b, k) => { b.style.background = k % 3 === 0 ? "#8f7bff" : "#5b41da"; });
@@ -1656,6 +1802,102 @@
       tl.to("#scan", { opacity: 0, duration: 0.15 }, 128.1);
       tl.fromTo("#ocx .fr", { scale: 1.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "expo.out" }, 128.3);
       tl.fromTo("#ocyr", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.25 }, 128.54);
+
+      // ================= 129.1 → 157.3s =================
+      tl.set("#c15", { opacity: 0 }, 129.3); tl.set("#c16", { opacity: 1 }, 129.3);
+      tl.set("#c16", { opacity: 0 }, 139.24); tl.set("#c17", { opacity: 1 }, 139.24);
+      tl.set("#c17", { opacity: 0 }, 143.5); tl.set("#c18", { opacity: 1 }, 143.5);
+      tl.set("#hud", { className: "on-dark" }, 153.95);
+
+      // --- 16 · the On our call card grows into an agenda: calls 129.84, many 130.64, POS 131.94, missed 134.28 ---
+      tl.to("#ocx .st, #ocx .fr, #ocyr", { opacity: 0, scale: 0.8, duration: 0.25, ease: "power2.in" }, 129.2);
+      tl.to("#ocx .k", { opacity: 0, duration: 0.2 }, 129.2);
+      tl.to("#oc", { height: 396, y: -70, duration: 0.45, ease: "power3.inOut" }, 129.3);
+      tl.set("#ocx", { height: 300 }, 129.3);
+      [[1, 129.84], [2, 130.64], [3, 131.94], [4, 134.1]].forEach(([k, t]) => {
+        tl.fromTo("#ag" + k, { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, t);
+        tl.fromTo("#ag" + k + " .ac", { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2.4)" }, t + 0.2);
+      });
+      tl.to("#oc", { x: 110, opacity: 0, filter: "blur(8px)", duration: 0.32, ease: "power3.in" }, 134.65);
+
+      // --- 16 · good fit? "deciding" 135.10, "whether" 135.54, "or not" 136.16, "RezFlo" 136.68, "fit" 137.98 ---
+      write("#fitl", 135.1, 0.35);
+      tl.set("#fitl", { clipPath: "inset(0% 100% 0% 0%)" }, 0);
+      tl.fromTo("#ftA", { x: -120, opacity: 0, rotation: -6 }, { x: 0, opacity: 1, rotation: 0, duration: 0.45, ease: spring }, 135.54);
+      tl.fromTo("#ftB", { x: 120, opacity: 0, rotation: 6 }, { x: 0, opacity: 1, rotation: 0, duration: 0.45, ease: spring }, 136.16);
+      tl.fromTo("#fplus", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.25, ease: spring }, 136.3);
+      tl.to("#ftB", { boxShadow: "0 0 0 3px #6d5cf0, 0 0 60px 10px rgba(109,92,240,0.55)", duration: 0.25 }, 136.68);
+      tl.to("#ftA", { x: 46, duration: 0.3, ease: "power4.in" }, 137.7);
+      tl.to("#ftB", { x: -46, duration: 0.3, ease: "power4.in" }, 137.7);
+      tl.to("#fplus", { scale: 0, opacity: 0, duration: 0.15 }, 137.85);
+      tl.fromTo("#fchk", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(3)" }, 137.98);
+      tl.fromTo("#fring", { scale: 1, opacity: 0.9 }, { scale: 9, opacity: 0, duration: 0.6, ease: "power2.out" }, 137.98);
+      tl.fromTo(".ft", { scale: 1 }, { scale: 1.05, duration: 0.12, yoyo: true, repeat: 1, immediateRender: false }, 137.98);
+      tl.to("#fitl", { opacity: 0, y: -12, duration: 0.2 }, 138.1);
+      tl.fromTo("#fitl2", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 138.22);
+      tl.to("#ftA, #ftB, #fchk, #fitl2", { x: "+=140", opacity: 0, filter: "blur(8px)", duration: 0.3, ease: "power3.in", stagger: 0.03 }, 138.85);
+
+      // --- 17 · your demo: "demo" 140.26, "restaurant" 140.98, "see it in action" 142.16 ---
+      tl.fromTo("#vid-wrap", { x: 0 }, { x: -300, duration: 0.55, ease: "power3.inOut", immediateRender: false }, 139.24);
+      tl.fromTo("#panel5", { x: 720 }, { x: 0, duration: 0.55, ease: "power3.inOut" }, 139.26);
+      tl.fromTo("#p5kick, #p5h", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out", stagger: 0.07 }, 139.55);
+      tl.set("#dph", { rotationY: -16, rotationX: 6 }, 0);
+      tl.fromTo("#dph", { y: 140, opacity: 0, rotationY: -30 }, { y: 0, opacity: 1, rotationY: -16, duration: 0.6, ease: spring, immediateRender: false }, 139.6);
+      tl.to("#dph", { rotationY: -8, rotationX: 3, duration: 3.0, ease: "sine.inOut" }, 140.2);
+      tl.set("#dbar i", { scaleX: 0 }, 0);
+      tl.to("#dbar i", { scaleX: 1, duration: 0.85, ease: "power2.inOut" }, 140.26);
+      const dp = document.getElementById("dpct"), dpo = { v: 0 };
+      tl.fromTo(dpo, { v: 0 }, { v: 100, duration: 0.85, ease: "power2.inOut", onUpdate: () => { dp.textContent = Math.round(dpo.v) + "%"; } }, 140.26);
+      tl.set("#dbl", { textContent: "Demo ready" }, 141.0);
+      tl.to("#dbl", { color: "#34c759", duration: 0.15 }, 141.0);
+      tl.fromTo("#dplay", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2.2)" }, 141.15);
+      tl.to("#dplay", { scale: 0.85, duration: 0.08 }, 142.12);
+      tl.to("#dplay", { scale: 1.6, opacity: 0, duration: 0.3, ease: "power2.out" }, 142.2);
+      tl.to("#dbld", { opacity: 0, duration: 0.2 }, 142.2);
+      tl.fromTo("#dlive", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3 }, 142.3);
+      tl.set("#dwave i", { scaleY: 0.25 }, 0);
+      tl.fromTo("#dwave i", { scaleY: 0.25 }, { scaleY: (i) => 0.35 + det(i, 7) * 0.65, duration: 0.18, ease: "sine.inOut", yoyo: true, repeat: 5, stagger: (i) => det(i, 5) * 0.1, immediateRender: false }, 142.35);
+      const dt = document.getElementById("dt"), dto = { v: 0 };
+      tl.fromTo(dto, { v: 0 }, { v: 1.4, duration: 1.4, ease: "none", onUpdate: () => { dt.textContent = "0:0" + Math.floor(dto.v + 1e-6); } }, 142.3);
+      tl.to("#panel5", { x: 720, duration: 0.45, ease: "power3.in" }, 143.3);
+      tl.to("#vid-wrap", { x: 0, duration: 0.45, ease: "power3.inOut" }, 143.3);
+
+      // --- 18 · questions: "questions" 144.10, "below" 145.32, "videos" 146.48-147.18, "answering" 147.56, "most" 151.04 ---
+      [143.86, 144.34, 144.64, 144.8].forEach((t, k) => tl.fromTo("#qh .w:nth-child(" + (k + 1) + ")", { opacity: 0, y: 22, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, t));
+      tl.fromTo("#below", { opacity: 0, y: -24 }, { opacity: 1, y: 0, duration: 0.35, ease: spring }, 145.32);
+      tl.fromTo("#below b", { y: -4 }, { y: 5, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 9, immediateRender: false }, 145.6);
+      [146.48, 146.88, 147.18].forEach((t, k) => tl.fromTo("#fq" + (k + 1), { opacity: 0, y: 40, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: spring }, t));
+      tl.set(".fq .pb b", { scaleX: 0 }, 0);
+      tl.to(".fq .pb b", { scaleX: (i) => [0.85, 0.6, 0.72][i], duration: 0.9, ease: "power2.out", stagger: 0.15 }, 147.56);
+      tl.fromTo("#most", { opacity: 0, scale: 1.6, rotation: -10 }, { opacity: 1, scale: 1, rotation: -4, duration: 0.22, ease: "expo.out" }, 150.26);
+      tl.fromTo("#fq1", { boxShadow: "0 20px 50px rgba(11,10,18,0.3)" }, { boxShadow: "0 0 0 2px #6d5cf0, 0 20px 50px rgba(91,65,218,0.45)", duration: 0.25, immediateRender: false }, 150.26);
+      // the whole stack heads "below"
+      tl.to("#qh .w", { opacity: 0, y: -16, duration: 0.25, stagger: 0.03 }, 151.15);
+      tl.to("#below, #fq1, #fq2, #fq3", { y: "+=520", opacity: 0, duration: 0.5, ease: "power3.in", stagger: 0.05 }, 151.2);
+
+      // --- 18 · sign-off: "Looking" 151.94 → name lockup; "Thanks" 153.52 → the dot floods the frame ---
+      const rot2 = [-80, 60, -45, 90, -60, 45];
+      tl.fromTo("#nm2 span", { y: -80, x: (i) => (i - 2.5) * 46, rotation: (i) => rot2[i], opacity: 0 }, { y: 0, x: 0, rotation: 0, opacity: 1, duration: 0.5, ease: spring, stagger: 0.05 }, 151.94);
+      tl.fromTo("#nm2ul", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 152.25);
+      tl.fromTo("#fr2", { yPercent: 140 }, { yPercent: 0, duration: 0.45, ease: "power4.out" }, 152.3);
+      tl.fromTo("#dot2", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: spring }, 152.5);
+      tl.fromTo("#dot2", { scale: 1 }, { scale: 1.3, duration: 0.18, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 152.8);
+      tl.to("#nm2 span", { y: 30, opacity: 0, duration: 0.2, ease: "power2.in", stagger: 0.02 }, 153.45);
+      tl.to("#nm2ul", { scaleX: 0, transformOrigin: "100% 50%", duration: 0.2 }, 153.45);
+      tl.to("#fr2", { yPercent: -140, duration: 0.2, ease: "power3.in" }, 153.45);
+      tl.to("#dot2", { scale: 160, duration: 0.42, ease: "power3.in" }, 153.52);
+
+      // --- end card: the R assembles, wordmark, "See you on the call.", rezflo.ca, fade to ink ---
+      tl.fromTo("#eR", { scale: 0.6, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: spring }, 153.98);
+      tl.fromTo("#eR .lane-g", { x: 14, y: -14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, 154.05);
+      tl.fromTo("#eR .lane-p", { x: -14, y: 14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, 154.1);
+      tl.fromTo("#eR .slash-g, #eR .slash-p", { x: -22, opacity: 0 }, { x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }, 154.3);
+      tl.fromTo("#ewm", { yPercent: 110 }, { yPercent: 0, duration: 0.45, ease: "power4.out" }, 154.35);
+      tl.fromTo("#esee", { yPercent: 110 }, { yPercent: 0, duration: 0.4, ease: "power4.out" }, 154.7);
+      tl.fromTo("#eurl", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, 155.0);
+      tl.fromTo("#cut-end .fg", { scale: 1 }, { scale: 1.04, duration: 3.3, ease: "none" }, 153.98);
+      tl.fromTo("#efade", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.in" }, 157.0);
+      tl.to("#hud", { opacity: 0, duration: 0.3 }, 157.0);
 
       window.__timelines["main"] = tl;
     </script>
