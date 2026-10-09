@@ -54,11 +54,11 @@
       
       /* 1 · freeze-frame photo + map tile */
       #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 45; }
-      #pola { position: absolute; left: 1480px; top: 190px; width: 300px; height: 304px; background: #fbfaf6; border-radius: 6px; box-shadow: 0 26px 60px rgba(11,10,18,0.32); opacity: 0; z-index: 20; }
-      #pola .ph { position: absolute; left: 16px; top: 16px; width: 268px; height: 205px; overflow: hidden; background: #ccc; }
+      #pola { position: absolute; left: 1480px; top: 172px; width: 300px; height: 338px; background: #fbfaf6; border-radius: 6px; box-shadow: 0 26px 60px rgba(11,10,18,0.32); opacity: 0; z-index: 20; }
+      #pola .ph { position: absolute; left: 16px; top: 16px; width: 268px; height: 239px; overflow: hidden; background: #ccc; }
       #pola .dev { position: absolute; inset: 0; background: #efe9dc; }
-      #pola .ph img { position: absolute; left: 0; top: 0; width: 268px; height: 205px; }
-      #pola .pc { position: absolute; left: 0; right: 0; top: 234px; text-align: center; font-size: 36px; color: var(--ink); }
+      #pola .ph img { position: absolute; left: 0; top: 0; width: 268px; height: 239px; }
+      #pola .pc { position: absolute; left: 0; right: 0; top: 266px; text-align: center; font-size: 36px; color: var(--ink); }
       .tape { position: absolute; width: 96px; height: 30px; background: rgba(236,229,210,0.82); box-shadow: 0 2px 6px rgba(11,10,18,0.12); }
       #pola .tape { left: 102px; top: -14px; }
       #map { position: absolute; left: 1470px; top: 545px; width: 340px; height: 250px; background: var(--paper); border-radius: 10px; box-shadow: 0 24px 56px rgba(11,10,18,0.28); opacity: 0; z-index: 19; }
@@ -93,34 +93,6 @@
       .mc .t2 { font-size: 13px; color: #b9b5cc; margin-top: 3px; }
 
       /* 4 · kitchen cutaway */
-      /* 4 · busy night on the wall: incoming-call island, rush gauge, task that pauses */
-      #gauge { position: absolute; left: 1396px; top: 150px; width: 470px; height: 246px; border-radius: 28px; opacity: 0; }
-      #gauge svg { position: absolute; left: 0; top: 0; width: 470px; height: 246px; }
-      #gauge .gk { position: absolute; left: 24px; top: 20px; font-size: 13px; color: var(--grey); }
-      #gauge .gq { position: absolute; left: 44px; top: 206px; font-size: 13px; color: var(--grey); }
-      #gauge .gp { position: absolute; right: 44px; top: 206px; font-size: 13px; color: var(--brand-deep); }
-      #gauge .gc { position: absolute; left: 0; right: 0; top: 200px; text-align: center; font-weight: 700; font-size: 20px; color: var(--ink); }
-      #islw { position: absolute; left: 1400px; top: 420px; width: 462px; height: 132px; display: flex; align-items: center; justify-content: center; }
-      #isl { position: relative; width: 150px; height: 42px; border-radius: 21px; background: #0b0a12; border: 1.5px solid #2a2738; box-shadow: 0 22px 50px rgba(11,10,18,0.32); overflow: hidden; opacity: 0; flex: none; }
-      #isl .ct { position: absolute; left: 24px; top: 0; height: 132px; width: 420px; display: flex; align-items: center; gap: 18px; opacity: 0; }
-      #isl .rg { position: relative; width: 64px; height: 64px; flex: none; }
-      #isl .rg .c { position: absolute; inset: 0; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; }
-      #isl .rg .c svg { width: 30px; height: 30px; }
-      #isl .rg .kr { position: absolute; inset: 0; border-radius: 50%; border: 2.5px solid var(--peri); opacity: 0; }
-      #isl .t1 { font-weight: 700; font-size: 28px; color: var(--cream); }
-      #isl .t2 { font-size: 13px; color: var(--peri); margin-top: 6px; }
-      #task { position: absolute; left: 1400px; top: 582px; width: 462px; height: 108px; border-radius: 26px; padding: 0 24px; display: flex; align-items: center; gap: 18px; opacity: 0; }
-      #task .ic { width: 58px; height: 58px; border-radius: 16px; background: var(--ink); color: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 15px; flex: none; }
-      #task .bd { flex: 1; }
-      #task .t1 { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 22px; color: var(--ink); }
-      #task .st { position: relative; width: 120px; height: 16px; font-weight: 400; font-size: 12px; }
-      #task .st span { position: absolute; right: 0; top: 0; white-space: nowrap; }
-      #tsa { color: var(--brand-deep); }
-      #tsb { color: var(--ink); opacity: 0; }
-      #task .bar { margin-top: 14px; height: 10px; border-radius: 5px; background: rgba(11,10,18,0.1); overflow: hidden; }
-      #task .bar i { display: block; height: 100%; width: 100%; border-radius: 5px; background: linear-gradient(90deg, #8f7bff, #5b41da); transform-origin: 0 50%; }
-      #tpause { position: absolute; left: 1424px; top: 607px; width: 58px; height: 58px; border-radius: 50%; background: var(--ink); display: flex; align-items: center; justify-content: center; gap: 6px; opacity: 0; z-index: 3; box-shadow: 0 10px 24px rgba(11,10,18,0.3); }
-      #tpause i { width: 6px; height: 20px; border-radius: 2px; background: var(--cream); }
       /* 5 · the call splits in half */
       #hc { position: absolute; left: 1400px; top: 420px; width: 462px; height: 132px; z-index: 18; }
       #hl, #hr { position: absolute; top: 0; width: 231px; height: 132px; background: #16141f; border: 1.5px solid #2a2738; box-shadow: 0 22px 50px rgba(11,10,18,0.32); opacity: 0; }
@@ -141,7 +113,7 @@
       #th { position: absolute; left: 1370px; top: 170px; width: 500px; height: 540px; border-radius: 32px; z-index: 20; opacity: 0; }
       #th .hd { position: absolute; left: 26px; top: 24px; right: 26px; height: 64px; display: flex; align-items: center; gap: 14px; }
       #th .av { width: 60px; height: 60px; border-radius: 16px; overflow: hidden; position: relative; flex: none; border: 3px solid #fbfaf6; box-shadow: 0 6px 14px rgba(11,10,18,0.2); }
-      #th .av img { position: absolute; left: -43px; top: -16px; width: 110px; height: 84px; }
+      #th .av img { position: absolute; left: -54px; top: -6px; width: 176px; height: 157px; }
       #th .nm { font-weight: 700; font-size: 27px; color: var(--ink); }
       #th .st { position: relative; height: 18px; margin-top: 4px; font-size: 13px; color: var(--grey); }
       #th .st span { position: absolute; left: 0; top: 0; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
@@ -232,7 +204,7 @@
 
       <!-- 1 · freeze-frame Polaroid + Mississauga map (4.5 to 7.6s), map returns for "around the GTA" (16.2 to 18.0s) -->
       <div id="g1" class="clip" data-start="4.5" data-duration="13.6" style="z-index:20">
-        <div id="pola"><div class="ph"><img src="portrait.png" alt=""><div class="dev"></div></div><div class="pc serif">Yousef, RezFlo</div><div class="tape"></div></div>
+        <div id="pola"><div class="ph"><img src="portrait.png" alt=""><div class="dev"></div></div><div class="pc serif">Team RezFlo</div><div class="tape"></div></div>
         <div id="map">
           <div id="mapv">
             <svg id="mapsvg" viewBox="0 0 316 164"><g id="mdots"></g><g id="mcont" fill="none" stroke="#cdbfa3" stroke-width="1.3"></g><path d="M-10 128 C 60 118, 120 140, 200 122 S 300 112, 330 120" fill="none" stroke="#d8cdb6" stroke-width="5"/><path d="M96 -10 C 104 50, 92 110, 110 180" fill="none" stroke="#d8cdb6" stroke-width="4"/></svg>
@@ -264,26 +236,6 @@
         <div class="mc" style="left:1474px;top:454px" data-layout-allow-occlusion><div class="ic"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#0b0a12"/><path d="M15 3l6 6M21 3l-6 6" stroke="#0b0a12" stroke-width="2.2" stroke-linecap="round"/></svg></div><div><div class="t1">Missed call</div><div class="t2 mono">Restaurant line · 8:03 PM</div></div></div>
         <div class="mc" style="left:1450px;top:540px" data-layout-allow-occlusion><div class="ic"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#0b0a12"/><path d="M15 3l6 6M21 3l-6 6" stroke="#0b0a12" stroke-width="2.2" stroke-linecap="round"/></svg></div><div><div class="t1">Missed call</div><div class="t2 mono">Restaurant line · 8:19 PM</div></div></div>
         <div class="mc" style="left:1474px;top:626px" data-layout-allow-occlusion><div class="ic"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#0b0a12"/><path d="M15 3l6 6M21 3l-6 6" stroke="#0b0a12" stroke-width="2.2" stroke-linecap="round"/></svg></div><div><div class="t1">Missed call</div><div class="t2 mono">Restaurant line · 8:37 PM</div></div></div>
-      </div>
-
-      <!-- 4 · "the phone rings during the busiest part of the night… someone has to stop" (18.1 to 21.7s), on the wall -->
-      <div id="g4" class="clip" data-start="18.1" data-duration="3.6" style="z-index:20">
-        <div id="gauge" class="frost">
-          <svg viewBox="0 0 470 246"><defs><linearGradient id="gg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#8f7bff"/><stop offset="1" stop-color="#5b41da"/></linearGradient></defs>
-            <g id="gticks"></g>
-            <path d="M95 188 A140 140 0 0 1 375 188" fill="none" stroke="rgba(11,10,18,0.1)" stroke-width="18" stroke-linecap="round"/>
-            <path id="garc" d="M95 188 A140 140 0 0 1 375 188" fill="none" stroke="url(#gg)" stroke-width="18" stroke-linecap="round" stroke-dasharray="439.8" stroke-dashoffset="439.8"/>
-            <g id="gneedle"><path d="M235 188 L235 74" stroke="#0b0a12" stroke-width="5" stroke-linecap="round"/></g>
-            <circle cx="235" cy="188" r="11" fill="#0b0a12"/><circle cx="235" cy="188" r="4" fill="#f3efe6"/>
-          </svg>
-          <div class="gk mono">Phone traffic</div>
-          <div class="gq mono">Quiet</div>
-          <div class="gp mono">Peak</div>
-          <div class="gc"><span class="mono" style="font-weight:400;font-size:14px;color:#5d5a6b">Fri · 7:42 PM</span></div>
-        </div>
-        <div id="islw"><div id="isl"><div class="ct"><div class="rg"><div class="kr"></div><div class="kr"></div><div class="c"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#fbfaf6"/></svg></div></div><div><div class="t1">Incoming call</div><div class="t2 mono">Restaurant line · ringing</div></div></div></div></div>
-        <div id="task" class="frost"><div class="ic mono">T6</div><div class="bd"><div class="t1"><span>Plating · Table 6</span><span class="st mono"><span id="tsa">In progress</span><span id="tsb">Paused</span></span></div><div class="bar"><i></i></div></div></div>
-        <div id="tpause"><i></i><i></i></div>
       </div>
 
       <!-- 5 · "half the time the call gets missed" (21.6 to 24.9s) -->
@@ -381,9 +333,6 @@
       <audio id="sfx-22" src="sfx/snap.wav" data-start="15.48" data-duration="0.16" data-volume="0.38"></audio>
       <audio id="sfx-23" src="sfx/fill.wav" data-start="16.0" data-duration="0.5" data-volume="0.18"></audio>
       <audio id="sfx-24" src="sfx/chime.wav" data-start="16.88" data-duration="0.95" data-volume="0.25"></audio>
-      <audio id="sfx-25" src="sfx/ring.wav" data-start="18.42" data-duration="1.0" data-volume="0.1"></audio>
-      <audio id="sfx-26" src="sfx/ring.wav" data-start="19.95" data-duration="1.0" data-volume="0.1"></audio>
-      <audio id="sfx-31" src="sfx/switch.wav" data-start="21.12" data-duration="0.14" data-volume="0.5"></audio>
       
       <audio id="sfx-33" src="sfx/snap.wav" data-start="22.44" data-duration="0.16" data-volume="0.4"></audio>
       <audio id="sfx-34" src="sfx/snap.wav" data-start="23.88" data-duration="0.16" data-volume="0.4"></audio>
@@ -397,9 +346,7 @@
       <audio id="sfx-42" src="sfx/snap.wav" data-start="35.38" data-duration="0.16" data-volume="0.45"></audio>
       <audio id="sfx-43" src="sfx/snap.wav" data-start="36.08" data-duration="0.16" data-volume="0.5"></audio>
       <audio id="sfx-44" src="sfx/switch.wav" data-start="36.3" data-duration="0.14" data-volume="0.3"></audio>
-      <audio id="sfx-x1" src="sfx/pop.wav" data-start="18.14" data-duration="0.17" data-volume="0.35"></audio>
-      <audio id="sfx-x2" src="sfx/fill.wav" data-start="19.2" data-duration="0.5" data-volume="0.22"></audio>
-      <audio id="sfx-x3" src="sfx/pop.wav" data-start="20.42" data-duration="0.17" data-volume="0.3"></audio>
+      <audio id="sfx-x6" src="sfx/pop.wav" data-start="21.64" data-duration="0.17" data-volume="0.3"></audio>
       <audio id="sfx-x4" src="sfx/snap.wav" data-start="35.58" data-duration="0.16" data-volume="0.45"></audio>
       <audio id="sfx-x5" src="sfx/snap.wav" data-start="35.76" data-duration="0.16" data-volume="0.45"></audio>
       <audio id="sfx-45" src="sfx/tick.wav" data-start="37.16" data-duration="0.09" data-volume="0.18"></audio>
@@ -521,43 +468,8 @@
       });
 
       // --- 4 · kitchen: "phone" 18.18, "rings" 18.42, "busiest" 19.20, "stop" 21.12 → everything freezes ---
-      // ticks around the gauge
-      const gt = document.getElementById("gticks");
-      for (let k = 0; k <= 20; k++) {
-        const a = Math.PI + (k / 20) * Math.PI, r1 = 156, r2 = k % 5 === 0 ? 172 : 164;
-        const l = document.createElementNS(NS, "line");
-        l.setAttribute("x1", (235 + Math.cos(a) * r1).toFixed(1)); l.setAttribute("y1", (188 + Math.sin(a) * r1).toFixed(1));
-        l.setAttribute("x2", (235 + Math.cos(a) * r2).toFixed(1)); l.setAttribute("y2", (188 + Math.sin(a) * r2).toFixed(1));
-        l.setAttribute("stroke", k > 15 ? "#5b41da" : "rgba(11,10,18,0.35)"); l.setAttribute("stroke-width", k % 5 === 0 ? 2.5 : 1.5); l.setAttribute("stroke-linecap", "round");
-        gt.appendChild(l);
-      }
-      // "phone" 18.18 → a black pill grows into the incoming call; "rings" 18.42 → it rings
-      tl.fromTo("#isl", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.2, ease: "power3.out" }, 18.12);
-      tl.to("#isl", { width: 462, height: 132, borderRadius: 30, duration: 0.42, ease: "expo.out" }, 18.3);
-      tl.fromTo("#isl .ct", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.25, ease: "power3.out" }, 18.48);
-      tl.fromTo("#isl .kr", { scale: 1, opacity: 0.7 }, { scale: 1.9, opacity: 0, duration: 0.8, ease: "power2.out", repeat: 3, stagger: 0.4 }, 18.5);
-      tl.fromTo("#islw", { x: -4 }, { x: 4, duration: 0.05, ease: "sine.inOut", yoyo: true, repeat: 15 }, 18.5);
-      tl.fromTo("#islw", { x: -4 }, { x: 4, duration: 0.05, ease: "sine.inOut", yoyo: true, repeat: 15, immediateRender: false }, 19.95);
-      // "busiest part of the night" 19.20 → the gauge sweeps up to peak
-      tl.fromTo("#gauge", { opacity: 0, y: -30, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: spring }, 18.95);
-      tl.fromTo("#garc", { strokeDashoffset: 439.8 }, { strokeDashoffset: 26, duration: 0.9, ease: "power3.out" }, 19.2);
-      tl.fromTo("#gneedle", { rotation: -90, svgOrigin: "235 188" }, { rotation: 78, svgOrigin: "235 188", duration: 0.9, ease: "back.out(1.6)" }, 19.2);
-      tl.fromTo("#gneedle", { rotation: 78, svgOrigin: "235 188" }, { rotation: 72, svgOrigin: "235 188", duration: 0.12, ease: "sine.inOut", yoyo: true, repeat: 7, immediateRender: false }, 20.1);
-      // "Someone has to" 20.52 → a task card fills; "stop" 21.12 → it freezes on Paused
-      tl.fromTo("#task", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 20.4);
-      tl.set("#task .bar i", { scaleX: 0.2 }, 0);
-      tl.to("#task .bar i", { scaleX: 0.62, duration: 0.64, ease: "none" }, 20.48);
-      tl.to("#task .bar i", { background: "#8b88a0", duration: 0.15 }, 21.12);
-      tl.to("#tsa", { opacity: 0, duration: 0.1 }, 21.12);
-      tl.fromTo("#tsb", { opacity: 0 }, { opacity: 1, duration: 0.12 }, 21.14);
-      tl.fromTo("#tpause", { opacity: 0, scale: 1.8 }, { opacity: 1, scale: 1, duration: 0.2, ease: "expo.out" }, 21.12);
-      // hand-off: gauge and task leave, the call island becomes the split card
-      tl.to("#gauge", { x: 80, opacity: 0, duration: 0.3, ease: "power3.in" }, 21.36);
-      tl.to("#task, #tpause", { x: 80, opacity: 0, duration: 0.3, ease: "power3.in", stagger: 0.03 }, 21.4);
-      tl.set("#isl", { opacity: 0 }, 21.66);
-
       // --- 5 · back on the wall: "half the time" 22.44 → split; "missed" 23.88 → right half goes red and drops ---
-      tl.fromTo("#hl, #hr", { opacity: 0 }, { opacity: 1, duration: 0.06 }, 21.62);
+      tl.fromTo("#hl, #hr", { opacity: 0, x: -120 }, { opacity: 1, x: 0, duration: 0.42, ease: "power3.out" }, 21.62);
       tl.fromTo("#hl .c", { scale: 1 }, { scale: 1.12, duration: 0.25, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }, 21.9);
       tl.fromTo("#seam", { opacity: 0, scaleY: 0 }, { opacity: 1, scaleY: 1, duration: 0.22, ease: "power3.out" }, 22.44);
       tl.to("#hl", { x: -12, duration: 0.3, ease: "power3.out" }, 22.6);
