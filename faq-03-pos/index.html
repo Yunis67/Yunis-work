@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="./gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Archivo Black"; src: url("fonts/ArchivoBlack-400.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Instrument Serif"; src: url("fonts/InstrumentSerif-400-italic.woff2") format("woff2"); font-weight: 400; font-style: italic; }
+      @font-face { font-family: "Inter"; src: url("fonts/Inter-400.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Inter"; src: url("fonts/Inter-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-400.woff2") format("woff2"); font-weight: 400; }
+
+      :root {
+        --ink: #0b0a12; --cream: #f3efe6; --paper: #fbfaf6; --brand: #5b41da; --brand-deep: #3f2ba6; --peri: #8f7bff;
+        --green: #34c759; --muted: #8b88a0; --grey: #5d5a6b; --dk: #16141f; --dkb: #2a2738;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ink); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Inter", sans-serif; }
+      .clip { position: absolute; inset: 0; }
+      .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+      .serif { font-family: "Instrument Serif", serif; font-style: italic; }
+      .frost { background: rgba(250,248,243,0.76); backdrop-filter: blur(16px) saturate(1.15); -webkit-backdrop-filter: blur(16px) saturate(1.15);
+        border: 1.5px solid rgba(255,255,255,0.75); box-shadow: 0 24px 60px rgba(11,10,18,0.22); }
+      .dark { background: var(--dk); border: 1.5px solid var(--dkb); box-shadow: 0 26px 64px rgba(11,10,18,0.4); color: var(--cream); }
+
+      #vid-wrap { position: absolute; inset: 0; transform-origin: 1040px 470px; }
+      #src { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; }
+
+      /* series tab + hook chip */
+      #tab { position: absolute; left: 56px; top: 44px; height: 46px; display: flex; align-items: center; gap: 8px; z-index: 60; opacity: 0; }
+      #tabq { width: 66px; height: 46px; border-radius: 14px; background: var(--brand); color: var(--cream); font-size: 15px; display: flex; align-items: center; justify-content: center; letter-spacing: 0.1em; }
+      #tabt { height: 46px; padding: 0 20px; border-radius: 14px; display: flex; align-items: center; font-weight: 700; font-size: 20px; color: var(--ink); }
+      #chipwrap { position: absolute; left: 0; top: 150px; width: 1920px; display: flex; justify-content: center; }
+      #chip { position: relative; display: flex; align-items: center; gap: 13px; padding: 20px 34px; border-radius: 999px; font-weight: 700; font-size: 46px; color: var(--ink); opacity: 0; }
+      #chip .cw { display: inline-block; position: relative; }
+      #chip .cul { position: absolute; left: 0; right: 0; bottom: -4px; height: 6px; border-radius: 3px; background: var(--brand); transform-origin: 0 50%; }
+
+      /* wall cards (right wall, clear of Yousef) */
+      .wc { position: absolute; left: 1488px; width: 396px; border-radius: 26px; opacity: 0; }
+      .wl { font-size: 13px; color: var(--grey); }
+      .ib { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; flex: none; }
+      .ib svg { width: 28px; height: 28px; }
+      .ib.ink { background: var(--ink); } .ib.br { background: var(--brand); } .ib.cr { background: var(--cream); }
+
+      /* 1 · the old way */
+      #oc { top: 200px; height: 100px; padding: 0 22px; display: flex; align-items: center; gap: 16px; }
+      #oc .t1 { font-weight: 700; font-size: 24px; color: var(--ink); }
+      #oc .t2 { position: relative; height: 16px; margin-top: 5px; font-size: 13px; color: var(--grey); }
+      #oc .t2 span { position: absolute; left: 0; top: 0; white-space: nowrap; }
+      #oc2 { opacity: 0; }
+      #ocr { position: relative; }
+      #ocr .kr { position: absolute; inset: 0; border-radius: 16px; border: 2.5px solid var(--ink); opacity: 0; }
+      #pm { top: 322px; height: 290px; padding: 22px 24px; }
+      #pm .hd { display: flex; align-items: center; justify-content: space-between; }
+      #pm .hd b { font-weight: 700; font-size: 22px; color: var(--ink); white-space: nowrap; }
+      #pm .badge { display: flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 11px; color: var(--grey); background: rgba(11,10,18,0.07); padding: 7px 10px; border-radius: 9px; }
+      #pm .badge svg { width: 18px; height: 18px; }
+      #pm .fl { margin-top: 14px; height: 50px; border-radius: 12px; background: var(--paper); border: 1.5px solid #e2ddd0; display: flex; align-items: center; padding: 0 16px; font-size: 19px; color: var(--ink); white-space: nowrap; overflow: hidden; }
+      #pm .fl:first-of-type { margin-top: 18px; }
+      #pm .fl i { display: inline-block; width: 2.5px; height: 24px; margin-left: 2px; background: var(--brand); opacity: 0; }
+      #pm .ft { margin-top: 12px; font-size: 12px; color: var(--grey); }
+      #stamp { position: absolute; left: 1510px; top: 420px; width: 352px; height: 96px; border: 6px solid var(--ink); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-family: "Archivo Black", sans-serif; font-size: 38px; white-space: nowrap; color: var(--ink); background: rgba(243,239,230,0.88); opacity: 0; z-index: 3; letter-spacing: 0.01em; }
+
+      /* 2 · RezFlo takes the order: ticket */
+      #tk { top: 150px; height: 520px; padding: 24px 24px; background: var(--paper); border: 1.5px solid #e2ddd0; box-shadow: 0 28px 64px rgba(11,10,18,0.26); }
+      #tk .hd { display: flex; align-items: center; gap: 14px; }
+      #tk .hd .ib { width: 52px; height: 52px; border-radius: 14px; }
+      #tk .hd .ib .rm { width: 36px; height: 36px; }
+      #tk .t1 { font-weight: 700; font-size: 26px; color: var(--ink); }
+      #tk .t2 { font-size: 12px; color: var(--grey); margin-top: 4px; }
+      #tk .perf { margin: 18px -24px 6px; border-top: 2px dashed #d8d1c2; }
+      .tr { display: flex; align-items: center; gap: 14px; height: 62px; border-bottom: 1px solid rgba(11,10,18,0.07); opacity: 0; }
+      .tr .tg { width: 92px; flex: none; font-size: 12px; text-align: center; padding: 7px 0; border-radius: 9px; background: rgba(11,10,18,0.07); color: var(--grey); }
+      .tr .v { font-size: 20px; color: var(--ink); white-space: nowrap; }
+      #tk .tot { display: flex; justify-content: space-between; margin-top: 16px; font-size: 13px; color: var(--grey); opacity: 0; }
+
+      /* 3 · POS terminal → kitchen display */
+      #term { top: 230px; height: 360px; padding: 22px 22px; }
+      #term .hd, #kds .hd { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #b9b5cc; }
+      #term .hd b, #kds .hd b { font-family: "Inter", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: 0; text-transform: none; color: var(--cream); }
+      #rows { position: relative; margin-top: 18px; height: 260px; }
+      .or { position: absolute; left: 0; right: 0; height: 74px; border-radius: 14px; background: #1f1c2b; border: 1.5px solid var(--dkb); display: flex; align-items: center; padding: 0 16px; gap: 14px; }
+      .or .n { font-weight: 700; font-size: 20px; color: var(--cream); }
+      .or .s { font-size: 12px; color: #b9b5cc; margin-top: 4px; }
+      .or .new { margin-left: auto; font-size: 11px; padding: 6px 9px; border-radius: 8px; background: var(--brand); color: var(--cream); }
+      #or3 { top: 0; border-color: var(--peri); box-shadow: 0 0 0 1px var(--peri), 0 12px 30px rgba(91,65,218,0.45); opacity: 0; }
+      #or1 { top: 86px; } #or2 { top: 172px; }
+      #kds { top: 230px; height: 360px; padding: 22px 22px; }
+      #kcols { display: flex; gap: 10px; margin-top: 18px; }
+      .kt { width: 108px; height: 196px; border-radius: 12px; background: #f4f0e6; padding: 12px 10px; color: var(--ink); position: relative; }
+      .kt .n { font-family: "JetBrains Mono", monospace; font-size: 14px; letter-spacing: 0.06em; }
+      .kt .tm { font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--grey); margin-top: 3px; letter-spacing: 0.08em; }
+      .kt i { display: block; height: 7px; border-radius: 4px; background: #cfc8b8; margin-top: 12px; }
+      .kt.nw { box-shadow: 0 0 0 3px var(--peri), 0 12px 30px rgba(91,65,218,0.5); opacity: 0; }
+      .kt.nw .tag { position: absolute; left: 10px; bottom: 10px; font-size: 10px; padding: 4px 6px; border-radius: 6px; background: var(--brand); color: var(--cream); }
+      #kok { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 13px; color: var(--cream); opacity: 0; }
+      #kok svg { width: 22px; height: 22px; }
+
+      /* 4 · the order flow */
+      #flow { top: 140px; height: 640px; padding: 24px 24px; }
+      #flow .hd { font-weight: 700; font-size: 26px; color: var(--ink); margin-top: 4px; }
+      #fsteps { position: relative; margin-top: 18px; }
+      #fline { position: absolute; left: 27px; top: 28px; width: 3px; height: 448px; border-radius: 2px; background: rgba(11,10,18,0.1); }
+      #fline i { display: block; width: 100%; height: 100%; border-radius: 2px; background: var(--brand); transform-origin: 50% 0; }
+      #fdot { position: absolute; left: 20px; top: 21px; width: 17px; height: 17px; border-radius: 50%; background: var(--peri); box-shadow: 0 0 14px 4px rgba(143,123,255,0.7); opacity: 0; }
+      .fs { position: relative; display: flex; align-items: center; gap: 16px; height: 112px; opacity: 0; }
+      .fs .ib { position: relative; z-index: 1; border: 3px solid #fbfaf6; }
+      .fs .t1 { font-weight: 700; font-size: 23px; color: var(--ink); }
+      .fs .t2 { font-size: 12px; color: var(--grey); margin-top: 5px; display: flex; align-items: center; gap: 7px; }
+      .fs .t2 .gd { width: 9px; height: 9px; border-radius: 50%; background: var(--green); }
+      .fs .ib .rm { width: 36px; height: 36px; }
+
+      /* 5 · compatibility */
+      #cp { top: 250px; height: 290px; padding: 24px 24px; }
+      #cp .row { display: flex; align-items: center; gap: 18px; }
+      #cpi { position: relative; width: 96px; height: 96px; border-radius: 24px; background: var(--ink); display: flex; align-items: center; justify-content: center; flex: none; }
+      #cpi svg { width: 50px; height: 50px; }
+      #cpq { position: absolute; right: -10px; top: -10px; width: 38px; height: 38px; border-radius: 50%; background: var(--brand); color: var(--cream); font-weight: 700; font-size: 22px; display: flex; align-items: center; justify-content: center; border: 3px solid #fbfaf6; }
+      #cp .t1 { font-weight: 700; font-size: 28px; color: var(--ink); }
+      #cp .t2 { font-size: 13px; color: var(--grey); margin-top: 6px; opacity: 0; }
+      #cpc { margin-top: 26px; height: 74px; border-radius: 18px; background: var(--brand); color: var(--cream); display: flex; align-items: center; gap: 14px; padding: 0 18px; opacity: 0; }
+      #cpc .ib { width: 44px; height: 44px; border-radius: 12px; background: rgba(243,239,230,0.16); }
+      #cpc .ib svg { width: 24px; height: 24px; }
+      #cpc b { font-weight: 700; font-size: 21px; }
+
+      /* end card */
+      #flood { position: absolute; left: 56px; top: 44px; width: 66px; height: 46px; border-radius: 14px; background: var(--brand); z-index: 58; opacity: 0; }
+      #cut-end { background: radial-gradient(1000px 700px at 50% 45%, #6c53ee 0%, var(--brand) 62%); color: var(--cream); z-index: 59; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      #eR { width: 132px; height: 132px; border-radius: 34px; background: var(--cream); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 100px 24px rgba(243,239,230,0.2); }
+      #eR .rm { width: 94px; height: 94px; overflow: visible; }
+      #eq { margin-top: 34px; font-size: 20px; color: var(--cream); background: rgba(11,10,18,0.22); padding: 10px 18px; border-radius: 10px; }
+      #esee-m { margin-top: 18px; overflow: hidden; padding-bottom: 6px; }
+      #esee { display: block; font-size: 96px; line-height: 1.1; }
+      #eurl { font-size: 22px; margin-top: 6px; }
+      #ebelow { position: absolute; left: 0; top: 920px; width: 1920px; display: flex; justify-content: center; align-items: center; gap: 12px; font-weight: 700; font-size: 24px; }
+      #ebelow b { display: inline-block; font-size: 28px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="43.4" data-width="1920" data-height="1080">
+
+      <div id="vid-wrap">
+        <video id="src" class="clip" src="source.mp4" data-start="0" data-duration="40.55" data-fade-out="0.3" data-has-audio="true" playsinline></video>
+      </div>
+
+      <!-- 0 · hook chip (0 to 2.5s) -->
+      <div id="g0" class="clip" data-start="0" data-duration="2.6" style="z-index:20">
+        <div id="chipwrap"><div id="chip" class="frost"><span class="cw">Does</span><span class="cw">it</span><span class="cw">work</span><span class="cw">with</span><span class="cw">my</span><span class="cw">POS?<span class="cul"></span></span></div></div>
+      </div>
+
+      <!-- 1 · the old way: a call, then the order retyped into the POS (2.9 to 11.3s) -->
+      <div id="g1" class="clip" data-start="2.9" data-duration="8.4" style="z-index:20">
+        <div id="oc" class="wc frost"><div class="ib ink" id="ocr"><div class="kr"></div><div class="kr"></div><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#f3efe6"/></svg></div><div><div class="t1">Order call</div><div class="t2 mono"><span id="oc1">Incoming · 6:42 PM</span><span id="oc2">Staff on the phone</span></div></div></div>
+        <div id="pm" class="wc frost"><div class="hd"><b>POS · New order</b><span class="badge mono"><svg viewBox="0 0 24 24" fill="none" stroke="#5d5a6b" stroke-width="1.8"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h1M9.5 10h1M13 10h1M16.5 10h1M7 14h10" stroke-linecap="round"/></svg> Manual entry</span></div>
+          <div class="fl" id="fl1"><span class="tx"></span><i></i></div>
+          <div class="fl" id="fl2"><span class="tx"></span><i></i></div>
+          <div class="fl" id="fl3"><span class="tx"></span><i></i></div>
+          <div class="ft mono">Re-typed by staff, after the call</div>
+        </div>
+        <div id="stamp" data-layout-ignore>DOUBLE WORK</div>
+      </div>
+
+      <!-- 2 · RezFlo takes the order (11.4 to 19.2s) -->
+      <div id="g2" class="clip" data-start="11.4" data-duration="7.8" style="z-index:20">
+        <div id="tk" class="wc">
+          <div class="hd"><div class="ib ink"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#B9B7C6"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#B9B7C6"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#8F7BFF"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#8F7BFF"/></g></svg></div><div><div class="t1">Phone order</div><div class="t2 mono">via RezFlo · #1053</div></div></div>
+          <div class="perf"></div>
+          <div class="tr" id="r1"><span class="tg mono">Items</span><span class="v">Margherita · Caesar salad</span></div>
+          <div class="tr" id="r2"><span class="tg mono">Size</span><span class="v">Large pizza</span></div>
+          <div class="tr" id="r3"><span class="tg mono">Mods</span><span class="v">No onions · extra cheese</span></div>
+          <div class="tr" id="r4"><span class="tg mono">Qty</span><span class="v">2 × pizza · 1 × salad</span></div>
+          <div class="tr" id="r5"><span class="tg mono">Pickup</span><span class="v">6:45 PM · Sam</span></div>
+          <div class="tot mono"><span>Taken by RezFlo</span><span>Ready to send</span></div>
+        </div>
+      </div>
+
+      <!-- 3 · into the POS (18.6 to 21.9s), then the kitchen display (21.7 to 25.4s) -->
+      <div id="g3" class="clip" data-start="18.5" data-duration="7.0" style="z-index:20">
+        <div id="term" class="wc dark">
+          <div class="hd mono"><b>Your POS</b><span>Orders</span></div>
+          <div id="rows">
+            <div class="or" id="or3"><div class="ib br" style="width:44px;height:44px;border-radius:12px"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#f3efe6"/></svg></div><div><div class="n">#1053 · Phone</div><div class="s mono">via RezFlo · pickup 6:45</div></div><span class="new mono">New</span></div>
+            <div class="or" id="or1"><div><div class="n">#1052 · Takeout</div><div class="s mono">In progress</div></div></div>
+            <div class="or" id="or2"><div><div class="n">#1051 · Dine-in</div><div class="s mono">Table 6</div></div></div>
+          </div>
+        </div>
+        <div id="kds" class="wc dark">
+          <div class="hd mono"><b>Kitchen display</b><span>Live</span></div>
+          <div id="kcols">
+            <div class="kt"><div class="n">#1051</div><div class="tm">4:12</div><i style="width:70px"></i><i style="width:52px"></i><i style="width:80px"></i></div>
+            <div class="kt"><div class="n">#1052</div><div class="tm">2:30</div><i style="width:60px"></i><i style="width:84px"></i></div>
+            <div class="kt nw"><div class="n">#1053</div><div class="tm">0:01</div><i style="width:76px"></i><i style="width:58px"></i><i style="width:66px"></i><span class="tag mono">Phone</span></div>
+          </div>
+          <div id="kok" class="mono"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#34c759"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#0b0a12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Same system · nothing new to learn</div>
+        </div>
+      </div>
+
+      <!-- 4 · the order flow (25.4 to 35.7s) -->
+      <div id="g4" class="clip" data-start="25.4" data-duration="10.3" style="z-index:20">
+        <div id="flow" class="wc frost">
+          <div class="wl mono">With RezFlo</div>
+          <div class="hd">The order flow</div>
+          <div id="fsteps">
+            <div id="fline"><i></i></div>
+            <div id="fdot"></div>
+            <div class="fs" id="s1"><div class="ib ink"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#f3efe6"/></svg></div><div><div class="t1">Customer calls</div><div class="t2 mono">Your restaurant line</div></div></div>
+            <div class="fs" id="s2"><div class="ib cr"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div><div><div class="t1">RezFlo answers</div><div class="t2 mono"><span class="gd"></span>Answered</div></div></div>
+            <div class="fs" id="s3"><div class="ib ink"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z"/><path d="M9 8h6M9 11.5h6M9 15h4" stroke-linecap="round"/></svg></div><div><div class="t1">Takes the full order</div><div class="t2 mono">Items · sizes · pickup</div></div></div>
+            <div class="fs" id="s4"><div class="ib ink"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="1.8" stroke-linejoin="round"><rect x="4" y="3" width="16" height="11" rx="1.8"/><path d="M8 14l-2 6h12l-2-6"/><path d="M7 7h6M7 10h4" stroke-linecap="round"/></svg></div><div><div class="t1">Reaches your POS</div><div class="t2 mono">No manual entry</div></div></div>
+            <div class="fs" id="s5"><div class="ib br"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v7a2 2 0 0 0 2 2v9M11 3v7a2 2 0 0 1-2 2M9 3v6"/><path d="M17 21V3c-2 1.5-3 4-3 7 0 1.5 1 2 3 2"/></svg></div><div><div class="t1">Your team makes it</div><div class="t2 mono">Focus on the food</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 · compatibility (35.6 to 40.5s) -->
+      <div id="g5" class="clip" data-start="35.6" data-duration="4.9" style="z-index:20">
+        <div id="cp" class="wc frost">
+          <div class="row"><div id="cpi"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="1.6" stroke-linejoin="round"><rect x="4" y="3" width="16" height="11" rx="1.8"/><path d="M8 14l-2 6h12l-2-6"/><path d="M7 7h6M7 10h4" stroke-linecap="round"/></svg><div id="cpq">?</div></div><div><div class="t1">POS compatibility</div><div class="t2 mono" id="cpt">Depends on your system</div></div></div>
+          <div id="cpc"><div class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="#f3efe6" stroke-width="1.8" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke-linecap="round"/></svg></div><b>We'll check yours on our call</b></div>
+        </div>
+      </div>
+
+      <div id="tab"><div id="tabq" class="mono">Q03</div><div id="tabt" class="frost">Does it work with my POS?</div></div>
+      <div id="flood"></div>
+
+      <!-- end card (40.75 to 43.4s) -->
+      <div id="cut-end" class="clip" data-start="40.75" data-duration="2.65">
+        <div id="eR"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div>
+        <div id="eq" class="mono">Q 03 · Does it work with my POS?</div>
+        <div id="esee-m"><span id="esee" class="serif">See you on the call.</span></div>
+        <div id="eurl" class="mono">rezflo.ca</div>
+        <div id="ebelow"><span>More answers below</span><b>↓</b></div>
+      </div>
+
+      <audio id="sfx-1" src="sfx/tick.wav" data-start="0.25" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-2" src="sfx/tick.wav" data-start="0.75" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-3" src="sfx/tick.wav" data-start="1.05" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-4" src="sfx/switch.wav" data-start="1.86" data-duration="0.14" data-volume="0.35"></audio>
+      <audio id="sfx-5" src="sfx/pop.wav" data-start="2.95" data-duration="0.17" data-volume="0.3"></audio>
+      <audio id="sfx-6" src="sfx/ring.wav" data-start="3.1" data-duration="1.0" data-volume="0.08"></audio>
+      <audio id="sfx-7" src="sfx/tick.wav" data-start="5.3" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-8" src="sfx/pop.wav" data-start="6.4" data-duration="0.17" data-volume="0.3"></audio>
+      <audio id="sfx-9" src="sfx/tick.wav" data-start="6.76" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-10" src="sfx/tick.wav" data-start="6.88" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-11" src="sfx/tick.wav" data-start="7.0" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-12" src="sfx/tick.wav" data-start="7.12" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-13" src="sfx/tick.wav" data-start="7.24" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-14" src="sfx/tick.wav" data-start="7.36" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-15" src="sfx/tick.wav" data-start="7.48" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-16" src="sfx/tick.wav" data-start="7.6" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-17" src="sfx/tick.wav" data-start="7.72" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-18" src="sfx/tick.wav" data-start="7.84" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-19" src="sfx/tick.wav" data-start="7.96" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-20" src="sfx/tick.wav" data-start="8.08" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-21" src="sfx/tick.wav" data-start="8.2" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-22" src="sfx/tick.wav" data-start="8.32" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-23" src="sfx/tick.wav" data-start="8.44" data-duration="0.09" data-volume="0.15"></audio>
+      <audio id="sfx-24" src="sfx/snap.wav" data-start="10.0" data-duration="0.16" data-volume="0.55"></audio>
+      <audio id="sfx-25" src="sfx/fill.wav" data-start="10.75" data-duration="0.5" data-volume="0.15"></audio>
+      <audio id="sfx-26" src="sfx/pop.wav" data-start="11.5" data-duration="0.17" data-volume="0.3"></audio>
+      <audio id="sfx-27" src="sfx/tick.wav" data-start="14.12" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-28" src="sfx/tick.wav" data-start="14.82" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-29" src="sfx/tick.wav" data-start="15.54" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-30" src="sfx/tick.wav" data-start="16.6" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-31" src="sfx/tick.wav" data-start="17.82" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-32" src="sfx/switch.wav" data-start="18.66" data-duration="0.14" data-volume="0.4"></audio>
+      <audio id="sfx-33" src="sfx/pop.wav" data-start="18.85" data-duration="0.17" data-volume="0.3"></audio>
+      <audio id="sfx-34" src="sfx/snap.wav" data-start="19.44" data-duration="0.16" data-volume="0.4"></audio>
+      <audio id="sfx-35" src="sfx/star.wav" data-start="20.4" data-duration="0.07" data-volume="0.35"></audio>
+      <audio id="sfx-36" src="sfx/switch.wav" data-start="21.8" data-duration="0.14" data-volume="0.35"></audio>
+      <audio id="sfx-37" src="sfx/pop.wav" data-start="22.86" data-duration="0.17" data-volume="0.35"></audio>
+      <audio id="sfx-38" src="sfx/success.wav" data-start="24.74" data-duration="0.75" data-volume="0.28"></audio>
+      <audio id="sfx-39" src="sfx/pop.wav" data-start="26.7" data-duration="0.17" data-volume="0.3"></audio>
+      <audio id="sfx-40" src="sfx/tick.wav" data-start="28.36" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-41" src="sfx/success.wav" data-start="29.6" data-duration="0.75" data-volume="0.25"></audio>
+      <audio id="sfx-42" src="sfx/tick.wav" data-start="31.02" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-43" src="sfx/tick.wav" data-start="32.84" data-duration="0.09" data-volume="0.35"></audio>
+      <audio id="sfx-44" src="sfx/pop.wav" data-start="34.98" data-duration="0.17" data-volume="0.35"></audio>
+      <audio id="sfx-45" src="sfx/pop.wav" data-start="35.95" data-duration="0.17" data-volume="0.3"></audio>
+      <audio id="sfx-46" src="sfx/tick.wav" data-start="38.1" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-47" src="sfx/success.wav" data-start="39.6" data-duration="0.75" data-volume="0.28"></audio>
+      <audio id="sfx-48" src="sfx/fill.wav" data-start="40.33" data-duration="0.5" data-volume="0.2"></audio>
+      <audio id="sfx-49" src="sfx/chime.wav" data-start="40.82" data-duration="0.95" data-volume="0.3"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const spring = "back.out(1.3)";
+      const typeIn = (el, text, t, d) => { const o = { v: 0 }; tl.fromTo(o, { v: 0 }, { v: text.length, duration: d, ease: "none", onUpdate: () => { el.textContent = text.slice(0, Math.round(o.v)); } }, t); };
+      const cardIn = (sel, t) => tl.fromTo(sel, { opacity: 0, x: 70 }, { opacity: 1, x: 0, duration: 0.42, ease: spring }, t);
+      const cardOut = (sel, t) => tl.to(sel, { opacity: 0, x: 60, duration: 0.3, ease: "power3.in", stagger: 0.04 }, t);
+
+      // --- tab ---
+      tl.fromTo("#tab", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out" }, 2.25);
+      tl.to("#tab", { opacity: 0, duration: 0.2 }, 40.6);
+
+      // --- 0 · hook: chip types on, docks into the tab on "RezFlo" (1.84) ---
+      tl.fromTo("#chip", { opacity: 0, y: 18, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power3.out" }, 0.1);
+      tl.set("#chip .cw", { opacity: 0 }, 0);
+      [0.25, 0.4, 0.55, 0.75, 0.9, 1.05].forEach((t, k) => tl.fromTo("#chip .cw:nth-child(" + (k + 1) + ")", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.18, ease: "power3.out", immediateRender: false }, t));
+      tl.set("#chip .cul", { scaleX: 0 }, 0);
+      tl.to("#chip .cul", { scaleX: 1, duration: 0.35, ease: "expo.out" }, 1.25);
+      tl.to("#chip", { x: -740, y: -128, scale: 0.4, opacity: 0, duration: 0.42, ease: "power3.inOut" }, 1.86);
+
+      // --- 1 · the old way: "calls" 3.04, "answering the phone" 5.28, "manually enter" 6.76–8.64, "defeats" 10.00 ---
+      cardIn("#oc", 2.95);
+      tl.fromTo("#ocr .kr", { scale: 1, opacity: 0.6 }, { scale: 1.7, opacity: 0, duration: 0.7, ease: "power2.out", repeat: 2, stagger: 0.35 }, 3.1);
+      tl.to("#oc1", { opacity: 0, y: -8, duration: 0.18 }, 5.28);
+      tl.fromTo("#oc2", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.22 }, 5.32);
+      cardIn("#pm", 6.4);
+      [["#fl1", "2 × Margherita (L)", 6.76, 0.7], ["#fl2", "1 × Caesar · no onions", 7.5, 0.75], ["#fl3", "Pickup 6:45 PM", 8.3, 0.5]].forEach(([s, txt, t, d]) => {
+        typeIn(document.querySelector(s + " .tx"), txt, t, d);
+        tl.fromTo(s + " i", { opacity: 1 }, { opacity: 1, duration: d, immediateRender: false }, t);
+        tl.to(s + " i", { opacity: 0, duration: 0.05 }, t + d + 0.05);
+      });
+      tl.fromTo("#vid-wrap", { scale: 1 }, { scale: 1.06, duration: 1.6, ease: "sine.inOut" }, 9.4);
+      tl.to("#vid-wrap", { scale: 1, duration: 1.0, ease: "sine.inOut" }, 11.2);
+      tl.fromTo("#stamp", { opacity: 0, scale: 1.8, rotation: -14 }, { opacity: 1, scale: 1, rotation: -7, duration: 0.2, ease: "expo.out" }, 10.0);
+      tl.fromTo("#pm", { x: 0 }, { x: 6, duration: 0.04, yoyo: true, repeat: 5, immediateRender: false }, 10.18);
+      tl.to("#oc, #pm, #stamp", { y: 520, rotation: (i) => [-8, 10, 6][i], opacity: 0, duration: 0.55, ease: "power2.in", stagger: 0.05 }, 10.75);
+
+      // --- 2 · ticket: "RezFlo" 11.48, items 14.12, size 14.82, mods 15.54, qty 16.60, pickup 17.82 ---
+      tl.fromTo("#tk", { opacity: 0, y: -60, clipPath: "inset(0% 0% 100% 0%)" }, { opacity: 1, y: 0, clipPath: "inset(0% 0% 0% 0%)", duration: 0.7, ease: "power3.out" }, 11.5);
+      [["#r1", 14.12], ["#r2", 14.82], ["#r3", 15.54], ["#r4", 16.6], ["#r5", 17.82]].forEach(([s, t], k, arr) => {
+        tl.fromTo(s, { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, t - 0.08);
+        tl.fromTo(s + " .tg", { backgroundColor: "rgba(11,10,18,0.07)", color: "#5d5a6b" }, { backgroundColor: "#5b41da", color: "#f3efe6", duration: 0.15, immediateRender: false }, t);
+        tl.to(s + " .tg", { backgroundColor: "rgba(11,10,18,0.07)", color: "#5d5a6b", duration: 0.25 }, k < 4 ? arr[k + 1][1] - 0.05 : 18.5);
+      });
+      tl.fromTo("#tk .tot", { opacity: 0 }, { opacity: 1, duration: 0.25 }, 18.2);
+      // "send" 18.70 → the ticket folds up and flies into the POS
+      tl.to("#tk", { scale: 0.3, y: 160, opacity: 0, transformOrigin: "50% 100%", duration: 0.32, ease: "power3.in" }, 18.62);
+
+      // --- 3 · POS: "straight" 19.44 → #1053 slides in, "POS" 20.40 → flash; "kitchen" 22.10 → kitchen display, "order" 22.90 → ticket drops in ---
+      cardIn("#term", 19.0);
+      tl.fromTo("#or1, #or2", { y: -86 }, { y: 0, duration: 0.4, ease: "power3.out" }, 19.44);
+      tl.fromTo("#or3", { opacity: 0, y: -40, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: spring }, 19.44);
+      tl.fromTo("#or3", { backgroundColor: "#1f1c2b" }, { backgroundColor: "#3f2ba6", duration: 0.12, yoyo: true, repeat: 1, immediateRender: false }, 20.4);
+      tl.to("#term", { opacity: 0, rotationY: 90, transformPerspective: 900, duration: 0.3, ease: "power2.in" }, 21.8);
+      tl.fromTo("#kds", { opacity: 0, rotationY: -90, transformPerspective: 900 }, { opacity: 1, rotationY: 0, transformPerspective: 900, duration: 0.35, ease: "power2.out" }, 22.08);
+      tl.fromTo("#kds .kt.nw", { opacity: 0, y: -60 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.6)" }, 22.86);
+      tl.fromTo("#kok", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, 24.7);
+      tl.fromTo("#kok svg", { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2.4)" }, 24.74);
+      cardOut("#kds", 25.1);
+
+      // --- 4 · order flow: "becomes" 27.00, calls 28.36, answers 29.60, full order 31.02, POS system 32.84, making it 34.98 ---
+      tl.fromTo("#flow", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 26.7);
+      tl.set("#fline i", { scaleY: 0 }, 0);
+      const steps = [28.36, 29.6, 31.02, 32.84, 34.98];
+      steps.forEach((t, k) => {
+        tl.fromTo("#s" + (k + 1), { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.35, ease: spring }, t - 0.1);
+        tl.fromTo("#s" + (k + 1) + " .ib", { scale: 0.5 }, { scale: 1, duration: 0.35, ease: "back.out(2.2)" }, t - 0.1);
+        if (k > 0) {
+          tl.to("#fline i", { scaleY: k / 4, duration: 0.4, ease: "power2.inOut" }, t - 0.42);
+          tl.to("#fdot", { y: k * 112, duration: 0.4, ease: "power2.inOut" }, t - 0.42);
+        }
+      });
+      tl.fromTo("#fdot", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 28.4);
+      tl.fromTo("#fdot", { scale: 1 }, { scale: 1.4, duration: 0.3, yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, 35.0);
+      cardOut("#flow", 35.45);
+
+      // --- 5 · "POS compatibility" 36.26, "system you're using" 38.20, "our call" 39.82 ---
+      cardIn("#cp", 35.95);
+      tl.fromTo("#cpq", { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2.4)" }, 36.4);
+      tl.fromTo("#cpq", { rotation: -12 }, { rotation: 12, duration: 0.25, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 36.75);
+      tl.fromTo("#cpt", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.25 }, 38.1);
+      tl.fromTo("#cpc", { opacity: 0, y: 20, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: spring }, 39.6);
+
+      // --- end card ---
+      tl.set("#flood", { opacity: 1 }, 40.33);
+      tl.to("#flood", { scale: 90, duration: 0.42, ease: "power3.in" }, 40.33);
+      tl.fromTo("#eR", { scale: 0.6, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: spring }, 40.8);
+      tl.fromTo("#eR .lane-g", { x: 14, y: -14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, 40.86);
+      tl.fromTo("#eR .lane-p", { x: -14, y: 14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, 40.91);
+      tl.fromTo("#eR .slash-g, #eR .slash-p", { x: -22, opacity: 0 }, { x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }, 41.1);
+      tl.fromTo("#eq", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, 41.15);
+      tl.fromTo("#esee", { yPercent: 110 }, { yPercent: 0, duration: 0.45, ease: "power4.out" }, 41.35);
+      tl.fromTo("#eurl", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, 41.7);
+      tl.fromTo("#ebelow", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 41.95);
+      tl.fromTo("#ebelow b", { y: -4 }, { y: 6, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 42.25);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
