@@ -76,7 +76,7 @@
       /* wall cards (right wall, clear of Yousef) */
       .wc { position: absolute; left: 1488px; width: 396px; border-radius: 26px; opacity: 0; }
       .wl { font-size: 13px; color: var(--grey); }
-      /* 437 calls answered */
+      /* calls answered card */
       #ans { top: 230px; height: 300px; padding: 26px 30px; }
       #ansn { font-family: "Archivo Black", sans-serif; font-size: 150px; line-height: 1; color: var(--ink); margin-top: 14px; letter-spacing: -0.02em; }
       #anst { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 30px; color: var(--ink); margin-top: 10px; }
@@ -110,10 +110,10 @@
       .cc .t1 { font-weight: 700; font-size: 23px; color: var(--ink); }
       .cc .t2 { font-size: 13px; color: var(--grey); margin-top: 5px; }
       #hold i { width: 6px; height: 26px; border-radius: 3px; background: var(--cream); transform-origin: 50% 50%; }
-      /* every single one: 437 dots */
+      /* every single one: 470 dots */
       #grid { top: 190px; height: 520px; padding: 24px 22px; }
       #gdots { position: relative; width: 352px; height: 334px; margin-top: 16px; }
-      #gdots i { position: absolute; width: 11px; height: 11px; border-radius: 50%; background: rgba(11,10,18,0.14); }
+      #gdots i { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: rgba(11,10,18,0.14); }
       #gfoot { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-weight: 700; font-size: 22px; color: var(--ink); opacity: 0; }
       #gfoot svg { width: 26px; height: 26px; }
       #ghd { font-weight: 700; font-size: 26px; color: var(--ink); margin-top: 6px; }
@@ -212,7 +212,7 @@
 
       <!-- 8 · every single one answered (38.3 to 42.9s), then back to the job (42.5 to 45.9s) -->
       <div id="g8" class="clip" data-start="38.3" data-duration="7.6" style="z-index:20">
-        <div id="grid" class="wc frost"><div class="wl mono">Location 1 · April 2026</div><div id="ghd">437 calls</div><div id="gdots"></div><div id="gfoot">Every one answered <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#34c759"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#0b0a12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div id="grid" class="wc frost"><div class="wl mono">Location 1 · April 2026</div><div id="ghd">470 calls</div><div id="gdots"></div><div id="gfoot">Every one answered <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#34c759"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#0b0a12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
         <div id="gdl" class="mono">Staff, back to</div>
         <div id="gd1" class="wc frost gd"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#34c759"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#0b0a12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div class="t1">Making orders</div><div class="t2 mono">Orders out on time</div></div></div>
         <div id="gd2" class="wc frost gd"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#34c759"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#0b0a12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div class="t1">Serving customers</div><div class="t2 mono">Eyes on the counter</div></div></div>
@@ -220,7 +220,7 @@
 
       <!-- 9 · two locations, two months (46.0 to 48.9s) -->
       <div id="g9" class="clip" data-start="46.0" data-duration="2.9" style="z-index:20">
-        <div id="rc1" class="wc frost rc"><div class="t1 mono">Location 1 · April 2026</div><div class="nums"><div>437<small>calls</small></div><div>4h 30m<small>time saved</small></div></div></div>
+        <div id="rc1" class="wc frost rc"><div class="t1 mono">Location 1 · April 2026</div><div class="nums"><div>470<small>calls</small></div><div>4h 05m<small>time saved</small></div></div></div>
         <div id="rc2" class="wc frost rc"><div class="t1 mono">Location 2 · January 2026</div><div class="nums"><div>347<small>calls</small></div><div>3h 07m<small>time saved</small></div></div></div>
       </div>
 
@@ -359,9 +359,9 @@
 
       // --- builders for the wall beats ---
       const gd = document.getElementById("gdots");
-      for (let r = 0; r < 19; r++) for (let c = 0; c < 23; c++) {
-        const d = document.createElement("i");
-        d.style.left = (c * 15.5) + "px"; d.style.top = (r * 17.4) + "px";
+      for (let k = 0; k < 470; k++) {
+        const r = Math.floor(k / 25), c = k % 25, d = document.createElement("i");
+        d.style.left = (c * 14.3) + "px"; d.style.top = (r * 17.4) + "px";
         gd.appendChild(d);
       }
       const reel = (host, n) => {
@@ -395,7 +395,7 @@
       tl.fromTo("#nx", { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.4, ease: spring }, 7.2);
       tl.to("#nx", { opacity: 0, y: -20, duration: 0.25, ease: "power2.in" }, 9.2);
 
-      // --- 4 · "470/calls answered" 13.80–15.36: dashboard figure 437 ---
+      // --- 4 · "470 calls answered" 13.80–15.36 ---
       tl.fromTo("#ans", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 13.3);
       count(document.getElementById("ansn"), 0, 470, 13.75, 1.1, (v) => Math.round(v));
       tl.fromTo("#anst svg", { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.35, ease: "back.out(2.4)" }, 15.36);
@@ -432,10 +432,10 @@
       // "Instead" 38.16: the cost cards flip away
       tl.to("#cc1, #cc2, #cc3", { rotationX: -90, opacity: 0, transformOrigin: "50% 0%", duration: 0.32, ease: "power2.in", stagger: 0.05 }, 38.1);
 
-      // --- 8 · "answered" 39.12, "every single one" 39.44–40.14: 437 dots tick green ---
+      // --- 8 · "answered" 39.12, "every single one" 39.44–40.14: 470 dots tick green ---
       tl.fromTo("#grid", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 38.45);
-      tl.fromTo("#gdots i", { scale: 0 }, { scale: 1, duration: 0.25, ease: "back.out(2)", stagger: { grid: [19, 23], from: "start", amount: 0.4 } }, 38.6);
-      tl.to("#gdots i", { backgroundColor: "#34c759", duration: 0.12, stagger: { grid: [19, 23], from: "start", amount: 0.75 } }, 39.42);
+      tl.fromTo("#gdots i", { scale: 0 }, { scale: 1, duration: 0.25, ease: "back.out(2)", stagger: { grid: "auto", from: "start", amount: 0.4 } }, 38.6);
+      tl.to("#gdots i", { backgroundColor: "#34c759", duration: 0.12, stagger: { grid: "auto", from: "start", amount: 0.75 } }, 39.42);
       tl.fromTo("#gfoot", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, 40.14);
       tl.fromTo("#gfoot svg", { scale: 0 }, { scale: 1, duration: 0.35, ease: "back.out(2.4)" }, 40.2);
       tl.to("#grid", { opacity: 0, x: 60, duration: 0.3, ease: "power3.in" }, 42.2);
