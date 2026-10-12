@@ -28,6 +28,8 @@ Use the PROMPT 15 style block in `prompts.md` for every video. Short version:
 - `prompts.md`: every prompt. 01–14 are from Damiano's motion graphics kit; 15–19 are the RezFlo additions. Read the "RezFlo additions" note at the top for run order.
 - `opener/`: finished 15-second RezFlo cold open (HyperFrames project). `index.html` holds the whole timeline; scenes are commented with their time ranges.
 - `renders/rezflo-opener.mp4`: the current render of the opener.
+- `precall-v3/`, `faq-01-who-is-rezflo/`, `faq-02-proof/`, `faq-03-pos/`: the pre-call video and the three FAQ videos (HyperFrames projects). Plans in `research/`, renders in `renders/`.
+- `precall-page/`: the pre-call web page (video, confirm button, FAQ videos). Static files, host anywhere. GHL setup in `precall-page/SETUP.md`.
 - `kit/`: fonts, sfx (9 code-made sounds, free to use in ads), practice clip and practice screenshots.
 - `brand/`: the RezFlo logo (vector remake, light and dark versions).
 - `raw/`: Yunis drops raw phone recordings here. Git ignores its contents, so recordings stay local.
