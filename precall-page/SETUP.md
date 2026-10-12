@@ -16,10 +16,10 @@ On the call, the rep can say: *"I'm texting you a short video from Yousef. Watch
 ## 1 · The link to text out
 
 ```
-https://rezflo-call.netlify.app/?name={{contact.first_name}}&email={{contact.email}}&cid={{contact.id}}
+https://rezflo-call.netlify.app/?cid={{contact.id}}
 ```
 
-- **What it does:** GHL fills in the `{{…}}` parts for each person. The page doesn't show them; it sends them back to GHL when the person taps confirm, so GHL knows who confirmed.
+- **What it does:** GHL fills in `{{contact.id}}` for each person. The page sends it back to GHL when they tap confirm, so GHL knows who confirmed. Keep the link this short: names with spaces or symbols can break a texted link.
 
 ## 2 · Workflow A: "Send pre-call page"
 
