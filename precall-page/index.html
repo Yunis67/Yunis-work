@@ -197,7 +197,7 @@
     // ---- Settings (see SETUP.md) ----
     // Paste the GoHighLevel "Inbound Webhook" URL here. Leave it empty and the
     // button still works for the visitor, it just doesn't tell GHL.
-    var CONFIG = { webhookUrl: "" };
+    var CONFIG = { webhookUrl: "https://services.leadconnectorhq.com/hooks/eL7Mgo6BpeKLcmSe9mTo/webhook-trigger/8cc9906a-a3f7-466e-86c0-f8a8bca4c666" };
 
     // The link GHL texts out carries the contact, e.g.
     // ?name={{contact.first_name}}&email={{contact.email}}&cid={{contact.id}} (sent back to GHL on confirm)
@@ -224,8 +224,8 @@
     btn.addEventListener("click", function () {
       btn.disabled = true;
       if (CONFIG.webhookUrl) {
-        var body = new URLSearchParams({ event: "call_confirmed", contact_id: who.cid, email: who.email, first_name: who.name, page: location.href.split("?")[0] });
-        fetch(CONFIG.webhookUrl, { method: "POST", mode: "no-cors", body: body }).catch(function () {});
+        var payload = { event: "call_confirmed", contact_id: who.cid, email: who.email, first_name: who.name, page: location.href.split("?")[0], confirmed_at: new Date().toISOString() };
+        fetch(CONFIG.webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), keepalive: true }).catch(function () {});
       }
       try { localStorage.setItem(key, "1"); } catch (e) {}
       showDone();

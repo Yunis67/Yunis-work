@@ -30,13 +30,13 @@ https://rezflo-call.netlify.app/?cid={{contact.id}}
 ## 3 · Workflow B: "Call confirmed"
 
 1. Create a workflow with the trigger **Inbound Webhook**. GHL shows a webhook URL; copy it.
-2. Open `index.html`, find `var CONFIG = { webhookUrl: "" };` near the bottom, and paste the URL between the quotes.
+2. Already done: the page's `CONFIG.webhookUrl` holds this account's webhook URL. If you ever make a new webhook, paste its URL there.
 3. Open the page using a test link (your own contact) and tap the button once, so GHL receives a sample. Map the contact using `contact_id` (or `email` as a fallback).
 4. Add actions:
    - **Add tag:** `call confirmed`
    - **Internal notification** (SMS or email to you): `{{contact.first_name}} confirmed their call with Yousef`
 
-What the page sends on tap: `event=call_confirmed`, `contact_id`, `email`, `first_name`, `page`.
+What the page sends on tap (JSON): `event` = `call_confirmed`, `contact_id`, `email`, `first_name`, `page`, `confirmed_at`. With the short texted link only `contact_id` is filled.
 
 > **Plan note:** on some GHL plans, Inbound Webhook is a premium trigger with a small per-run charge. If you'd rather not use it, the fallback is a one-button GHL form embedded in place of the button. It works the same way but is harder to style to match the page.
 
