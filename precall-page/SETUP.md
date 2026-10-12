@@ -59,60 +59,46 @@ From this folder run `python3 -m http.server 8000`, then open http://localhost:8
 - [ ] You get the "confirmed" notification.
 - [ ] Reopening the link on the same phone still shows "You're confirmed". This is stored on the device; the GHL tag is the real record.
 
-## 6 · Meeting reminders (Cal.com → GHL webhook)
+## 6 · Meeting reminders (Cal.com → GHL, as built)
 
-Cal.com sends each booking straight to GHL, and GHL texts the reminders. This is free on Cal.com: no paid plan needed.
+Free on Cal.com. GHL sends the texts. The team books the **"Schedule a Meeting" 30min** event (Cal.com event type ID **5598938**).
 
-### Step 1 · Make two custom fields in GHL
-Go to Settings → Custom Fields → Contact, and add:
-- **Demo call time** (type: Date/Time)
-- **Reschedule link** (type: Text)
+### Custom contact fields
+- **Demo call time** (Date picker)
+- **Reschedule link** (Single line)
 
-### Step 2 · Make the workflow and get its URL
-1. Create a new workflow, "Demo reminders", with the trigger **Inbound Webhook**. Copy its URL.
-2. In Cal.com, go to **Settings → Developer → Webhooks → New**.
-   - Paste the GHL URL.
-   - Tick **Booking Created**, **Booking Rescheduled** and **Booking Cancelled**.
-   - Leave the payload template empty (default) and save.
-3. Book one test call on yourself in Cal.com. Then go back to the GHL trigger and click **Fetch sample**, so GHL can see the fields.
+### Workflow "Cal.com Lead Booking System" (old Cal.com webhook, new bookings)
+- **Branch:** `payload.eventTypeId` is `5598938`. This must match the event the team books, or nothing below runs.
+- **Create Contact** step also sets:
+  - Demo call time = Inbound Webhook Trigger › Payload › Start Time
+  - Reschedule link = `https://cal.com/reschedule/` + Inbound Webhook Trigger › Payload › Uid (insert with the tag picker, don't type it)
+- **Last step:** Add to Workflow → **Meeting SMS Reminders**.
 
-### Step 3 · What Cal.com sends (the fields you'll map)
+### Workflow "Meeting SMS Reminders" (no trigger; people are added to it)
+```
+Wait  → Until a specific date/time → Contact › Demo call time → Before 24 hours
+SMS   → "Hey {{contact.first_name}}, it's RezFlo. Reminder: your call with Yousef
+         is tomorrow. Need a new time? {{contact.reschedule_link}}"
+Wait  → same, Before 1 hour
+If/Else → tag "call confirmed"
+   Yes → "Your call with Yousef starts in an hour. Talk soon!"
+   No  → "Your call with Yousef starts in an hour. Quick 2-min video + confirm
+          here: https://rezflo-call.netlify.app/?cid={{contact.id}}"
+```
+"If this date has already passed" = Skip outbound communication (so same-day bookings skip the 24h text).
 
-| What | Cal.com field |
-|---|---|
-| Event type | `triggerEvent` (`BOOKING_CREATED`, `BOOKING_RESCHEDULED`, `BOOKING_CANCELLED`) |
-| Start time | `payload.startTime` |
-| Email | `payload.attendees[0].email` |
-| Name | `payload.attendees[0].name` |
-| Phone (if the booking form asks for it) | `payload.responses.attendeePhoneNumber.value` |
-| Booking ID | `payload.uid` |
+### Reschedules and cancels (new Cal.com webhook)
+Cal.com webhook with only **Booking rescheduled** and **Booking canceled** ticked (not "created", or it races the booking workflow and can make duplicate contacts). Its GHL workflow:
+```
+Inbound Webhook → Create/update contact (email, Demo call time, Reschedule link)
+→ Remove from Workflow: Meeting SMS Reminders
+→ If/Else triggerEvent
+   BOOKING_CANCELLED → Add tag "call cancelled"
+   None (rescheduled) → Add to Workflow: Meeting SMS Reminders
+```
 
-**Reschedule link for this booking:** `https://cal.com/reschedule/` + `payload.uid`. This moves the existing booking, so you don't end up with a second one like the general link creates.
-
-### Step 4 · Workflow actions
-1. **Find contact** by email (`payload.attendees[0].email`). If no contact is found, create one with the name, email and phone.
-2. **If/Else** on `triggerEvent`:
-   - **BOOKING_CANCELLED:** remove the contact from this workflow's earlier runs (action "Remove from workflow", pick "Demo reminders"), add the tag `call cancelled`, and stop.
-   - **Anything else** (created or rescheduled): continue.
-3. **Remove from workflow "Demo reminders"** (only the *other* runs). This clears old reminders when someone reschedules. If GHL won't let a workflow remove itself, use a second tiny workflow that only does this step and runs first.
-4. **Update contact fields:**
-   - Demo call time = `payload.startTime`
-   - Reschedule link = `https://cal.com/reschedule/{{inboundWebhookRequest.payload.uid}}`
-5. **Wait** until 24 hours before **Demo call time**, then send this SMS:
-   > Hey {{contact.first_name}}, reminder: your call with Yousef is tomorrow at {{contact.demo_call_time}}. Need a new time? {{contact.reschedule_link}}
-6. **Wait** until 1 hour before **Demo call time**.
-7. **If/Else:** does the contact have the tag `call confirmed`?
-   - **Yes:** send "Starting in an hour. Talk soon!"
-   - **No:** send "Your call with Yousef starts in an hour. Quick 2-min video + confirm here: https://rezflo-call.netlify.app/?cid={{contact.id}}"
-
-> **Waits on bookings made the same day:** if the call is less than 24 hours away, GHL skips the 24h wait and sends that reminder right away. Add an If/Else before step 5 if you'd rather skip it.
-
-> **Time zone:** Cal.com sends the start time in UTC. Make sure the GHL location time zone is set to Toronto, so the time shows correctly in the texts.
-
-### Step 5 · Test
-- [ ] Book a test call → the contact gets the two fields filled in.
-- [ ] Reschedule it → the fields update, and the old reminders don't send.
-- [ ] Cancel it → no reminders send, and the contact gets the `call cancelled` tag.
+### Debugging
+Execution logs → open the run → click a step. If a run went down "None" at the Branch, the event type ID doesn't match.
 
 ## Swapping videos
 
