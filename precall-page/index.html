@@ -39,7 +39,6 @@
       border-bottom: 1px solid var(--line); font-size: 14px; text-align: center; }
     .bar .tick { width: 20px; height: 20px; flex: none; }
     .bar b { font-weight: 700; }
-    .bar .when { color: var(--soft); }
 
     .wrap { width: 100%; max-width: 780px; margin: 0 auto; padding: 0 16px; }
     .wide { max-width: 1060px; }
@@ -51,7 +50,6 @@
     h1 { font-family: "Archivo Black", "Inter", sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: -0.01em;
       font-size: clamp(34px, 8vw, 60px); line-height: 1.02; }
     h1 .serif { text-transform: none; color: var(--peri); font-size: 1.12em; letter-spacing: 0; }
-    .sub { max-width: 560px; margin: 16px auto 0; color: var(--soft); font-size: 17px; }
 
     /* steps */
     .step { margin-top: 26px; }
@@ -115,7 +113,7 @@
 
   <div class="bar" role="status">
     <svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#34c759"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#0b0a12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span><b id="bar-text">Your call with Yousef is booked</b><span class="when" id="bar-when"></span></span>
+    <b>Your call is booked</b>
   </div>
 
   <main>
@@ -124,7 +122,6 @@
         <img class="logo" src="img/rezflo-logo-horizontal-on-dark.svg" alt="RezFlo">
         <div class="kicker mono">Before our call</div>
         <h1>Watch this <span class="serif">before</span> we talk.</h1>
-        <p class="sub">A short video from Yousef on what we'll cover, so our time on the call goes to your restaurant.</p>
       </header>
 
       <div class="step">
@@ -197,13 +194,9 @@
     var CONFIG = { webhookUrl: "" };
 
     // The link GHL texts out carries the contact, e.g.
-    // ?name={{contact.first_name}}&email={{contact.email}}&cid={{contact.id}}&when=Thu Oct 16 · 2:00 PM
+    // ?name={{contact.first_name}}&email={{contact.email}}&cid={{contact.id}} (sent back to GHL on confirm)
     var params = new URLSearchParams(location.search);
     var who = { name: (params.get("name") || "").trim(), email: (params.get("email") || "").trim(), cid: (params.get("cid") || "").trim() };
-    var when = (params.get("when") || "").trim();
-
-    if (who.name) document.getElementById("bar-text").textContent = who.name + ", your call with Yousef is booked";
-    if (when) document.getElementById("bar-when").textContent = " · " + when;
 
     // Players: tap to play, only one plays at a time.
     var players = Array.prototype.slice.call(document.querySelectorAll("[data-player]"));

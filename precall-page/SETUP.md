@@ -17,8 +17,7 @@ On the call, the rep can say: *"I'm texting you a short video from Yousef. Watch
 https://YOUR-DOMAIN/precall/?name={{contact.first_name}}&email={{contact.email}}&cid={{contact.id}}
 ```
 
-- **What it does:** GHL fills in the `{{…}}` parts for each person. The page uses `name` in the top bar ("Marco, your call with Yousef is booked") and sends `cid` and `email` back when they confirm.
-- **Optional call time:** if the call time is saved on the contact (for example a custom field), add `&when={{contact.your_field}}` and it shows in the top bar. Leave it off if not.
+- **What it does:** GHL fills in the `{{…}}` parts for each person. The page doesn't show them; it sends them back to GHL when the person taps confirm, so GHL knows who confirmed.
 
 ## 2 · Workflow A: "Send pre-call page"
 
@@ -47,8 +46,12 @@ In Workflow A, after the SMS:
   - **No:** send one short reminder: "Quick reminder about your call with Yousef today. Tap here to confirm: LINK"
   - **Yes:** do nothing.
 
+## Preview on your computer
+
+From this folder run `python3 -m http.server 8000`, then open http://localhost:8000 in your browser.
+
 ## 5 · Test before going live
-- [ ] The texted link opens the page and shows the right first name.
+- [ ] The texted link opens the page.
 - [ ] Both the main video and the FAQ videos play on an iPhone and an Android phone, with sound.
 - [ ] Tapping the button shows "You're confirmed", and GHL tags the contact within a minute.
 - [ ] You get the "confirmed" notification.
