@@ -1,5 +1,7 @@
 # Pre-call page · setup
 
+Live at **https://rezflo-call.netlify.app** (Netlify Drop). To update it, drag the new `precall-page` folder onto the site's Deploys page in Netlify.
+
 A single page that leads take one step at a time: watch Yousef's video, tap **Yes, I'll be there**, then the three FAQ videos. Everything it needs is in this folder (`index.html`, `media/`, `fonts/`, `img/`), so it can be hosted anywhere that serves static files (GHL custom code or file hosting, Netlify, Vercel, Cloudflare Pages, your own domain).
 
 ## How it fits your flow
@@ -14,7 +16,7 @@ On the call, the rep can say: *"I'm texting you a short video from Yousef. Watch
 ## 1 · The link to text out
 
 ```
-https://YOUR-DOMAIN/precall/?name={{contact.first_name}}&email={{contact.email}}&cid={{contact.id}}
+https://rezflo-call.netlify.app/?name={{contact.first_name}}&email={{contact.email}}&cid={{contact.id}}
 ```
 
 - **What it does:** GHL fills in the `{{…}}` parts for each person. The page doesn't show them; it sends them back to GHL when the person taps confirm, so GHL knows who confirmed.
