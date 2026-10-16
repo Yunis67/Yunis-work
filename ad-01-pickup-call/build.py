@@ -4,7 +4,8 @@ import json, html
 
 SEGS = json.load(open("clip.segs.json"))
 CLIP = SEGS[-1]["out"][1]                 # clip.mp4 length
-END = 3.6                                 # end banner length
+END = 3.6                                 # end banner length (fully on screen)
+XF = 0.7                                  # dissolve from the call into the banner
 TOTAL = round(CLIP + END, 2)
 CUTS = [s["out"][0] for s in SEGS[1:]]    # jump cuts in clip.mp4
 
@@ -14,7 +15,7 @@ words = [{"w": FIX.get(w["w"].strip(), w["w"].strip()), "s": round(w["s"], 2), "
 T = lambda i: words[i]["s"]               # start time of word i (indices from transcript.json)
 
 # the caller (Sarah) says these word ranges; everything else is the AI
-CALLER = [(10, 16), (26, 26), (37, 46), (68, 72), (84, 86), (104, 107), (137, 143)]
+CALLER = [(10, 16), (36, 36), (47, 56), (78, 82), (94, 96), (114, 117), (178, 184)]
 for i, w in enumerate(words):
     w["ai"] = not any(a <= i <= b for a, b in CALLER)
 
@@ -48,12 +49,12 @@ for k, c in enumerate(chunks):
 
 # key moments, synced to the spoken word
 K = dict(
-    name=T(19), sarah=T(26), doner=T(41), fries=T(45), itemsOut=T(47) + 0.2,
-    soda=T(64), tea=T(66), sodaPick=T(72), drinkOut=T(73) - 0.1,
-    onions=T(79), sauce=T(82), nope=T(84), modsOut=T(87) - 0.2,
-    asap=T(95), specific=T(102), asapPick=T(104), pickOut=T(108) - 0.1,
-    readback=T(119), rb1=T(125), rb2=T(128), rb3=T(131), correct=T(136), yeah=T(137),
-    rbPunch=T(122), cool=T(140),
+    name=T(29), sarah=T(36), doner=T(51), fries=T(55), itemsOut=T(57) + 0.2,
+    soda=T(74), tea=T(76), sodaPick=T(82), drinkOut=T(84) - 0.2,
+    onions=T(89), sauce=T(92), nope=T(94), modsOut=T(97) - 0.2,
+    asap=T(105), specific=T(112), asapPick=T(114), pickOut=T(118) - 0.1,
+    readback=T(127), rPick=T(135), rName=T(147), r1=T(159), r2=T(162), r3=T(166), rNotes=T(167),
+    correct=T(177), yeah=T(178), push2=T(156), cool=T(181),
 )
 K = {k: round(v, 2) for k, v in K.items()}
 
@@ -111,7 +112,7 @@ page = f"""<!doctype html>
       #anote {{ font-weight: 700; font-size: 36px; line-height: 1.22; text-align: center; color: #fff; text-shadow: 0 0 14px rgba(255,255,255,0.35), 0 3px 16px rgba(11,10,18,0.95); opacity: 0; }}
 
       /* order review ticket (top, only during the read-back) */
-      #tk {{ position: absolute; left: 230px; top: 140px; width: 620px; padding: 22px 30px 16px; border-radius: 30px; background: rgba(11,10,18,0.86);
+      #tk {{ position: absolute; left: 230px; top: 110px; width: 620px; padding: 22px 30px 16px; border-radius: 30px; background: rgba(11,10,18,0.86);
         border: 2.5px solid var(--peri); box-shadow: 0 0 26px rgba(143,123,255,0.5), 0 24px 60px rgba(11,10,18,0.5); opacity: 0; }}
       #tk .hd {{ display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 2px solid rgba(143,123,255,0.3); }}
       #tk .t1 {{ font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 38px; color: #fff; letter-spacing: -0.01em; }}
@@ -122,7 +123,7 @@ page = f"""<!doctype html>
       #st .live i {{ width: 11px; height: 11px; border-radius: 50%; background: var(--peri); }}
       #st .done {{ color: #fff; background: var(--green); opacity: 0; }}
       #st .done svg {{ width: 22px; height: 22px; }}
-      .tr {{ display: flex; align-items: center; gap: 18px; height: 56px; font-size: 32px; color: #fff; opacity: 0; }}
+      .tr {{ display: flex; align-items: center; gap: 18px; height: 50px; font-size: 30px; color: #fff; opacity: 0; }}
       .tr:first-of-type {{ margin-top: 8px; }}
       .tr .q {{ width: 64px; font-size: 22px; color: var(--peri); }}
       .tr .v {{ font-weight: 700; white-space: nowrap; }}
@@ -179,13 +180,15 @@ page = f"""<!doctype html>
 
         <div id="tk">
           <div class="hd">
-            <div><div class="t1">Order review</div><div class="t2 mono">Pickup · Name: Sarah</div></div>
+            <div><div class="t1">Order review</div><div class="t2 mono">Read back to the caller</div></div>
             <div id="st"><div class="s live mono"><i></i>Live</div><div class="s done mono"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Placed</div></div>
           </div>
+          <div id="rp" class="tr pk"><span class="q mono">◷</span><span class="v">Pickup · as soon as possible</span></div>
+          <div id="rn" class="tr pk"><span class="q mono">◉</span><span class="v">Name · Sarah</span></div>
           <div id="r1" class="tr"><span class="q mono">1 ×</span><span class="v">Chicken doner</span></div>
           <div id="r2" class="tr"><span class="q mono">1 ×</span><span class="v">Regular fries</span></div>
           <div id="r3" class="tr"><span class="q mono">1 ×</span><span class="v">Soda</span></div>
-          <div id="r4" class="tr pk"><span class="q mono">◷</span><span class="v">Pickup · as soon as possible</span></div>
+          <div id="rx" class="tr pk"><span class="q mono">✎</span><span class="v">No notes or allergies</span></div>
         </div>
 
         <div class="chips" id="cn"><div id="nm" class="chip">{ic("user")}<span><b class="lab">Name</b><b id="nmv">{"".join(f"<i>{c}</i>" for c in "Sarah")}</b><i class="cur"></i></span></div></div>
@@ -197,8 +200,8 @@ page = f"""<!doctype html>
         {(chr(10) + "        ").join(cap_html)}
       </div>
 
-      <!-- end banner ({CLIP} to {TOTAL}s) -->
-      <div id="endc" class="clip" data-start="{CLIP}" data-duration="{END}" style="z-index:30">
+      <!-- end banner (dissolves in from {round(CLIP - XF, 2)}s, full at {CLIP}s, ends {TOTAL}s) -->
+      <div id="endc" class="clip" data-start="{round(CLIP - XF, 2)}" data-duration="{round(END + XF, 2)}" style="z-index:30">
         <div id="eR">{RTILE}</div>
         <div id="eq" class="mono">AI receptionist for restaurants</div>
         <div id="esee-m"><span id="esee">Never miss<br />a call again.</span></div>
@@ -221,13 +224,16 @@ page = f"""<!doctype html>
       <audio id="sfx-p1" src="sfx/pop.wav" data-start="{K['asap']}" data-duration="0.17" data-volume="0.18"></audio>
       <audio id="sfx-p2" src="sfx/pop.wav" data-start="{K['specific']}" data-duration="0.17" data-volume="0.18"></audio>
       <audio id="sfx-pp" src="sfx/tick.wav" data-start="{K['asapPick']}" data-duration="0.09" data-volume="0.3"></audio>
-      <audio id="sfx-tk" src="sfx/fill.wav" data-start="{K['readback']}" data-duration="0.5" data-volume="0.16"></audio>
-      <audio id="sfx-rb1" src="sfx/tick.wav" data-start="{K['rb1']}" data-duration="0.09" data-volume="0.25"></audio>
-      <audio id="sfx-rb2" src="sfx/tick.wav" data-start="{K['rb2']}" data-duration="0.09" data-volume="0.25"></audio>
-      <audio id="sfx-rb3" src="sfx/tick.wav" data-start="{K['rb3']}" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-tk" src="sfx/pop.wav" data-start="{K['readback']}" data-duration="0.17" data-volume="0.22"></audio>
+      <audio id="sfx-rp" src="sfx/tick.wav" data-start="{K['rPick']}" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-rn" src="sfx/tick.wav" data-start="{K['rName']}" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-r1" src="sfx/tick.wav" data-start="{K['r1']}" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-r2" src="sfx/tick.wav" data-start="{K['r2']}" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-r3" src="sfx/tick.wav" data-start="{K['r3']}" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-rx" src="sfx/tick.wav" data-start="{K['rNotes']}" data-duration="0.09" data-volume="0.2"></audio>
       <audio id="sfx-ok" src="sfx/success.wav" data-start="{K['yeah']}" data-duration="0.6" data-volume="0.3"></audio>
-      <audio id="sfx-fill" src="sfx/fill.wav" data-start="{CLIP - 0.42:.2f}" data-duration="0.5" data-volume="0.2"></audio>
-      <audio id="sfx-end" src="sfx/chime.wav" data-start="{CLIP + 0.07:.2f}" data-duration="0.95" data-volume="0.3"></audio>
+      <audio id="sfx-fill" src="sfx/fill.wav" data-start="{CLIP - 0.9:.2f}" data-duration="0.5" data-volume="0.2"></audio>
+      <audio id="sfx-end" src="sfx/chime.wav" data-start="{CLIP - 0.25:.2f}" data-duration="0.95" data-volume="0.3"></audio>
     </div>
 
     <script>
@@ -236,8 +242,8 @@ page = f"""<!doctype html>
       const K = {json.dumps(K)};
       const CAPS = {json.dumps(cap_js)};
       const AI = {json.dumps(AI)};
-      const CUTS = {json.dumps(CUTS)};
       const CLIP = {CLIP};
+      const XF = {XF};
       const AION = {{ opacity: 1, color: "#c4b9ff", textShadow: "0 0 22px rgba(143,123,255,0.95), 0 0 6px rgba(143,123,255,0.75), 0 4px 20px rgba(11,10,18,0.95)" }};
       const MEON = {{ opacity: 1, color: "#ffffff", textShadow: "0 0 18px rgba(255,255,255,0.5), 0 4px 20px rgba(11,10,18,0.95)" }};
       const chipIn = (sel, t) => tl.fromTo(sel, {{ opacity: 0, y: 24, scale: 0.86 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.32, ease: "back.out(1.6)" }}, t);
@@ -245,10 +251,10 @@ page = f"""<!doctype html>
       const pick = (sel, t) => {{ tl.to(sel + " .pick", {{ opacity: 1, duration: 0.15 }}, t); tl.fromTo(sel, {{ scale: 1 }}, {{ scale: 1.1, duration: 0.14, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }}, t); }};
       const flash = (sel, t) => tl.fromTo(sel, {{ color: "#ffffff" }}, {{ color: "#c4b9ff", duration: 0.14, yoyo: true, repeat: 1, immediateRender: false }}, t);
 
-      // jump cuts: alternate framing so each cut reads as a new angle
-      CUTS.forEach((t, k) => tl.set("#vw", {{ scale: k % 2 === 0 ? 1.07 : 1 }}, t));
-      tl.fromTo("#vw", {{ scale: 1.0 }}, {{ scale: 1.08, duration: 0.35, ease: "power3.out", immediateRender: false }}, K.rbPunch);
-      tl.fromTo("#vw", {{ scale: 1.0 }}, {{ scale: 1.08, duration: 0.3, ease: "power3.out", immediateRender: false }}, K.cool);
+      // camera: slow push-ins that hold (no snapping back)
+      tl.fromTo("#vw", {{ scale: 1 }}, {{ scale: 1.05, duration: K.readback, ease: "none" }}, 0);
+      tl.to("#vw", {{ scale: 1.1, duration: 2.2, ease: "sine.inOut" }}, K.push2 - 0.3);
+      tl.to("#vw", {{ scale: 1.2, duration: CLIP - K.cool + 0.2, ease: "sine.inOut" }}, K.cool - 0.2);
 
       // hook (under 3s)
       tl.fromTo("#hook .ln span", {{ yPercent: 105 }}, {{ yPercent: 0, duration: 0.5, ease: "power4.out", stagger: 0.12 }}, 0.05);
@@ -310,23 +316,28 @@ page = f"""<!doctype html>
 
       // order review: ticket drops in on "read that back", rows light up as they're read
       tl.fromTo("#tk", {{ opacity: 0, y: -40, scale: 0.94 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "back.out(1.4)" }}, K.readback);
-      tl.fromTo(".tr", {{ opacity: 0, x: -24 }}, {{ opacity: 1, x: 0, duration: 0.28, ease: "power3.out", stagger: 0.09 }}, K.readback + 0.25);
-      flash("#r1 .v", K.rb1); flash("#r2 .v", K.rb2); flash("#r3 .v", K.rb3);
+      [["#rp", K.rPick], ["#rn", K.rName], ["#r1", K.r1], ["#r2", K.r2], ["#r3", K.r3], ["#rx", K.rNotes]].forEach(([s, t]) => {{
+        tl.fromTo(s, {{ opacity: 0, x: -30 }}, {{ opacity: 1, x: 0, duration: 0.32, ease: "power3.out" }}, t);
+        flash(s + " .v", t + 0.05);
+      }});
       tl.fromTo("#tk", {{ scale: 1 }}, {{ scale: 1.035, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }}, K.correct);
       tl.to("#st .live", {{ opacity: 0, duration: 0.15 }}, K.yeah);
       tl.fromTo("#st .done", {{ opacity: 0, scale: 0.6 }}, {{ opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.2)" }}, K.yeah);
       tl.to("#tk", {{ borderColor: "#34c759", boxShadow: "0 0 30px rgba(52,199,89,0.55), 0 24px 60px rgba(11,10,18,0.5)", duration: 0.3 }}, K.yeah);
 
-      // end banner
-      tl.fromTo("#eR", {{ scale: 0.6, opacity: 0, y: 40 }}, {{ scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.3)" }}, CLIP + 0.05);
-      tl.fromTo("#eR .lane-g", {{ x: 14, y: -14, opacity: 0 }}, {{ x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }}, CLIP + 0.11);
-      tl.fromTo("#eR .lane-p", {{ x: -14, y: 14, opacity: 0 }}, {{ x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }}, CLIP + 0.16);
-      tl.fromTo("#eR .slash-g, #eR .slash-p", {{ x: -22, opacity: 0 }}, {{ x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }}, CLIP + 0.35);
-      tl.fromTo("#eq", {{ opacity: 0, y: 12 }}, {{ opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }}, CLIP + 0.4);
-      tl.fromTo("#esee", {{ yPercent: 110 }}, {{ yPercent: 0, duration: 0.5, ease: "power4.out" }}, CLIP + 0.6);
-      tl.fromTo("#eurl", {{ opacity: 0, y: 10 }}, {{ opacity: 1, y: 0, duration: 0.3 }}, CLIP + 0.95);
-      tl.fromTo("#ebelow", {{ opacity: 0, y: 16 }}, {{ opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }}, CLIP + 1.2);
-      tl.fromTo("#ebelow b", {{ y: -4 }}, {{ y: 8, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }}, CLIP + 1.5);
+      // end banner: dissolves in over her last moment, then the logo builds
+      const E = CLIP - 0.25;
+      tl.fromTo("#endc", {{ opacity: 0 }}, {{ opacity: 1, duration: XF, ease: "sine.inOut" }}, CLIP - XF);
+      tl.to("#tk, .cap", {{ opacity: 0, duration: XF * 0.6, ease: "power2.in" }}, CLIP - XF);
+      tl.fromTo("#eR", {{ scale: 0.6, opacity: 0, y: 40 }}, {{ scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.3)" }}, E);
+      tl.fromTo("#eR .lane-g", {{ x: 14, y: -14, opacity: 0 }}, {{ x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }}, E + 0.06);
+      tl.fromTo("#eR .lane-p", {{ x: -14, y: 14, opacity: 0 }}, {{ x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }}, E + 0.11);
+      tl.fromTo("#eR .slash-g, #eR .slash-p", {{ x: -22, opacity: 0 }}, {{ x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }}, E + 0.3);
+      tl.fromTo("#eq", {{ opacity: 0, y: 12 }}, {{ opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }}, E + 0.35);
+      tl.fromTo("#esee", {{ yPercent: 110 }}, {{ yPercent: 0, duration: 0.5, ease: "power4.out" }}, E + 0.55);
+      tl.fromTo("#eurl", {{ opacity: 0, y: 10 }}, {{ opacity: 1, y: 0, duration: 0.3 }}, E + 0.9);
+      tl.fromTo("#ebelow", {{ opacity: 0, y: 16 }}, {{ opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }}, E + 1.15);
+      tl.fromTo("#ebelow b", {{ y: -4 }}, {{ y: 8, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }}, E + 1.45);
 
       window.__timelines["main"] = tl;
     </script>

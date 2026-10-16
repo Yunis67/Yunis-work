@@ -1,11 +1,11 @@
 # Original background track, synthesized from scratch (no licence needed).
 # Soft tech-ad bed: pad chords, plucked arpeggio, sub bass, light kick and hats.
 # Quiet under the call, swells on the end banner. Writes music.wav.
-# Run: python3 music.py <clip length> <end card length>
+# Run: python3 music.py <clip length> <end card length> <swell start>
 import sys, wave
 import numpy as np
 
-CLIP, END = float(sys.argv[1]), float(sys.argv[2])
+CLIP, END, SWELL = float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3])
 SR, BPM = 48000, 104
 DUR = CLIP + END
 n = int(DUR * SR)
@@ -77,13 +77,14 @@ for k in range(4, int(DUR / beat) + 1):
 out = pad + arp + bass + drums
 out /= np.max(np.abs(out)) + 1e-9
 
-# level: low bed under the call (about -30 dBFS peaks), swell into the end banner (about -9 dBFS)
-low, high = 10 ** (-30 / 20), 10 ** (-9 / 20)
+# level: low bed under the call (about -26 dBFS peaks), swells from "That is so cool" into the banner (about -9 dBFS)
+low, high = 10 ** (-26 / 20), 10 ** (-9 / 20)
 g = np.full(n, low)
 g[t < 0.6] = low * t[t < 0.6] / 0.6
-ramp = (t >= CLIP - 0.4) & (t < CLIP + 0.3)
-g[ramp] = low + (high - low) * (t[ramp] - (CLIP - 0.4)) / 0.7
-g[t >= CLIP + 0.3] = high
+ramp = (t >= SWELL) & (t < CLIP)
+x = (t[ramp] - SWELL) / (CLIP - SWELL)
+g[ramp] = low + (high - low) * (0.5 - 0.5 * np.cos(np.pi * x))   # smooth S-curve
+g[t >= CLIP] = high
 fade = t > DUR - 0.9
 g[fade] *= (DUR - t[fade]) / 0.9
 out *= g

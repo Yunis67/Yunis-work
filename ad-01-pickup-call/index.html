@@ -41,7 +41,7 @@
       #anote { font-weight: 700; font-size: 36px; line-height: 1.22; text-align: center; color: #fff; text-shadow: 0 0 14px rgba(255,255,255,0.35), 0 3px 16px rgba(11,10,18,0.95); opacity: 0; }
 
       /* order review ticket (top, only during the read-back) */
-      #tk { position: absolute; left: 230px; top: 140px; width: 620px; padding: 22px 30px 16px; border-radius: 30px; background: rgba(11,10,18,0.86);
+      #tk { position: absolute; left: 230px; top: 110px; width: 620px; padding: 22px 30px 16px; border-radius: 30px; background: rgba(11,10,18,0.86);
         border: 2.5px solid var(--peri); box-shadow: 0 0 26px rgba(143,123,255,0.5), 0 24px 60px rgba(11,10,18,0.5); opacity: 0; }
       #tk .hd { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 2px solid rgba(143,123,255,0.3); }
       #tk .t1 { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 38px; color: #fff; letter-spacing: -0.01em; }
@@ -52,7 +52,7 @@
       #st .live i { width: 11px; height: 11px; border-radius: 50%; background: var(--peri); }
       #st .done { color: #fff; background: var(--green); opacity: 0; }
       #st .done svg { width: 22px; height: 22px; }
-      .tr { display: flex; align-items: center; gap: 18px; height: 56px; font-size: 32px; color: #fff; opacity: 0; }
+      .tr { display: flex; align-items: center; gap: 18px; height: 50px; font-size: 30px; color: #fff; opacity: 0; }
       .tr:first-of-type { margin-top: 8px; }
       .tr .q { width: 64px; font-size: 22px; color: var(--peri); }
       .tr .v { font-weight: 700; white-space: nowrap; }
@@ -88,15 +88,15 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="54.76" data-width="1080" data-height="1920">
-      <!-- the call (0 to 51.155s): cut-down clip.mp4 -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="67.2" data-width="1080" data-height="1920">
+      <!-- the call (0 to 63.605s): cut-down clip.mp4 -->
       <div id="vw">
-        <video id="src" class="clip" src="clip.mp4" data-start="0" data-duration="51.155" data-has-audio="true" playsinline></video>
+        <video id="src" class="clip" src="clip.mp4" data-start="0" data-duration="63.605" data-has-audio="true" playsinline></video>
         <div id="shade"></div>
       </div>
-      <audio id="music" src="music.wav" data-start="0" data-duration="54.76" data-volume="1"></audio>
+      <audio id="music" src="music.wav" data-start="0" data-duration="67.2" data-volume="1"></audio>
 
-      <div id="ov" class="clip" data-start="0" data-duration="51.155" style="z-index:20">
+      <div id="ov" class="clip" data-start="0" data-duration="63.605" style="z-index:20">
         <div id="hook"><span class="ln"><span>Can you tell</span></span><span class="ln"><span>this is <b class="ai">AI?</b></span></span></div>
 
         <div id="agent">
@@ -109,13 +109,15 @@
 
         <div id="tk">
           <div class="hd">
-            <div><div class="t1">Order review</div><div class="t2 mono">Pickup · Name: Sarah</div></div>
+            <div><div class="t1">Order review</div><div class="t2 mono">Read back to the caller</div></div>
             <div id="st"><div class="s live mono"><i></i>Live</div><div class="s done mono"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Placed</div></div>
           </div>
+          <div id="rp" class="tr pk"><span class="q mono">◷</span><span class="v">Pickup · as soon as possible</span></div>
+          <div id="rn" class="tr pk"><span class="q mono">◉</span><span class="v">Name · Sarah</span></div>
           <div id="r1" class="tr"><span class="q mono">1 ×</span><span class="v">Chicken doner</span></div>
           <div id="r2" class="tr"><span class="q mono">1 ×</span><span class="v">Regular fries</span></div>
           <div id="r3" class="tr"><span class="q mono">1 ×</span><span class="v">Soda</span></div>
-          <div id="r4" class="tr pk"><span class="q mono">◷</span><span class="v">Pickup · as soon as possible</span></div>
+          <div id="rx" class="tr pk"><span class="q mono">✎</span><span class="v">No notes or allergies</span></div>
         </div>
 
         <div class="chips" id="cn"><div id="nm" class="chip"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span><b class="lab">Name</b><b id="nmv"><i>S</i><i>a</i><i>r</i><i>a</i><i>h</i></b><i class="cur"></i></span></div></div>
@@ -131,49 +133,60 @@
         <div id="c4" class="cap me"><span class="w">Can</span> <span class="w">I</span> <span class="w">place</span> <span class="w">an</span></div>
         <div id="c5" class="cap me"><span class="w">order</span> <span class="w">for</span> <span class="w">pickup?</span></div>
         <div id="c6" class="cap ai"><span class="w">Absolutely.</span></div>
-        <div id="c7" class="cap ai"><span class="w">What</span> <span class="w">name</span> <span class="w">should</span> <span class="w">I</span></div>
-        <div id="c8" class="cap ai"><span class="w">put</span> <span class="w">the</span> <span class="w">order</span> <span class="w">under?</span></div>
-        <div id="c9" class="cap me"><span class="w">Sarah.</span></div>
-        <div id="c10" class="cap ai"><span class="w">Perfect,</span> <span class="w">Sarah.</span></div>
-        <div id="c11" class="cap ai"><span class="w">What</span> <span class="w">can</span> <span class="w">I</span> <span class="w">get</span></div>
-        <div id="c12" class="cap ai"><span class="w">started</span> <span class="w">for</span> <span class="w">you</span> <span class="w">today?</span></div>
-        <div id="c13" class="cap me"><span class="w">Can</span> <span class="w">I</span> <span class="w">get</span> <span class="w">a</span></div>
-        <div id="c14" class="cap me"><span class="w">chicken</span> <span class="w">doner</span> <span class="w">and</span> <span class="w">a</span></div>
-        <div id="c15" class="cap me"><span class="w">regular</span> <span class="w">fries?</span></div>
-        <div id="c16" class="cap ai"><span class="w">Great</span> <span class="w">choice.</span></div>
-        <div id="c17" class="cap ai"><span class="w">Would</span> <span class="w">you</span> <span class="w">like</span> <span class="w">to</span></div>
-        <div id="c18" class="cap ai"><span class="w">make</span> <span class="w">that</span> <span class="w">more</span> <span class="w">of</span></div>
-        <div id="c19" class="cap ai"><span class="w">a</span> <span class="w">meal</span> <span class="w">with</span> <span class="w">a</span></div>
-        <div id="c20" class="cap ai"><span class="w">drink,</span> <span class="w">like</span> <span class="w">a</span> <span class="w">soda</span></div>
-        <div id="c21" class="cap ai"><span class="w">or</span> <span class="w">Turkish</span> <span class="w">tea?</span></div>
-        <div id="c22" class="cap me"><span class="w">Yeah,</span> <span class="w">I&#x27;ll</span> <span class="w">get</span> <span class="w">a</span></div>
-        <div id="c23" class="cap me"><span class="w">soda.</span></div>
-        <div id="c24" class="cap ai"><span class="w">Any</span> <span class="w">changes</span> <span class="w">to</span> <span class="w">those</span></div>
-        <div id="c25" class="cap ai"><span class="w">items,</span> <span class="w">like</span> <span class="w">no</span> <span class="w">onions</span></div>
-        <div id="c26" class="cap ai"><span class="w">or</span> <span class="w">extra</span> <span class="w">sauce?</span></div>
-        <div id="c27" class="cap me"><span class="w">Nope,</span> <span class="w">that&#x27;s</span> <span class="w">it.</span></div>
-        <div id="c28" class="cap ai"><span class="w">Got</span> <span class="w">it.</span></div>
-        <div id="c29" class="cap ai"><span class="w">What</span> <span class="w">pickup</span> <span class="w">time</span> <span class="w">would</span></div>
-        <div id="c30" class="cap ai"><span class="w">you</span> <span class="w">like?</span></div>
-        <div id="c31" class="cap ai"><span class="w">As</span> <span class="w">soon</span> <span class="w">as</span> <span class="w">possible</span></div>
-        <div id="c32" class="cap ai"><span class="w">or</span> <span class="w">for</span> <span class="w">a</span> <span class="w">specific</span></div>
-        <div id="c33" class="cap ai"><span class="w">time?</span></div>
-        <div id="c34" class="cap me"><span class="w">As</span> <span class="w">soon</span> <span class="w">as</span> <span class="w">possible.</span></div>
-        <div id="c35" class="cap ai"><span class="w">Perfect.</span></div>
-        <div id="c36" class="cap ai"><span class="w">I&#x27;ll</span> <span class="w">mark</span> <span class="w">it</span> <span class="w">for</span></div>
-        <div id="c37" class="cap ai"><span class="w">as</span> <span class="w">soon</span> <span class="w">as</span> <span class="w">possible.</span></div>
-        <div id="c38" class="cap ai"><span class="w">Let</span> <span class="w">me</span> <span class="w">read</span> <span class="w">that</span></div>
-        <div id="c39" class="cap ai"><span class="w">back.</span></div>
-        <div id="c40" class="cap ai"><span class="w">I</span> <span class="w">have</span> <span class="w">one</span> <span class="w">chicken</span></div>
-        <div id="c41" class="cap ai"><span class="w">doner,</span> <span class="w">one</span> <span class="w">regular</span> <span class="w">fries,</span></div>
-        <div id="c42" class="cap ai"><span class="w">and</span> <span class="w">one</span> <span class="w">soda.</span></div>
-        <div id="c43" class="cap ai"><span class="w">Does</span> <span class="w">everything</span> <span class="w">sound</span> <span class="w">correct?</span></div>
-        <div id="c44" class="cap me"><span class="w">Yeah,</span> <span class="w">that&#x27;s</span> <span class="w">perfect.</span></div>
-        <div id="c45" class="cap me"><span class="w">That</span> <span class="w">is</span> <span class="w">so</span> <span class="w">cool.</span></div>
+        <div id="c7" class="cap ai"><span class="w">I&#x27;d</span> <span class="w">be</span> <span class="w">happy</span> <span class="w">to</span></div>
+        <div id="c8" class="cap ai"><span class="w">help</span> <span class="w">you</span> <span class="w">with</span> <span class="w">a</span></div>
+        <div id="c9" class="cap ai"><span class="w">pickup</span> <span class="w">order.</span></div>
+        <div id="c10" class="cap ai"><span class="w">What</span> <span class="w">name</span> <span class="w">should</span> <span class="w">I</span></div>
+        <div id="c11" class="cap ai"><span class="w">put</span> <span class="w">the</span> <span class="w">order</span> <span class="w">under?</span></div>
+        <div id="c12" class="cap me"><span class="w">Sarah.</span></div>
+        <div id="c13" class="cap ai"><span class="w">Perfect,</span> <span class="w">Sarah.</span></div>
+        <div id="c14" class="cap ai"><span class="w">What</span> <span class="w">can</span> <span class="w">I</span> <span class="w">get</span></div>
+        <div id="c15" class="cap ai"><span class="w">started</span> <span class="w">for</span> <span class="w">you</span> <span class="w">today?</span></div>
+        <div id="c16" class="cap me"><span class="w">Can</span> <span class="w">I</span> <span class="w">get</span> <span class="w">a</span></div>
+        <div id="c17" class="cap me"><span class="w">chicken</span> <span class="w">doner</span> <span class="w">and</span> <span class="w">a</span></div>
+        <div id="c18" class="cap me"><span class="w">regular</span> <span class="w">fries?</span></div>
+        <div id="c19" class="cap ai"><span class="w">Great</span> <span class="w">choice.</span></div>
+        <div id="c20" class="cap ai"><span class="w">Would</span> <span class="w">you</span> <span class="w">like</span> <span class="w">to</span></div>
+        <div id="c21" class="cap ai"><span class="w">make</span> <span class="w">that</span> <span class="w">more</span> <span class="w">of</span></div>
+        <div id="c22" class="cap ai"><span class="w">a</span> <span class="w">meal</span> <span class="w">with</span> <span class="w">a</span></div>
+        <div id="c23" class="cap ai"><span class="w">drink,</span> <span class="w">like</span> <span class="w">a</span> <span class="w">soda</span></div>
+        <div id="c24" class="cap ai"><span class="w">or</span> <span class="w">Turkish</span> <span class="w">tea?</span></div>
+        <div id="c25" class="cap me"><span class="w">Yeah,</span> <span class="w">I&#x27;ll</span> <span class="w">get</span> <span class="w">a</span></div>
+        <div id="c26" class="cap me"><span class="w">soda.</span></div>
+        <div id="c27" class="cap ai"><span class="w">Any</span> <span class="w">changes</span> <span class="w">to</span> <span class="w">those</span></div>
+        <div id="c28" class="cap ai"><span class="w">items,</span> <span class="w">like</span> <span class="w">no</span> <span class="w">onions</span></div>
+        <div id="c29" class="cap ai"><span class="w">or</span> <span class="w">extra</span> <span class="w">sauce?</span></div>
+        <div id="c30" class="cap me"><span class="w">Nope,</span> <span class="w">that&#x27;s</span> <span class="w">it.</span></div>
+        <div id="c31" class="cap ai"><span class="w">Got</span> <span class="w">it.</span></div>
+        <div id="c32" class="cap ai"><span class="w">What</span> <span class="w">pickup</span> <span class="w">time</span> <span class="w">would</span></div>
+        <div id="c33" class="cap ai"><span class="w">you</span> <span class="w">like?</span></div>
+        <div id="c34" class="cap ai"><span class="w">As</span> <span class="w">soon</span> <span class="w">as</span> <span class="w">possible,</span></div>
+        <div id="c35" class="cap ai"><span class="w">or</span> <span class="w">for</span> <span class="w">a</span> <span class="w">specific</span></div>
+        <div id="c36" class="cap ai"><span class="w">time?</span></div>
+        <div id="c37" class="cap me"><span class="w">As</span> <span class="w">soon</span> <span class="w">as</span> <span class="w">possible.</span></div>
+        <div id="c38" class="cap ai"><span class="w">Perfect.</span></div>
+        <div id="c39" class="cap ai"><span class="w">I&#x27;ll</span> <span class="w">mark</span> <span class="w">it</span> <span class="w">for</span></div>
+        <div id="c40" class="cap ai"><span class="w">as</span> <span class="w">soon</span> <span class="w">as</span> <span class="w">possible.</span></div>
+        <div id="c41" class="cap ai"><span class="w">Let</span> <span class="w">me</span> <span class="w">read</span> <span class="w">that</span></div>
+        <div id="c42" class="cap ai"><span class="w">back.</span></div>
+        <div id="c43" class="cap ai"><span class="w">This</span> <span class="w">is</span> <span class="w">for</span> <span class="w">pickup</span></div>
+        <div id="c44" class="cap ai"><span class="w">at</span> <span class="w">Antalya</span> <span class="w">Restaurant</span> <span class="w">Kitchener,</span></div>
+        <div id="c45" class="cap ai"><span class="w">as</span> <span class="w">soon</span> <span class="w">as</span> <span class="w">possible.</span></div>
+        <div id="c46" class="cap ai"><span class="w">The</span> <span class="w">name</span> <span class="w">is</span> <span class="w">Sarah,</span></div>
+        <div id="c47" class="cap ai"><span class="w">and</span> <span class="w">I&#x27;ll</span> <span class="w">use</span> <span class="w">the</span></div>
+        <div id="c48" class="cap ai"><span class="w">number</span> <span class="w">you&#x27;re</span> <span class="w">calling</span> <span class="w">from.</span></div>
+        <div id="c49" class="cap ai"><span class="w">I</span> <span class="w">have</span> <span class="w">one</span> <span class="w">chicken</span></div>
+        <div id="c50" class="cap ai"><span class="w">doner,</span> <span class="w">one</span> <span class="w">regular</span> <span class="w">fries,</span></div>
+        <div id="c51" class="cap ai"><span class="w">and</span> <span class="w">one</span> <span class="w">soda.</span></div>
+        <div id="c52" class="cap ai"><span class="w">No</span> <span class="w">special</span> <span class="w">kitchen</span> <span class="w">notes</span></div>
+        <div id="c53" class="cap ai"><span class="w">or</span> <span class="w">allergies</span> <span class="w">mentioned.</span></div>
+        <div id="c54" class="cap ai"><span class="w">Does</span> <span class="w">everything</span> <span class="w">sound</span> <span class="w">correct?</span></div>
+        <div id="c55" class="cap me"><span class="w">Yeah,</span> <span class="w">that&#x27;s</span> <span class="w">perfect.</span></div>
+        <div id="c56" class="cap me"><span class="w">That</span> <span class="w">is</span> <span class="w">so</span> <span class="w">cool.</span></div>
       </div>
 
-      <!-- end banner (51.155 to 54.76s) -->
-      <div id="endc" class="clip" data-start="51.155" data-duration="3.6" style="z-index:30">
+      <!-- end banner (dissolves in from 62.9s, full at 63.605s, ends 67.2s) -->
+      <div id="endc" class="clip" data-start="62.9" data-duration="4.3" style="z-index:30">
         <div id="eR"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div>
         <div id="eq" class="mono">AI receptionist for restaurants</div>
         <div id="esee-m"><span id="esee">Never miss<br />a call again.</span></div>
@@ -183,36 +196,39 @@
 
       <audio id="sfx-hook" src="sfx/switch.wav" data-start="0.12" data-duration="0.14" data-volume="0.25"></audio>
       <audio id="sfx-card" src="sfx/pop.wav" data-start="0.35" data-duration="0.17" data-volume="0.22"></audio>
-      <audio id="sfx-nm" src="sfx/pop.wav" data-start="7.08" data-duration="0.17" data-volume="0.2"></audio>
-      <audio id="sfx-sarah" src="sfx/tick.wav" data-start="8.8" data-duration="0.09" data-volume="0.3"></audio>
-      <audio id="sfx-i1" src="sfx/pop.wav" data-start="14.18" data-duration="0.17" data-volume="0.2"></audio>
-      <audio id="sfx-i2" src="sfx/pop.wav" data-start="15.48" data-duration="0.17" data-volume="0.2"></audio>
-      <audio id="sfx-d1" src="sfx/pop.wav" data-start="20.96" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-d2" src="sfx/pop.wav" data-start="21.68" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-dp" src="sfx/tick.wav" data-start="23.86" data-duration="0.09" data-volume="0.3"></audio>
-      <audio id="sfx-m1" src="sfx/pop.wav" data-start="26.58" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-m2" src="sfx/pop.wav" data-start="27.8" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-mx" src="sfx/snap.wav" data-start="29.18" data-duration="0.16" data-volume="0.25"></audio>
-      <audio id="sfx-p1" src="sfx/pop.wav" data-start="33.4" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-p2" src="sfx/pop.wav" data-start="35.12" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-pp" src="sfx/tick.wav" data-start="36.1" data-duration="0.09" data-volume="0.3"></audio>
-      <audio id="sfx-tk" src="sfx/fill.wav" data-start="40.9" data-duration="0.5" data-volume="0.16"></audio>
-      <audio id="sfx-rb1" src="sfx/tick.wav" data-start="42.94" data-duration="0.09" data-volume="0.25"></audio>
-      <audio id="sfx-rb2" src="sfx/tick.wav" data-start="44.1" data-duration="0.09" data-volume="0.25"></audio>
-      <audio id="sfx-rb3" src="sfx/tick.wav" data-start="45.28" data-duration="0.09" data-volume="0.25"></audio>
-      <audio id="sfx-ok" src="sfx/success.wav" data-start="48.44" data-duration="0.6" data-volume="0.3"></audio>
-      <audio id="sfx-fill" src="sfx/fill.wav" data-start="50.73" data-duration="0.5" data-volume="0.2"></audio>
-      <audio id="sfx-end" src="sfx/chime.wav" data-start="51.23" data-duration="0.95" data-volume="0.3"></audio>
+      <audio id="sfx-nm" src="sfx/pop.wav" data-start="9.06" data-duration="0.17" data-volume="0.2"></audio>
+      <audio id="sfx-sarah" src="sfx/tick.wav" data-start="10.8" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-i1" src="sfx/pop.wav" data-start="16.16" data-duration="0.17" data-volume="0.2"></audio>
+      <audio id="sfx-i2" src="sfx/pop.wav" data-start="17.46" data-duration="0.17" data-volume="0.2"></audio>
+      <audio id="sfx-d1" src="sfx/pop.wav" data-start="22.94" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-d2" src="sfx/pop.wav" data-start="23.68" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-dp" src="sfx/tick.wav" data-start="25.84" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-m1" src="sfx/pop.wav" data-start="28.5" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-m2" src="sfx/pop.wav" data-start="29.8" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-mx" src="sfx/snap.wav" data-start="31.14" data-duration="0.16" data-volume="0.25"></audio>
+      <audio id="sfx-p1" src="sfx/pop.wav" data-start="35.38" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-p2" src="sfx/pop.wav" data-start="37.1" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-pp" src="sfx/tick.wav" data-start="38.08" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-tk" src="sfx/pop.wav" data-start="42.28" data-duration="0.17" data-volume="0.22"></audio>
+      <audio id="sfx-rp" src="sfx/tick.wav" data-start="44.52" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-rn" src="sfx/tick.wav" data-start="49.02" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-r1" src="sfx/tick.wav" data-start="52.46" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-r2" src="sfx/tick.wav" data-start="53.64" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-r3" src="sfx/tick.wav" data-start="55.0" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-rx" src="sfx/tick.wav" data-start="55.34" data-duration="0.09" data-volume="0.2"></audio>
+      <audio id="sfx-ok" src="sfx/success.wav" data-start="59.9" data-duration="0.6" data-volume="0.3"></audio>
+      <audio id="sfx-fill" src="sfx/fill.wav" data-start="62.70" data-duration="0.5" data-volume="0.2"></audio>
+      <audio id="sfx-end" src="sfx/chime.wav" data-start="63.35" data-duration="0.95" data-volume="0.3"></audio>
     </div>
 
     <script>
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
-      const K = {"name": 7.08, "sarah": 8.8, "doner": 14.18, "fries": 15.48, "itemsOut": 17.12, "soda": 20.96, "tea": 21.68, "sodaPick": 23.86, "drinkOut": 24.52, "onions": 26.58, "sauce": 27.8, "nope": 29.18, "modsOut": 30.78, "asap": 33.4, "specific": 35.12, "asapPick": 36.1, "pickOut": 37.82, "readback": 40.9, "rb1": 42.94, "rb2": 44.1, "rb3": 45.28, "correct": 47.62, "yeah": 48.44, "rbPunch": 42.08, "cool": 49.66};
-      const CAPS = [[0, -0.06, 1.4, [0.0, 0.84, 1.04, 1.2]], [1, 1.4, 1.96, [1.46]], [2, 1.96, 2.74, [2.02, 2.36, 2.52, 2.62]], [3, 2.74, 3.18, [2.8]], [4, 3.18, 4.04, [3.24, 3.66, 3.76, 3.96]], [5, 4.04, 5.28, [4.1, 4.3, 4.54]], [6, 5.6, 6.54, [5.66]], [7, 6.54, 7.52, [6.6, 7.08, 7.32, 7.46]], [8, 7.52, 8.74, [7.58, 7.7, 7.82, 8.02]], [9, 8.74, 9.6, [8.8]], [10, 9.78, 10.78, [9.84, 10.4]], [11, 10.78, 11.62, [10.84, 11.32, 11.42, 11.54]], [12, 11.62, 13.06, [11.68, 11.96, 12.18, 12.3]], [13, 13.14, 14.12, [13.2, 13.68, 13.82, 14.02]], [14, 14.12, 15.42, [14.18, 14.64, 14.94, 15.34]], [15, 15.42, 16.72, [15.48, 15.8]], [16, 16.86, 17.88, [16.92, 17.4]], [17, 17.88, 18.74, [17.94, 18.42, 18.54, 18.7]], [18, 18.74, 19.46, [18.8, 18.98, 19.16, 19.38]], [19, 19.46, 20.08, [19.52, 19.58, 19.82, 20.0]], [20, 20.08, 21.22, [20.14, 20.54, 20.84, 20.96]], [21, 21.22, 22.84, [21.28, 21.68, 22.06]], [22, 22.84, 23.8, [22.9, 23.42, 23.6, 23.74]], [23, 23.8, 24.56, [23.86]], [24, 24.56, 25.8, [24.62, 25.1, 25.46, 25.66]], [25, 25.8, 27.38, [25.86, 26.24, 26.58, 27.04]], [26, 27.38, 29.08, [27.44, 27.8, 28.22]], [27, 29.12, 30.64, [29.18, 29.68, 29.98]], [28, 30.92, 31.78, [30.98, 31.46]], [29, 31.78, 32.9, [31.84, 32.32, 32.58, 32.8]], [30, 32.9, 33.34, [32.96, 33.06]], [31, 33.34, 34.3, [33.4, 33.72, 33.9, 34.02]], [32, 34.3, 35.28, [34.36, 34.78, 34.98, 35.12]], [33, 35.28, 36.04, [35.34]], [34, 36.04, 37.66, [36.1, 36.58, 36.7, 36.84]], [35, 37.86, 38.52, [37.92]], [36, 38.52, 39.3, [38.58, 39.0, 39.08, 39.24]], [37, 39.3, 40.28, [39.36, 39.48, 39.66, 39.78]], [38, 40.28, 41.18, [40.34, 40.76, 40.9, 41.08]], [39, 41.18, 41.96, [41.24]], [40, 42.02, 43.22, [42.08, 42.56, 42.72, 42.94]], [41, 43.22, 45.04, [43.28, 43.84, 44.1, 44.5]], [42, 45.04, 45.96, [45.1, 45.28, 45.5]], [43, 45.96, 48.38, [46.02, 46.44, 47.26, 47.62]], [44, 48.38, 49.6, [48.44, 48.92, 49.18]], [45, 49.6, 51.16, [49.66, 50.14, 50.4, 50.62]]];
-      const AI = [[0.0, 2.96], [5.66, 8.3], [9.84, 12.56], [16.92, 22.42], [24.62, 28.58], [30.98, 35.8], [37.92, 41.46], [42.08, 47.92]];
-      const CUTS = [5.315, 6.325, 9.355, 12.75, 16.365, 22.45, 24.095, 30.225, 37.215, 40.065, 41.38, 45.77, 49.28];
-      const CLIP = 51.155;
+      const K = {"name": 9.06, "sarah": 10.8, "doner": 16.16, "fries": 17.46, "itemsOut": 19.2, "soda": 22.94, "tea": 23.68, "sodaPick": 25.84, "drinkOut": 26.84, "onions": 28.5, "sauce": 29.8, "nope": 31.14, "modsOut": 32.78, "asap": 35.38, "specific": 37.1, "asapPick": 38.08, "pickOut": 39.76, "readback": 42.28, "rPick": 44.52, "rName": 49.02, "r1": 52.46, "r2": 53.64, "r3": 55.0, "rNotes": 55.34, "correct": 59.22, "yeah": 59.9, "push2": 51.54, "cool": 61.22};
+      const CAPS = [[0, -0.06, 1.42, [0.0, 0.84, 1.06, 1.24]], [1, 1.42, 1.98, [1.48]], [2, 1.98, 2.76, [2.04, 2.38, 2.54, 2.64]], [3, 2.76, 3.22, [2.82]], [4, 3.22, 4.06, [3.28, 3.68, 3.8, 4.0]], [5, 4.06, 5.3, [4.12, 4.32, 4.56]], [6, 5.7, 6.46, [5.76]], [7, 6.46, 7.22, [6.52, 6.82, 6.9, 7.14]], [8, 7.22, 7.66, [7.28, 7.4, 7.52, 7.62]], [9, 7.66, 8.6, [7.72, 7.94]], [10, 8.6, 9.52, [8.66, 9.06, 9.3, 9.46]], [11, 9.52, 10.74, [9.58, 9.7, 9.82, 10.0]], [12, 10.74, 11.6, [10.8]], [13, 11.86, 12.84, [11.92, 12.38]], [14, 12.84, 13.62, [12.9, 13.3, 13.42, 13.52]], [15, 13.62, 15.04, [13.68, 13.96, 14.16, 14.28]], [16, 15.22, 16.1, [15.28, 15.68, 15.82, 16.0]], [17, 16.1, 17.4, [16.16, 16.64, 16.92, 17.34]], [18, 17.4, 18.7, [17.46, 17.8]], [19, 18.94, 19.96, [19.0, 19.4]], [20, 19.96, 20.74, [20.02, 20.42, 20.52, 20.68]], [21, 20.74, 21.46, [20.8, 20.96, 21.16, 21.36]], [22, 21.46, 22.06, [21.52, 21.58, 21.8, 21.98]], [23, 22.06, 23.2, [22.12, 22.52, 22.84, 22.94]], [24, 23.2, 24.92, [23.26, 23.68, 24.06]], [25, 24.92, 25.78, [24.98, 25.4, 25.58, 25.72]], [26, 25.78, 26.0, [25.84]], [27, 26.0, 27.78, [26.06, 27.04, 27.36, 27.64]], [28, 27.78, 29.38, [27.84, 28.24, 28.5, 29.02]], [29, 29.38, 31.06, [29.44, 29.8, 30.2]], [30, 31.08, 32.62, [31.14, 31.66, 31.96]], [31, 32.92, 33.74, [32.98, 33.5]], [32, 33.74, 34.88, [33.8, 34.32, 34.58, 34.78]], [33, 34.88, 35.32, [34.94, 35.06]], [34, 35.32, 36.5, [35.38, 35.7, 35.88, 36.02]], [35, 36.5, 37.26, [36.56, 36.86, 36.96, 37.1]], [36, 37.26, 38.02, [37.32]], [37, 38.02, 39.66, [38.08, 38.56, 38.7, 38.82]], [38, 39.8, 40.52, [39.86]], [39, 40.52, 41.3, [40.58, 40.96, 41.08, 41.24]], [40, 41.3, 42.22, [41.36, 41.46, 41.64, 41.78]], [41, 42.22, 43.18, [42.28, 42.74, 42.88, 43.06]], [42, 43.18, 43.7, [43.24]], [43, 43.7, 44.72, [43.76, 44.28, 44.38, 44.52]], [44, 44.72, 46.76, [44.78, 45.04, 45.64, 45.94]], [45, 46.76, 48.1, [46.82, 47.12, 47.32, 47.46]], [46, 48.1, 49.34, [48.16, 48.68, 48.88, 49.02]], [47, 49.34, 50.08, [49.4, 49.7, 49.86, 49.98]], [48, 50.08, 51.48, [50.14, 50.4, 50.58, 50.8]], [49, 51.48, 52.74, [51.54, 52.06, 52.22, 52.46]], [50, 52.74, 54.56, [52.8, 53.36, 53.64, 54.0]], [51, 54.56, 55.28, [54.62, 54.88, 55.0]], [52, 55.28, 56.78, [55.34, 55.86, 56.12, 56.46]], [53, 56.78, 58.0, [56.84, 57.06, 57.5]], [54, 58.0, 59.84, [58.06, 58.6, 58.88, 59.22]], [55, 59.84, 61.16, [59.9, 60.52, 60.76]], [56, 61.16, 63.02, [61.22, 61.72, 61.98, 62.22]]];
+      const AI = [[0.0, 2.98], [5.76, 10.3], [11.92, 14.54], [19.0, 24.42], [26.06, 30.56], [32.98, 37.78], [39.86, 59.5]];
+      const CLIP = 63.605;
+      const XF = 0.7;
       const AION = { opacity: 1, color: "#c4b9ff", textShadow: "0 0 22px rgba(143,123,255,0.95), 0 0 6px rgba(143,123,255,0.75), 0 4px 20px rgba(11,10,18,0.95)" };
       const MEON = { opacity: 1, color: "#ffffff", textShadow: "0 0 18px rgba(255,255,255,0.5), 0 4px 20px rgba(11,10,18,0.95)" };
       const chipIn = (sel, t) => tl.fromTo(sel, { opacity: 0, y: 24, scale: 0.86 }, { opacity: 1, y: 0, scale: 1, duration: 0.32, ease: "back.out(1.6)" }, t);
@@ -220,10 +236,10 @@
       const pick = (sel, t) => { tl.to(sel + " .pick", { opacity: 1, duration: 0.15 }, t); tl.fromTo(sel, { scale: 1 }, { scale: 1.1, duration: 0.14, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, t); };
       const flash = (sel, t) => tl.fromTo(sel, { color: "#ffffff" }, { color: "#c4b9ff", duration: 0.14, yoyo: true, repeat: 1, immediateRender: false }, t);
 
-      // jump cuts: alternate framing so each cut reads as a new angle
-      CUTS.forEach((t, k) => tl.set("#vw", { scale: k % 2 === 0 ? 1.07 : 1 }, t));
-      tl.fromTo("#vw", { scale: 1.0 }, { scale: 1.08, duration: 0.35, ease: "power3.out", immediateRender: false }, K.rbPunch);
-      tl.fromTo("#vw", { scale: 1.0 }, { scale: 1.08, duration: 0.3, ease: "power3.out", immediateRender: false }, K.cool);
+      // camera: slow push-ins that hold (no snapping back)
+      tl.fromTo("#vw", { scale: 1 }, { scale: 1.05, duration: K.readback, ease: "none" }, 0);
+      tl.to("#vw", { scale: 1.1, duration: 2.2, ease: "sine.inOut" }, K.push2 - 0.3);
+      tl.to("#vw", { scale: 1.2, duration: CLIP - K.cool + 0.2, ease: "sine.inOut" }, K.cool - 0.2);
 
       // hook (under 3s)
       tl.fromTo("#hook .ln span", { yPercent: 105 }, { yPercent: 0, duration: 0.5, ease: "power4.out", stagger: 0.12 }, 0.05);
@@ -285,23 +301,28 @@
 
       // order review: ticket drops in on "read that back", rows light up as they're read
       tl.fromTo("#tk", { opacity: 0, y: -40, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "back.out(1.4)" }, K.readback);
-      tl.fromTo(".tr", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.28, ease: "power3.out", stagger: 0.09 }, K.readback + 0.25);
-      flash("#r1 .v", K.rb1); flash("#r2 .v", K.rb2); flash("#r3 .v", K.rb3);
+      [["#rp", K.rPick], ["#rn", K.rName], ["#r1", K.r1], ["#r2", K.r2], ["#r3", K.r3], ["#rx", K.rNotes]].forEach(([s, t]) => {
+        tl.fromTo(s, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.32, ease: "power3.out" }, t);
+        flash(s + " .v", t + 0.05);
+      });
       tl.fromTo("#tk", { scale: 1 }, { scale: 1.035, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, K.correct);
       tl.to("#st .live", { opacity: 0, duration: 0.15 }, K.yeah);
       tl.fromTo("#st .done", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.2)" }, K.yeah);
       tl.to("#tk", { borderColor: "#34c759", boxShadow: "0 0 30px rgba(52,199,89,0.55), 0 24px 60px rgba(11,10,18,0.5)", duration: 0.3 }, K.yeah);
 
-      // end banner
-      tl.fromTo("#eR", { scale: 0.6, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.3)" }, CLIP + 0.05);
-      tl.fromTo("#eR .lane-g", { x: 14, y: -14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, CLIP + 0.11);
-      tl.fromTo("#eR .lane-p", { x: -14, y: 14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, CLIP + 0.16);
-      tl.fromTo("#eR .slash-g, #eR .slash-p", { x: -22, opacity: 0 }, { x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }, CLIP + 0.35);
-      tl.fromTo("#eq", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, CLIP + 0.4);
-      tl.fromTo("#esee", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "power4.out" }, CLIP + 0.6);
-      tl.fromTo("#eurl", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, CLIP + 0.95);
-      tl.fromTo("#ebelow", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, CLIP + 1.2);
-      tl.fromTo("#ebelow b", { y: -4 }, { y: 8, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }, CLIP + 1.5);
+      // end banner: dissolves in over her last moment, then the logo builds
+      const E = CLIP - 0.25;
+      tl.fromTo("#endc", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, CLIP - XF);
+      tl.to("#tk, .cap", { opacity: 0, duration: XF * 0.6, ease: "power2.in" }, CLIP - XF);
+      tl.fromTo("#eR", { scale: 0.6, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.3)" }, E);
+      tl.fromTo("#eR .lane-g", { x: 14, y: -14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, E + 0.06);
+      tl.fromTo("#eR .lane-p", { x: -14, y: 14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, E + 0.11);
+      tl.fromTo("#eR .slash-g, #eR .slash-p", { x: -22, opacity: 0 }, { x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }, E + 0.3);
+      tl.fromTo("#eq", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, E + 0.35);
+      tl.fromTo("#esee", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "power4.out" }, E + 0.55);
+      tl.fromTo("#eurl", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, E + 0.9);
+      tl.fromTo("#ebelow", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, E + 1.15);
+      tl.fromTo("#ebelow b", { y: -4 }, { y: 8, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }, E + 1.45);
 
       window.__timelines["main"] = tl;
     </script>
