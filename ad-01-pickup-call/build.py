@@ -123,7 +123,7 @@ page = f"""<!doctype html>
       #st .live i {{ width: 11px; height: 11px; border-radius: 50%; background: var(--peri); }}
       #st .done {{ color: #fff; background: var(--green); opacity: 0; }}
       #st .done svg {{ width: 22px; height: 22px; }}
-      .tr {{ display: flex; align-items: center; gap: 18px; height: 50px; font-size: 30px; color: #fff; opacity: 0; }}
+      .tr {{ display: flex; align-items: center; gap: 18px; height: 50px; overflow: hidden; font-size: 30px; color: #fff; opacity: 0; }}
       .tr:first-of-type {{ margin-top: 8px; }}
       .tr .q {{ width: 64px; font-size: 22px; color: var(--peri); }}
       .tr .v {{ font-weight: 700; white-space: nowrap; }}
@@ -317,7 +317,8 @@ page = f"""<!doctype html>
       // order review: ticket drops in on "read that back", rows light up as they're read
       tl.fromTo("#tk", {{ opacity: 0, y: -40, scale: 0.94 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "back.out(1.4)" }}, K.readback);
       [["#rp", K.rPick], ["#rn", K.rName], ["#r1", K.r1], ["#r2", K.r2], ["#r3", K.r3], ["#rx", K.rNotes]].forEach(([s, t]) => {{
-        tl.fromTo(s, {{ opacity: 0, x: -30 }}, {{ opacity: 1, x: 0, duration: 0.32, ease: "power3.out" }}, t);
+        tl.fromTo(s, {{ height: 0, opacity: 0, x: -30 }}, {{ height: 50, duration: 0.28, ease: "power3.out" }}, t);
+        tl.to(s, {{ opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }}, t + 0.08);
         flash(s + " .v", t + 0.05);
       }});
       tl.fromTo("#tk", {{ scale: 1 }}, {{ scale: 1.035, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }}, K.correct);
