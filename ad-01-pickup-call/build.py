@@ -1,45 +1,72 @@
-# Builds index.html from transcript.json (word timings of clip.mp4).
-# Run: python3 build.py   (then npx hyperframes check / render)
+# Builds index.html from transcript.json (word timings of clip.mp4) and clip.segs.json (cut points).
+# Run: python3 cut.py … ; python3 music.py <clip> <end> ; python3 build.py ; npx hyperframes check / render
 import json, html
 
-CLIP = 45.22          # clip.mp4 length
-END = 3.4             # end card length
+SEGS = json.load(open("clip.segs.json"))
+CLIP = SEGS[-1]["out"][1]                 # clip.mp4 length
+END = 3.6                                 # end banner length
 TOTAL = round(CLIP + END, 2)
-CUTS = [4.82, 5.32, 7.84, 10.68, 13.76, 19.36, 20.66, 26.28, 32.68, 35.02, 36.1, 39.98, 43.04]  # jump cuts in clip.mp4
+CUTS = [s["out"][0] for s in SEGS[1:]]    # jump cuts in clip.mp4
 
-# who is talking (clip.mp4 time ranges); everything else is the caller (Sarah)
-AI = [(0, 2.9), (4.85, 7.2), (7.98, 10.8), (14.0, 19.55), (21.0, 25.0), (26.4, 31.6), (33.0, 41.9)]
-FIX = {"Intalia.": "Antalya.", "donor": "doner", "donor,": "doner,", "fry?": "fries?"}
+FIX = {"Intalia.": "Antalya.", "donor": "doner", "donor,": "doner,"}
+W = [w for s in json.load(open("transcript.json")) for w in s["words"]]
+words = [{"w": FIX.get(w["w"].strip(), w["w"].strip()), "s": round(w["s"], 2), "e": round(w["e"], 2)} for w in W]
+T = lambda i: words[i]["s"]               # start time of word i (indices from transcript.json)
 
-words = []
-for s in json.load(open("transcript.json")):
-    for w in s["words"]:
-        t = w["w"].strip()
-        words.append({"w": FIX.get(t, t), "s": round(w["s"], 2), "e": round(w["e"], 2)})
-for w in words:
-    w["ai"] = any(a <= w["s"] < b for a, b in AI)
-
-# group into 1 to 4 word chunks: break on speaker change, sentence end, gap, or length
-chunks, cur = [], []
+# the caller (Sarah) says these word ranges; everything else is the AI
+CALLER = [(10, 16), (26, 26), (37, 46), (68, 72), (84, 86), (104, 107), (137, 143)]
 for i, w in enumerate(words):
+    w["ai"] = not any(a <= i <= b for a, b in CALLER)
+
+# AI talking ranges (drives the waveform)
+AI, cur = [], None
+for w in words:
+    if not w["ai"]:
+        if cur: AI.append(cur); cur = None
+    elif cur and w["s"] - cur[1] < 0.6: cur[1] = w["e"]
+    else:
+        if cur: AI.append(cur)
+        cur = [w["s"], w["e"]]
+if cur: AI.append(cur)
+
+# captions: 1 to 4 word chunks; break on speaker change, sentence end, pause, or length
+chunks, cur = [], []
+for w in words:
     if cur and (w["ai"] != cur[-1]["ai"] or w["s"] - cur[-1]["e"] > 0.35 or len(cur) >= 4
                 or cur[-1]["w"][-1] in ".?!" or (cur[-1]["w"][-1] == "," and len(cur) >= 2)):
         chunks.append(cur); cur = []
     cur.append(w)
 chunks.append(cur)
-
 cap_html, cap_js = [], []
 for k, c in enumerate(chunks):
-    start = round(c[0]["s"] - 0.06, 2)
+    a = round(c[0]["s"] - 0.06, 2)
     nxt = chunks[k + 1][0]["s"] - 0.06 if k + 1 < len(chunks) else CLIP
-    end = round(min(nxt, c[-1]["e"] + 0.45), 2)
+    b = round(min(nxt, c[-1]["e"] + 0.5), 2)
     cls = "cap ai" if c[0]["ai"] else "cap me"
-    spans = "".join(f'<span class="w">{html.escape(w["w"])}</span> ' for w in c).strip()
-    cap_html.append(f'<div id="c{k}" class="{cls}">{spans}</div>')
-    cap_js.append([k, start, end, [w["s"] for w in c]])
+    cap_html.append(f'<div id="c{k}" class="{cls}">' + " ".join(f'<span class="w">{html.escape(w["w"])}</span>' for w in c) + "</div>")
+    cap_js.append([k, a, b, [w["s"] for w in c]])
 
-# waveform: bars move only while the AI is talking
-wave_js = [[a, b] for a, b in AI]
+# key moments, synced to the spoken word
+K = dict(
+    name=T(19), sarah=T(26), doner=T(41), fries=T(45), itemsOut=T(47) + 0.2,
+    soda=T(64), tea=T(66), sodaPick=T(72), drinkOut=T(73) - 0.1,
+    onions=T(79), sauce=T(82), nope=T(84), modsOut=T(87) - 0.2,
+    asap=T(95), specific=T(102), asapPick=T(104), pickOut=T(108) - 0.1,
+    readback=T(119), rb1=T(125), rb2=T(128), rb3=T(131), correct=T(136), yeah=T(137),
+    rbPunch=T(122), cool=T(140),
+)
+K = {k: round(v, 2) for k, v in K.items()}
+
+ICON = {
+    "user": '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+    "wrap": '<path d="M6 3h12l-3.2 18H9.2z"/><path d="M7 8h10M7.8 13h8.4"/>',
+    "fries": '<path d="M5 10h14l-2 11H7z"/><path d="M8 10V4M11 10V3M14 10V4M17 10V6"/>',
+    "cup": '<path d="M6 7h12l-1.6 14H7.6z"/><path d="M5 7h14M13 7l2-5h3"/>',
+    "tea": '<path d="M8 3h8c0 6-1.2 8-2.6 10v5H17v3H7v-3h3.6v-5C9.2 11 8 9 8 3z"/>',
+    "clock": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+}
+ic = lambda k: f'<svg class="ic" viewBox="0 0 24 24">{ICON[k]}</svg>'
+RTILE = open("rtile.svg").read()
 
 page = f"""<!doctype html>
 <html lang="en" data-resolution="portrait">
@@ -52,7 +79,8 @@ page = f"""<!doctype html>
       @font-face {{ font-family: "Inter"; src: url("fonts/Inter-400.woff2") format("woff2"); font-weight: 400; }}
       @font-face {{ font-family: "Inter"; src: url("fonts/Inter-700.woff2") format("woff2"); font-weight: 700; }}
       @font-face {{ font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-400.woff2") format("woff2"); font-weight: 400; }}
-      :root {{ --ink: #0b0a12; --glow: #1d1638; --brand: #5b41da; --peri: #8f7bff; --green: #34c759; --cream: #f3efe6; }}
+      @font-face {{ font-family: "Instrument Serif"; src: url("fonts/InstrumentSerif-400-italic.woff2") format("woff2"); font-weight: 400; font-style: italic; }}
+      :root {{ --ink: #0b0a12; --brand: #5b41da; --peri: #8f7bff; --green: #34c759; --cream: #f3efe6; }}
       * {{ margin: 0; padding: 0; box-sizing: border-box; }}
       html, body {{ width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); }}
       #root {{ position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Inter", sans-serif; background: var(--ink); }}
@@ -61,8 +89,8 @@ page = f"""<!doctype html>
 
       #vw {{ position: absolute; inset: 0; transform-origin: 540px 820px; }}
       #src {{ position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; }}
-      #shade {{ position: absolute; inset: 0; pointer-events: none;
-        background: linear-gradient(180deg, rgba(11,10,18,0.62) 0%, rgba(11,10,18,0.38) 26%, rgba(11,10,18,0) 40%, rgba(11,10,18,0) 70%, rgba(11,10,18,0.3) 100%); }}
+      #shade {{ position: absolute; inset: 0;
+        background: linear-gradient(180deg, rgba(11,10,18,0.5) 0%, rgba(11,10,18,0.2) 24%, rgba(11,10,18,0) 36%, rgba(11,10,18,0) 52%, rgba(11,10,18,0.32) 66%, rgba(11,10,18,0.32) 78%, rgba(11,10,18,0) 100%); }}
 
       /* hook */
       #hook {{ position: absolute; left: 0; top: 300px; width: 1080px; text-align: center; font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 104px; line-height: 1.02; letter-spacing: -0.03em; color: #fff; }}
@@ -70,18 +98,20 @@ page = f"""<!doctype html>
       #hook .ln span {{ display: inline-block; text-shadow: 0 6px 30px rgba(11,10,18,0.75); }}
       #hook .ai {{ color: var(--peri); text-shadow: 0 0 26px rgba(143,123,255,0.85), 0 6px 30px rgba(11,10,18,0.75); }}
 
-      /* AI badge (top) */
-      #badge {{ position: absolute; left: 0; top: 118px; width: 1080px; display: flex; flex-direction: column; align-items: center; gap: 14px; opacity: 0; }}
-      #pill {{ display: flex; align-items: center; gap: 18px; height: 78px; padding: 0 30px; border-radius: 999px; background: rgba(11,10,18,0.8);
-        border: 2.5px solid var(--peri); box-shadow: 0 0 22px rgba(143,123,255,0.55), inset 0 0 14px rgba(143,123,255,0.25); }}
-      #pill .dot {{ width: 16px; height: 16px; border-radius: 50%; background: var(--peri); box-shadow: 0 0 12px var(--peri); }}
-      #pill .lbl {{ font-size: 24px; color: #fff; }}
-      #bars {{ display: flex; align-items: center; gap: 6px; height: 40px; }}
-      #bars i {{ display: block; width: 6px; height: 40px; border-radius: 3px; background: var(--peri); transform: scaleY(0.18); }}
-      #sub {{ font-size: 25px; color: rgba(255,255,255,0.86); text-shadow: 0 2px 12px rgba(11,10,18,0.9); }}
+      /* "AI agent" card, under the captions at the start */
+      #agent {{ position: absolute; left: 0; top: 1226px; width: 1080px; display: flex; flex-direction: column; align-items: center; gap: 22px; }}
+      #acard {{ width: 600px; height: 172px; border-radius: 30px; background: rgba(11,10,18,0.82); border: 3px solid var(--peri);
+        box-shadow: 0 0 30px rgba(143,123,255,0.65), inset 0 0 18px rgba(143,123,255,0.25); display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: 0 40px; opacity: 0; }}
+      #acard .row {{ display: flex; align-items: center; gap: 22px; }}
+      #acard .dot {{ width: 22px; height: 22px; border-radius: 50%; background: var(--peri); box-shadow: 0 0 14px var(--peri); flex: none; }}
+      #acard img {{ height: 50px; width: auto; }}
+      #acard .lab {{ margin-left: auto; font-weight: 700; font-size: 40px; color: var(--peri); text-shadow: 0 0 16px rgba(143,123,255,0.8); }}
+      #bars {{ display: flex; align-items: center; justify-content: center; gap: 7px; height: 52px; }}
+      #bars i {{ display: block; width: 6px; height: 52px; border-radius: 3px; background: var(--peri); box-shadow: 0 0 8px rgba(143,123,255,0.8); transform: scaleY(0.16); }}
+      #anote {{ font-weight: 700; font-size: 36px; line-height: 1.22; text-align: center; color: #fff; text-shadow: 0 0 14px rgba(255,255,255,0.35), 0 3px 16px rgba(11,10,18,0.95); opacity: 0; }}
 
-      /* live order ticket (ceiling area, above her head) */
-      #tk {{ position: absolute; left: 230px; top: 278px; width: 620px; padding: 22px 30px 18px; border-radius: 30px; background: rgba(11,10,18,0.84);
+      /* order review ticket (top, only during the read-back) */
+      #tk {{ position: absolute; left: 230px; top: 140px; width: 620px; padding: 22px 30px 16px; border-radius: 30px; background: rgba(11,10,18,0.86);
         border: 2.5px solid var(--peri); box-shadow: 0 0 26px rgba(143,123,255,0.5), 0 24px 60px rgba(11,10,18,0.5); opacity: 0; }}
       #tk .hd {{ display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 2px solid rgba(143,123,255,0.3); }}
       #tk .t1 {{ font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 38px; color: #fff; letter-spacing: -0.01em; }}
@@ -98,32 +128,33 @@ page = f"""<!doctype html>
       .tr .v {{ font-weight: 700; white-space: nowrap; }}
       .tr.pk .v {{ font-weight: 400; color: rgba(255,255,255,0.85); }}
 
-      /* captions (under her face) */
-      .cap {{ position: absolute; left: 110px; top: 1090px; width: 860px; text-align: center; font-weight: 700; font-size: 70px; line-height: 1.08; letter-spacing: -0.01em; opacity: 0; }}
-      .cap .w {{ display: inline-block; opacity: 0.4; color: #fff; text-shadow: 0 4px 18px rgba(11,10,18,0.85); }}
-      .cap.ai .w.on {{ opacity: 1; color: #b9adff; text-shadow: 0 0 22px rgba(143,123,255,0.95), 0 0 6px rgba(143,123,255,0.7), 0 4px 18px rgba(11,10,18,0.85); }}
-      .cap.me .w.on {{ opacity: 1; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.55), 0 4px 18px rgba(11,10,18,0.9); }}
+      /* captions: bottom edge sits just above the pills */
+      .cap {{ position: absolute; left: 110px; bottom: 712px; width: 860px; text-align: center; font-weight: 700; font-size: 60px; line-height: 1.1; letter-spacing: -0.01em; opacity: 0; }}
+      .cap .w {{ display: inline-block; color: #fff; opacity: 0.7; text-shadow: 0 2px 0 rgba(11,10,18,0.45), 0 4px 20px rgba(11,10,18,0.95); }}
 
-      /* option chips (over her chest) */
-      .chips {{ position: absolute; left: 110px; top: 1290px; width: 860px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }}
-      .chip {{ position: relative; height: 84px; padding: 0 36px; border-radius: 999px; display: flex; align-items: center; font-weight: 700; font-size: 38px; color: #fff; white-space: nowrap;
+      /* pills, right under the captions */
+      .chips {{ position: absolute; left: 90px; top: 1232px; width: 900px; display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }}
+      .chip {{ position: relative; height: 82px; padding: 0 34px; border-radius: 999px; display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 36px; color: #fff; white-space: nowrap;
         background: rgba(11,10,18,0.8); border: 2.5px solid var(--peri); box-shadow: 0 0 20px rgba(143,123,255,0.5); opacity: 0; }}
+      .chip .ic {{ position: relative; width: 38px; height: 38px; fill: none; stroke: #b9adff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }}
       .chip .x {{ position: absolute; left: 26px; right: 26px; top: 50%; height: 4px; margin-top: -2px; border-radius: 2px; background: #fff; transform-origin: 0 50%; }}
       .chip .pick {{ position: absolute; inset: -3px; border-radius: 999px; background: var(--brand); border: 2.5px solid #b9adff; opacity: 0; }}
       .chip span {{ position: relative; }}
-      #nm .cur {{ display: inline-block; width: 4px; height: 44px; margin-left: 4px; vertical-align: -6px; background: var(--peri); }}
       #nmv i {{ font-style: normal; opacity: 0; }}
-      #nm .lab {{ color: var(--peri); font-weight: 400; margin-right: 14px; }}
+      #nm .cur {{ display: inline-block; width: 4px; height: 42px; margin-left: 4px; vertical-align: -6px; background: var(--peri); }}
+      #nm .lab {{ color: var(--peri); font-weight: 400; margin-right: 12px; }}
 
-      /* end card */
-      #endc {{ position: absolute; inset: 0; background: radial-gradient(ellipse 760px 900px at 50% 46%, var(--glow) 0%, var(--ink) 72%); }}
-      #elogo {{ position: absolute; left: 395px; top: 470px; width: 290px; height: 358px; }}
-      #eh {{ position: absolute; left: 0; top: 930px; width: 1080px; text-align: center; font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 84px; line-height: 1.05; letter-spacing: -0.03em; color: #fff; }}
-      #eh .ln {{ display: block; overflow: hidden; padding-bottom: 12px; }}
-      #eh .ln span {{ display: inline-block; }}
-      #eh .p {{ color: var(--peri); }}
-      #ecta {{ position: absolute; left: 190px; top: 1200px; width: 700px; height: 112px; border-radius: 999px; background: var(--brand); display: flex; align-items: center; justify-content: center; gap: 16px;
-        font-weight: 700; font-size: 42px; color: #fff; box-shadow: 0 0 40px rgba(91,65,218,0.6); }}
+      /* end banner (same family as the FAQ end cards) */
+      #endc {{ position: absolute; inset: 0; background: radial-gradient(900px 1200px at 50% 44%, #6c53ee 0%, var(--brand) 64%); color: var(--cream);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 180px; }}
+      #eR {{ width: 210px; height: 210px; border-radius: 54px; background: var(--cream); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 140px 30px rgba(243,239,230,0.22); }}
+      #eR .rm {{ width: 150px; height: 150px; overflow: visible; }}
+      #eq {{ margin-top: 54px; font-size: 26px; color: var(--cream); background: rgba(11,10,18,0.22); padding: 14px 24px; border-radius: 14px; }}
+      #esee-m {{ margin-top: 26px; overflow: hidden; padding: 0 60px 10px; text-align: center; }}
+      #esee {{ display: block; font-family: "Instrument Serif", serif; font-style: italic; font-size: 132px; line-height: 1.02; }}
+      #eurl {{ font-size: 28px; margin-top: 18px; }}
+      #ebelow {{ position: absolute; left: 0; top: 1380px; width: 1080px; display: flex; justify-content: center; align-items: center; gap: 16px; font-weight: 700; font-size: 44px; }}
+      #ebelow b {{ display: inline-block; font-size: 50px; }}
     </style>
   </head>
   <body>
@@ -133,19 +164,22 @@ page = f"""<!doctype html>
         <video id="src" class="clip" src="clip.mp4" data-start="0" data-duration="{CLIP}" data-has-audio="true" playsinline></video>
         <div id="shade"></div>
       </div>
+      <audio id="music" src="music.wav" data-start="0" data-duration="{TOTAL}" data-volume="1"></audio>
 
       <div id="ov" class="clip" data-start="0" data-duration="{CLIP}" style="z-index:20">
-        <!-- hook 0 to 3s -->
         <div id="hook"><span class="ln"><span>Can you tell</span></span><span class="ln"><span>this is <b class="ai">AI?</b></span></span></div>
 
-        <div id="badge">
-          <div id="pill"><i class="dot"></i><span class="lbl mono">RezFlo AI receptionist</span><div id="bars">{"".join("<i></i>" for _ in range(9))}</div></div>
-          <div id="sub">Real call to RezFlo's AI · pauses trimmed</div>
+        <div id="agent">
+          <div id="acard">
+            <div class="row"><i class="dot"></i><img src="rezflo-logo-horizontal-on-dark.svg" alt="RezFlo" /><span class="lab">AI agent</span></div>
+            <div id="bars">{"".join("<i></i>" for _ in range(22))}</div>
+          </div>
+          <div id="anote">Real conversation between<br />a caller and RezFlo AI</div>
         </div>
 
         <div id="tk">
           <div class="hd">
-            <div><div class="t1">Pickup order</div><div class="t2 mono">Antalya · Name: Sarah</div></div>
+            <div><div class="t1">Order review</div><div class="t2 mono">Pickup · Name: Sarah</div></div>
             <div id="st"><div class="s live mono"><i></i>Live</div><div class="s done mono"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Placed</div></div>
           </div>
           <div id="r1" class="tr"><span class="q mono">1 ×</span><span class="v">Chicken doner</span></div>
@@ -154,130 +188,145 @@ page = f"""<!doctype html>
           <div id="r4" class="tr pk"><span class="q mono">◷</span><span class="v">Pickup · as soon as possible</span></div>
         </div>
 
-        <div class="chips" id="cn"><div id="nm" class="chip"><span><b class="lab">Name</b><b id="nmv">{"".join(f"<i>{c}</i>" for c in "Sarah")}</b><i class="cur"></i></span></div></div>
-        <div class="chips" id="cd"><div id="d1" class="chip"><i class="pick"></i><span>Soda</span></div><div id="d2" class="chip"><span>Turkish tea</span></div></div>
+        <div class="chips" id="cn"><div id="nm" class="chip">{ic("user")}<span><b class="lab">Name</b><b id="nmv">{"".join(f"<i>{c}</i>" for c in "Sarah")}</b><i class="cur"></i></span></div></div>
+        <div class="chips" id="ci"><div id="i1" class="chip">{ic("wrap")}<span>Chicken doner</span></div><div id="i2" class="chip">{ic("fries")}<span>Regular fries</span></div></div>
+        <div class="chips" id="cd"><div id="d1" class="chip"><i class="pick"></i>{ic("cup")}<span>Soda</span></div><div id="d2" class="chip">{ic("tea")}<span>Turkish tea</span></div></div>
         <div class="chips" id="cc"><div id="m1" class="chip"><span>No onions</span><i class="x"></i></div><div id="m2" class="chip"><span>Extra sauce</span><i class="x"></i></div></div>
-        <div class="chips" id="cp"><div id="p1" class="chip"><i class="pick"></i><span>As soon as possible</span></div><div id="p2" class="chip"><span>Specific time</span></div></div>
+        <div class="chips" id="cp"><div id="p1" class="chip"><i class="pick"></i>{ic("clock")}<span>As soon as possible</span></div><div id="p2" class="chip">{ic("clock")}<span>Specific time</span></div></div>
 
-        {chr(10).join("        " + h for h in cap_html).strip()}
+        {(chr(10) + "        ").join(cap_html)}
       </div>
 
-      <!-- end card ({CLIP} to {TOTAL}s) -->
+      <!-- end banner ({CLIP} to {TOTAL}s) -->
       <div id="endc" class="clip" data-start="{CLIP}" data-duration="{END}" style="z-index:30">
-        <img id="elogo" src="rezflo-logo-on-dark.svg" alt="RezFlo" />
-        <div id="eh"><span class="ln"><span>Every call answered.</span></span><span class="ln"><span class="p">Every order taken.</span></span></div>
-        <div id="ecta"><span>Fill out the form below</span><b>↓</b></div>
+        <div id="eR">{RTILE}</div>
+        <div id="eq" class="mono">AI receptionist for restaurants</div>
+        <div id="esee-m"><span id="esee">Never miss<br />a call again.</span></div>
+        <div id="eurl" class="mono">rezflo.ca</div>
+        <div id="ebelow"><span>Fill out the form below</span><b>↓</b></div>
       </div>
 
       <audio id="sfx-hook" src="sfx/switch.wav" data-start="0.12" data-duration="0.14" data-volume="0.25"></audio>
-      <audio id="sfx-badge" src="sfx/pop.wav" data-start="3.0" data-duration="0.17" data-volume="0.2"></audio>
-      <audio id="sfx-nm" src="sfx/pop.wav" data-start="5.9" data-duration="0.17" data-volume="0.2"></audio>
-      <audio id="sfx-tk" src="sfx/pop.wav" data-start="8.05" data-duration="0.17" data-volume="0.22"></audio>
-      <audio id="sfx-r1" src="sfx/tick.wav" data-start="11.95" data-duration="0.09" data-volume="0.3"></audio>
-      <audio id="sfx-r2" src="sfx/tick.wav" data-start="13.25" data-duration="0.09" data-volume="0.3"></audio>
-      <audio id="sfx-d1" src="sfx/pop.wav" data-start="18.0" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-d2" src="sfx/pop.wav" data-start="18.7" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-r3" src="sfx/tick.wav" data-start="20.6" data-duration="0.09" data-volume="0.3"></audio>
-      <audio id="sfx-m1" src="sfx/pop.wav" data-start="22.9" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-m2" src="sfx/pop.wav" data-start="24.1" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-mx" src="sfx/snap.wav" data-start="25.55" data-duration="0.16" data-volume="0.25"></audio>
-      <audio id="sfx-p1" src="sfx/pop.wav" data-start="29.1" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-p2" src="sfx/pop.wav" data-start="30.8" data-duration="0.17" data-volume="0.18"></audio>
-      <audio id="sfx-r4" src="sfx/tick.wav" data-start="32.3" data-duration="0.09" data-volume="0.3"></audio>
-      <audio id="sfx-ok" src="sfx/success.wav" data-start="42.3" data-duration="0.6" data-volume="0.3"></audio>
-      <audio id="sfx-end" src="sfx/chime.wav" data-start="{CLIP + 0.1:.2f}" data-duration="0.8" data-volume="0.3"></audio>
+      <audio id="sfx-card" src="sfx/pop.wav" data-start="0.35" data-duration="0.17" data-volume="0.22"></audio>
+      <audio id="sfx-nm" src="sfx/pop.wav" data-start="{K['name']}" data-duration="0.17" data-volume="0.2"></audio>
+      <audio id="sfx-sarah" src="sfx/tick.wav" data-start="{K['sarah']}" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-i1" src="sfx/pop.wav" data-start="{K['doner']}" data-duration="0.17" data-volume="0.2"></audio>
+      <audio id="sfx-i2" src="sfx/pop.wav" data-start="{K['fries']}" data-duration="0.17" data-volume="0.2"></audio>
+      <audio id="sfx-d1" src="sfx/pop.wav" data-start="{K['soda']}" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-d2" src="sfx/pop.wav" data-start="{K['tea']}" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-dp" src="sfx/tick.wav" data-start="{K['sodaPick']}" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-m1" src="sfx/pop.wav" data-start="{K['onions']}" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-m2" src="sfx/pop.wav" data-start="{K['sauce']}" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-mx" src="sfx/snap.wav" data-start="{K['nope']}" data-duration="0.16" data-volume="0.25"></audio>
+      <audio id="sfx-p1" src="sfx/pop.wav" data-start="{K['asap']}" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-p2" src="sfx/pop.wav" data-start="{K['specific']}" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-pp" src="sfx/tick.wav" data-start="{K['asapPick']}" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-tk" src="sfx/fill.wav" data-start="{K['readback']}" data-duration="0.5" data-volume="0.16"></audio>
+      <audio id="sfx-rb1" src="sfx/tick.wav" data-start="{K['rb1']}" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-rb2" src="sfx/tick.wav" data-start="{K['rb2']}" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-rb3" src="sfx/tick.wav" data-start="{K['rb3']}" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-ok" src="sfx/success.wav" data-start="{K['yeah']}" data-duration="0.6" data-volume="0.3"></audio>
+      <audio id="sfx-fill" src="sfx/fill.wav" data-start="{CLIP - 0.42:.2f}" data-duration="0.5" data-volume="0.2"></audio>
+      <audio id="sfx-end" src="sfx/chime.wav" data-start="{CLIP + 0.07:.2f}" data-duration="0.95" data-volume="0.3"></audio>
     </div>
 
     <script>
       window.__timelines = window.__timelines || {{}};
       const tl = gsap.timeline({{ paused: true }});
+      const K = {json.dumps(K)};
       const CAPS = {json.dumps(cap_js)};
-      const WAVE = {json.dumps(wave_js)};
+      const AI = {json.dumps(AI)};
       const CUTS = {json.dumps(CUTS)};
-      const AION = {{ opacity: 1, color: "#b9adff", textShadow: "0 0 22px rgba(143,123,255,0.95), 0 0 6px rgba(143,123,255,0.7), 0 4px 18px rgba(11,10,18,0.85)" }};
-      const MEON = {{ opacity: 1, color: "#ffffff", textShadow: "0 0 20px rgba(255,255,255,0.55), 0 4px 18px rgba(11,10,18,0.9)" }};
-      const chipIn = (sel, t) => tl.fromTo(sel, {{ opacity: 0, y: 26, scale: 0.86 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.32, ease: "back.out(1.6)" }}, t);
-      const chipsOut = (sel, t) => tl.to(sel, {{ opacity: 0, y: -16, scale: 0.94, duration: 0.25, ease: "power3.in", stagger: 0.04 }}, t);
+      const CLIP = {CLIP};
+      const AION = {{ opacity: 1, color: "#c4b9ff", textShadow: "0 0 22px rgba(143,123,255,0.95), 0 0 6px rgba(143,123,255,0.75), 0 4px 20px rgba(11,10,18,0.95)" }};
+      const MEON = {{ opacity: 1, color: "#ffffff", textShadow: "0 0 18px rgba(255,255,255,0.5), 0 4px 20px rgba(11,10,18,0.95)" }};
+      const chipIn = (sel, t) => tl.fromTo(sel, {{ opacity: 0, y: 24, scale: 0.86 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.32, ease: "back.out(1.6)" }}, t);
+      const chipsOut = (sel, t) => tl.to(sel, {{ opacity: 0, y: -14, scale: 0.94, duration: 0.25, ease: "power3.in", stagger: 0.04 }}, t);
       const pick = (sel, t) => {{ tl.to(sel + " .pick", {{ opacity: 1, duration: 0.15 }}, t); tl.fromTo(sel, {{ scale: 1 }}, {{ scale: 1.1, duration: 0.14, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }}, t); }};
-      const rowIn = (sel, t) => tl.fromTo(sel, {{ opacity: 0, x: -24 }}, {{ opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }}, t);
-      const flash = (sel, t) => tl.fromTo(sel, {{ color: "#ffffff" }}, {{ color: "#b9adff", duration: 0.12, yoyo: true, repeat: 1, immediateRender: false }}, t);
+      const flash = (sel, t) => tl.fromTo(sel, {{ color: "#ffffff" }}, {{ color: "#c4b9ff", duration: 0.14, yoyo: true, repeat: 1, immediateRender: false }}, t);
 
       // jump cuts: alternate framing so each cut reads as a new angle
       CUTS.forEach((t, k) => tl.set("#vw", {{ scale: k % 2 === 0 ? 1.07 : 1 }}, t));
-      // punch-ins on the key lines
-      tl.fromTo("#vw", {{ scale: 1.07 }}, {{ scale: 1.12, duration: 0.35, ease: "power3.out", immediateRender: false }}, 36.6);
-      tl.fromTo("#vw", {{ scale: 1.0 }}, {{ scale: 1.08, duration: 0.3, ease: "power3.out", immediateRender: false }}, 43.1);
+      tl.fromTo("#vw", {{ scale: 1.0 }}, {{ scale: 1.08, duration: 0.35, ease: "power3.out", immediateRender: false }}, K.rbPunch);
+      tl.fromTo("#vw", {{ scale: 1.0 }}, {{ scale: 1.08, duration: 0.3, ease: "power3.out", immediateRender: false }}, K.cool);
 
-      // hook (under 3s) → shrinks into the AI badge
+      // hook (under 3s)
       tl.fromTo("#hook .ln span", {{ yPercent: 105 }}, {{ yPercent: 0, duration: 0.5, ease: "power4.out", stagger: 0.12 }}, 0.05);
-      tl.to("#hook", {{ opacity: 0, y: -60, scale: 0.8, duration: 0.3, ease: "power3.in" }}, 2.75);
-      tl.fromTo("#badge", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }}, 3.0);
-      tl.to("#pill .dot", {{ opacity: 0.35, duration: 0.5, yoyo: true, repeat: 41, ease: "sine.inOut" }}, 3.0);
+      tl.to("#hook", {{ opacity: 0, y: -50, duration: 0.3, ease: "power3.in" }}, 2.8);
+
+      // "AI agent" card under the captions, then it clears for the pills
+      tl.fromTo("#acard", {{ opacity: 0, y: 30, scale: 0.9 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.5)" }}, 0.3);
+      tl.fromTo("#anote", {{ opacity: 0, y: 14 }}, {{ opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }}, 0.55);
+      tl.to("#acard .dot", {{ opacity: 0.35, duration: 0.45, yoyo: true, repeat: 5, ease: "sine.inOut" }}, 0.7);
+      tl.to("#agent > *", {{ opacity: 0, y: -16, duration: 0.3, ease: "power3.in", stagger: 0.05 }}, K.name - 0.55);
 
       // waveform moves while the AI talks (fixed pattern, so every render is identical)
-      const H = [0.55, 0.9, 0.4, 1, 0.65, 0.85, 0.35, 0.75, 0.5];
-      WAVE.forEach(([a, b]) => {{
-        for (let t = Math.max(a, 3.0), n = 0; t < b; t += 0.14, n++) {{
-          document.querySelectorAll("#bars i").forEach((el, j) => tl.to(el, {{ scaleY: 0.2 + 0.8 * H[(j + n * 4) % 9] * (0.6 + 0.4 * ((n + j) % 3) / 2), duration: 0.13, ease: "sine.inOut" }}, t));
+      const H = [0.5, 0.85, 0.35, 1, 0.6, 0.9, 0.3, 0.75, 0.45, 0.95, 0.55];
+      const bars = document.querySelectorAll("#bars i");
+      AI.forEach(([a, b]) => {{
+        if (a > K.name) return;
+        for (let t = a, n = 0; t < b; t += 0.12, n++) {{
+          bars.forEach((el, j) => tl.to(el, {{ scaleY: 0.18 + 0.82 * H[(j * 3 + n * 5) % 11] * (0.55 + 0.45 * ((n + j) % 4) / 3), duration: 0.11, ease: "sine.inOut" }}, t));
         }}
-        tl.to("#bars i", {{ scaleY: 0.18, duration: 0.15 }}, b);
+        tl.to(bars, {{ scaleY: 0.16, duration: 0.15 }}, b);
       }});
 
       // captions: chunk on/off, each word lights up as it is said
       CAPS.forEach(([k, a, b, ws]) => {{
         const el = document.getElementById("c" + k);
-        tl.fromTo(el, {{ opacity: 0, y: 14 }}, {{ opacity: 1, y: 0, duration: 0.12, ease: "power2.out" }}, a);
+        tl.fromTo(el, {{ opacity: 0, y: 12 }}, {{ opacity: 1, y: 0, duration: 0.12, ease: "power2.out" }}, a);
         const on = el.classList.contains("ai") ? AION : MEON;
         el.querySelectorAll(".w").forEach((w, j) => tl.set(w, on, ws[j]));
         tl.set(el, {{ opacity: 0 }}, b);
       }});
 
-      // name: "What name…" 5.42 → chip with a cursor, "Sarah" 7.56 types in
-      chipIn("#nm", 5.9);
-      tl.to("#nm .cur", {{ opacity: 0, duration: 0.25, yoyo: true, repeat: 5, ease: "steps(1)" }}, 6.0);
-      document.querySelectorAll("#nmv i").forEach((el, j) => tl.fromTo(el, {{ opacity: 0 }}, {{ opacity: 1, duration: 0.01, immediateRender: false }}, 7.56 + j * 0.06));
-      chipsOut("#nm", 8.6);
+      // name: chip with a cursor on "name", "Sarah" types in when she says it
+      chipIn("#nm", K.name);
+      tl.to("#nm .cur", {{ opacity: 0, duration: 0.25, yoyo: true, repeat: 5, ease: "steps(1)" }}, K.name + 0.1);
+      document.querySelectorAll("#nmv i").forEach((el, j) => tl.fromTo(el, {{ opacity: 0 }}, {{ opacity: 1, duration: 0.01, immediateRender: false }}, K.sarah + j * 0.06));
+      chipsOut("#nm", K.sarah + 1.3);
 
-      // ticket: opens on "Perfect, Sarah" 8.02, items as she says them
-      tl.fromTo("#tk", {{ opacity: 0, y: -30, scale: 0.94 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.4)" }}, 8.05);
-      rowIn("#r1", 11.9);   // "chicken doner"
-      rowIn("#r2", 13.2);   // "regular fries"
+      // her order: items pop up as she says them
+      chipIn("#i1", K.doner); chipIn("#i2", K.fries);
+      chipsOut("#ci .chip", K.itemsOut);
 
-      // drink: "soda" 18.02, "Turkish tea" 18.72, "I'll get a soda" 20.56
-      chipIn("#d1", 18.0); chipIn("#d2", 18.7);
-      pick("#d1", 20.5);
-      tl.to("#d2", {{ opacity: 0.25, duration: 0.2 }}, 20.5);
-      rowIn("#r3", 20.6);
-      chipsOut("#cd .chip", 21.25);
+      // drink
+      chipIn("#d1", K.soda); chipIn("#d2", K.tea);
+      pick("#d1", K.sodaPick);
+      tl.to("#d2", {{ opacity: 0.25, duration: 0.2 }}, K.sodaPick);
+      chipsOut("#cd .chip", K.drinkOut);
 
-      // changes: "no onions" 22.90, "extra sauce" 24.12, "Nope" 25.54 → crossed out
-      chipIn("#m1", 22.9); chipIn("#m2", 24.1);
-      tl.fromTo("#cc .x", {{ scaleX: 0 }}, {{ scaleX: 1, duration: 0.25, ease: "power3.out", stagger: 0.08 }}, 25.55);
-      tl.to("#cc .chip", {{ opacity: 0.45, duration: 0.2 }}, 25.75);
-      chipsOut("#cc .chip", 26.6);
+      // changes: crossed out on "Nope"
+      chipIn("#m1", K.onions); chipIn("#m2", K.sauce);
+      tl.fromTo("#cc .x", {{ scaleX: 0 }}, {{ scaleX: 1, duration: 0.25, ease: "power3.out", stagger: 0.08 }}, K.nope);
+      tl.to("#cc .chip", {{ opacity: 0.45, duration: 0.2 }}, K.nope + 0.2);
+      chipsOut("#cc .chip", K.modsOut);
 
-      // pickup time: "as soon as possible" 29.10, "specific time" 30.82, answer 31.78
-      chipIn("#p1", 29.1); chipIn("#p2", 30.8);
-      pick("#p1", 31.8);
-      tl.to("#p2", {{ opacity: 0.25, duration: 0.2 }}, 31.8);
-      rowIn("#r4", 32.3);
-      chipsOut("#cp .chip", 33.1);
+      // pickup time
+      chipIn("#p1", K.asap); chipIn("#p2", K.specific);
+      pick("#p1", K.asapPick);
+      tl.to("#p2", {{ opacity: 0.25, duration: 0.2 }}, K.asapPick);
+      chipsOut("#cp .chip", K.pickOut);
 
-      // read-back: rows light up on each item, ticket pulses on "correct?"
-      flash("#r1 .v", 37.4); flash("#r2 .v", 38.6); flash("#r3 .v", 39.8);
-      tl.fromTo("#tk", {{ scale: 1 }}, {{ scale: 1.035, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }}, 41.4);
+      // order review: ticket drops in on "read that back", rows light up as they're read
+      tl.fromTo("#tk", {{ opacity: 0, y: -40, scale: 0.94 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "back.out(1.4)" }}, K.readback);
+      tl.fromTo(".tr", {{ opacity: 0, x: -24 }}, {{ opacity: 1, x: 0, duration: 0.28, ease: "power3.out", stagger: 0.09 }}, K.readback + 0.25);
+      flash("#r1 .v", K.rb1); flash("#r2 .v", K.rb2); flash("#r3 .v", K.rb3);
+      tl.fromTo("#tk", {{ scale: 1 }}, {{ scale: 1.035, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }}, K.correct);
+      tl.to("#st .live", {{ opacity: 0, duration: 0.15 }}, K.yeah);
+      tl.fromTo("#st .done", {{ opacity: 0, scale: 0.6 }}, {{ opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.2)" }}, K.yeah);
+      tl.to("#tk", {{ borderColor: "#34c759", boxShadow: "0 0 30px rgba(52,199,89,0.55), 0 24px 60px rgba(11,10,18,0.5)", duration: 0.3 }}, K.yeah);
 
-      // "Yeah, that's perfect" 42.26 → order placed
-      tl.to("#st .live", {{ opacity: 0, duration: 0.15 }}, 42.3);
-      tl.fromTo("#st .done", {{ opacity: 0, scale: 0.6 }}, {{ opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.2)" }}, 42.3);
-      tl.to("#tk", {{ borderColor: "#34c759", boxShadow: "0 0 30px rgba(52,199,89,0.55), 0 24px 60px rgba(11,10,18,0.5)", duration: 0.3 }}, 42.3);
-
-      // end card
-      tl.fromTo("#endc", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.25 }}, {CLIP});
-      tl.fromTo("#elogo", {{ opacity: 0, scale: 0.7 }}, {{ opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }}, {CLIP + 0.1:.2f});
-      tl.fromTo("#eh .ln span", {{ yPercent: 105 }}, {{ yPercent: 0, duration: 0.5, ease: "power4.out", stagger: 0.14 }}, {CLIP + 0.35:.2f});
-      tl.fromTo("#ecta", {{ opacity: 0, y: 30 }}, {{ opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }}, {CLIP + 0.85:.2f});
-      tl.to("#ecta b", {{ y: 8, duration: 0.35, yoyo: true, repeat: 5, ease: "sine.inOut" }}, {CLIP + 1.2:.2f});
+      // end banner
+      tl.fromTo("#eR", {{ scale: 0.6, opacity: 0, y: 40 }}, {{ scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.3)" }}, CLIP + 0.05);
+      tl.fromTo("#eR .lane-g", {{ x: 14, y: -14, opacity: 0 }}, {{ x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }}, CLIP + 0.11);
+      tl.fromTo("#eR .lane-p", {{ x: -14, y: 14, opacity: 0 }}, {{ x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }}, CLIP + 0.16);
+      tl.fromTo("#eR .slash-g, #eR .slash-p", {{ x: -22, opacity: 0 }}, {{ x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }}, CLIP + 0.35);
+      tl.fromTo("#eq", {{ opacity: 0, y: 12 }}, {{ opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }}, CLIP + 0.4);
+      tl.fromTo("#esee", {{ yPercent: 110 }}, {{ yPercent: 0, duration: 0.5, ease: "power4.out" }}, CLIP + 0.6);
+      tl.fromTo("#eurl", {{ opacity: 0, y: 10 }}, {{ opacity: 1, y: 0, duration: 0.3 }}, CLIP + 0.95);
+      tl.fromTo("#ebelow", {{ opacity: 0, y: 16 }}, {{ opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }}, CLIP + 1.2);
+      tl.fromTo("#ebelow b", {{ y: -4 }}, {{ y: 8, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }}, CLIP + 1.5);
 
       window.__timelines["main"] = tl;
     </script>
@@ -285,4 +334,4 @@ page = f"""<!doctype html>
 </html>
 """
 open("index.html", "w").write(page)
-print(len(chunks), "caption chunks,", TOTAL, "s")
+print(len(chunks), "caption chunks,", TOTAL, "s, AI ranges", len(AI))
