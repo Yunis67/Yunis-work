@@ -6,3 +6,6 @@ raw/*
 # scratch renders; keep named finals by committing them explicitly with -f
 renders/*-test.mp4
 renders/*-draft.mp4
+# HyperFrames render scratch folders
+**/renders/work-*/
+**/renders/.*hf-transaction*
