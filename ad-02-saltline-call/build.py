@@ -74,7 +74,7 @@ STEPS = [
     ("AI disclosure", "When asked", "bot", 230, True, "#a78bfa", "blink"),
     ("Transfer to human", "Offered", "person", 253, True, "#ff9a76", "wave"),
 ]
-CW, CH, GX, GY, X0, Y0 = 270, 122, 50, 64, 85, 24
+CW, CH, GX, GY, X0, Y0 = 296, 134, 36, 56, 62, 24
 def cell(k):                     # snake: rows of 3, alternating direction
     r, c = divmod(k, 3)
     if r % 2: c = 2 - c
@@ -129,7 +129,7 @@ page = f"""<!doctype html>
       #vw {{ position: absolute; inset: 0; transform-origin: 540px 880px; }}
       #src {{ position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; }}
       #shade {{ position: absolute; inset: 0;
-        background: linear-gradient(180deg, rgba(11,10,18,0.78) 0%, rgba(11,10,18,0.6) 20%, rgba(11,10,18,0) 31%, rgba(11,10,18,0) 60%, rgba(11,10,18,0.35) 70%, rgba(11,10,18,0.35) 78%, rgba(11,10,18,0) 92%); }}
+        background: linear-gradient(180deg, rgba(11,10,18,0.7) 0%, rgba(11,10,18,0.62) 22%, rgba(11,10,18,0.3) 29%, rgba(11,10,18,0) 35%, rgba(11,10,18,0) 60%, rgba(11,10,18,0.35) 70%, rgba(11,10,18,0.35) 78%, rgba(11,10,18,0) 92%); }}
 
       /* hook */
       #hookw {{ position: absolute; left: 0; top: 190px; width: 1080px; display: flex; justify-content: center; }}
@@ -137,7 +137,7 @@ page = f"""<!doctype html>
         font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 84px; line-height: 1; letter-spacing: -0.03em; color: #fff; white-space: nowrap; opacity: 0; }}
 
       /* call-flow map (top of frame, above his head) */
-      #vp {{ position: absolute; left: 0; top: 70px; width: 1080px; height: {VPH}px; overflow: hidden;
+      #vp {{ position: absolute; left: 0; top: 150px; width: 1080px; height: {VPH}px; overflow: hidden;
         opacity: 0; }}
       #map {{ position: absolute; left: 0; top: 0; width: 1080px; height: {MAPH}px; }}
       #links {{ position: absolute; inset: 0; width: 1080px; height: {MAPH}px; overflow: visible; }}
@@ -146,13 +146,13 @@ page = f"""<!doctype html>
       .node {{ position: absolute; width: {CW}px; height: {CH}px; border-radius: 30px; background: rgba(22,20,31,0.9); border: 2.5px solid var(--dkb);
         display: flex; align-items: center; gap: 14px; padding: 0 16px; opacity: 0.5; box-shadow: 0 16px 36px rgba(11,10,18,0.45); }}
       .node.anytime {{ border-style: dashed; border-color: rgba(143,123,255,0.45); }}
-      .node .any {{ position: absolute; right: 18px; top: -15px; font-size: 14px; color: #c9bfff; background: var(--ink); border: 1.5px solid rgba(143,123,255,0.7); padding: 4px 9px; border-radius: 8px; }}
-      .tile {{ position: relative; width: 58px; height: 58px; border-radius: 18px; background: color-mix(in srgb, var(--c) 20%, #16141f); display: flex; align-items: center; justify-content: center; flex: none; }}
-      .tile svg {{ width: 32px; height: 32px; fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }}
+      .node .any {{ position: absolute; right: 18px; top: -15px; font-size: 15px; color: #c9bfff; background: var(--ink); border: 1.5px solid rgba(143,123,255,0.7); padding: 4px 9px; border-radius: 8px; }}
+      .tile {{ position: relative; width: 66px; height: 66px; border-radius: 20px; background: color-mix(in srgb, var(--c) 20%, #16141f); display: flex; align-items: center; justify-content: center; flex: none; }}
+      .tile svg {{ width: 36px; height: 36px; fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }}
       .node .ring {{ position: absolute; inset: -3px; border-radius: 32px; border: 3px solid var(--c); opacity: 0; pointer-events: none; }}
       .txt {{ flex: 1; min-width: 0; }}
-      .node .t {{ font-weight: 700; font-size: 25px; line-height: 1.06; color: #fff; }}
-      .node .d {{ font-size: 13px; letter-spacing: 0.08em; color: #b9b5cc; margin-top: 6px; white-space: nowrap; opacity: 0; }}
+      .node .t {{ font-weight: 700; font-size: 29px; line-height: 1.05; color: #fff; }}
+      .node .d {{ font-size: 15px; letter-spacing: 0.08em; color: #b9b5cc; margin-top: 6px; white-space: nowrap; opacity: 0; }}
       .node .tick {{ position: absolute; right: -10px; top: -10px; width: 34px; height: 34px; border-radius: 50%; background: var(--green); border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center; opacity: 0; }}
       .node .tick svg {{ width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }}
 
