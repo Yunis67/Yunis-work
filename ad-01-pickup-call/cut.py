@@ -20,14 +20,19 @@ for i,(a,b) in enumerate(spans):
     if i == 10: lead = 0.1   # "Perfect." ends at 95.56 just before; don't catch it
     if i == len(spans)-1: tail = OUTRO
     keep.append((round(a-lead,3), round(b+tail,3)))
+# cold open: her "That is so cool!" plays first as the hook, then the call starts
+INTRO = (119.05, 120.70)
+keep.insert(0, INTRO)
 os.makedirs(tmp, exist_ok=True); lst=[]
+# cafe chatter: stronger denoise, plus a soft gate that dips the room ~9 dB between words (never fully silent)
+AUDIO = "highpass=f=90,afftdn=nr=14:nf=-38,agate=threshold=0.035:ratio=2.5:range=0.35:attack=6:release=220,"
 # HDR (HLG) iPhone footage → SDR bt709 in the same pass
 vf = "zscale=t=linear:npl=203,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p"
 for i,(a,b) in enumerate(keep):
     du=b-a; f=f"{tmp}/s{i:02d}.mp4"
     subprocess.run(["ffmpeg","-v","error","-y","-ss",f"{a}","-i",src,"-t",f"{du:.3f}","-vf",vf,
       "-color_primaries","bt709","-color_trc","bt709","-colorspace","bt709",
-      "-af",f"highpass=f=70,afftdn=nr=7:nf=-40,afade=t=in:d=0.03," + (f"afade=t=out:st={du-OUTRO+0.05:.3f}:d={OUTRO-0.1:.2f}" if i == len(keep)-1 else f"afade=t=out:st={du-0.04:.3f}:d=0.04"),"-c:v","libx264","-crf","14","-preset","fast","-r","30",
+      "-af",AUDIO + "afade=t=in:d=" + ("0.06," if i == 0 else "0.03,") + (f"afade=t=out:st={du-OUTRO+0.05:.3f}:d={OUTRO-0.1:.2f}" if i == len(keep)-1 else f"afade=t=out:st={du-0.18:.3f}:d=0.16" if i == 0 else f"afade=t=out:st={du-0.04:.3f}:d=0.04"),"-c:v","libx264","-crf","14","-preset","fast","-r","30",
       "-c:a","aac","-b:a","192k","-ar","48000",f],check=True)
     lst.append(f"file '{f}'")
 open(tmp+"/list.txt","w").write("\n".join(lst))

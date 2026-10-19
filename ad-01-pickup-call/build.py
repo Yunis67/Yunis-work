@@ -12,10 +12,13 @@ CUTS = [s["out"][0] for s in SEGS[1:]]    # jump cuts in clip.mp4
 FIX = {"Intalia.": "Antalya.", "donor": "doner", "donor,": "doner,"}
 W = [w for s in json.load(open("transcript.json")) for w in s["words"]]
 words = [{"w": FIX.get(w["w"].strip(), w["w"].strip()), "s": round(w["s"], 2), "e": round(w["e"], 2)} for w in W]
-T = lambda i: words[i]["s"]               # start time of word i (indices from transcript.json)
+N0 = 4                                    # cold open "That is so cool." is words 0-3; the call starts at word 4
+words = words[:189]                       # anything after the final "cool." is fading out under the music
+INTRO = SEGS[1]["out"][0]                 # where the call starts (end of the cold open)
+T = lambda i: words[i + N0]["s"]          # start time of call word i (same numbering as before the cold open)
 
 # the caller (Sarah) says these word ranges; everything else is the AI
-CALLER = [(10, 16), (36, 36), (47, 56), (78, 82), (94, 96), (114, 117), (178, 184)]
+CALLER = [(0, 3)] + [(a + N0, b + N0) for a, b in [(10, 16), (36, 36), (47, 56), (78, 82), (94, 96), (114, 117), (178, 184)]]
 for i, w in enumerate(words):
     w["ai"] = not any(a <= i <= b for a, b in CALLER)
 
@@ -90,6 +93,7 @@ page = f"""<!doctype html>
 
       #vw {{ position: absolute; inset: 0; transform-origin: 540px 820px; }}
       #src {{ position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; }}
+      #flash {{ position: absolute; inset: 0; background: #fff; opacity: 0; }}
       #shade {{ position: absolute; inset: 0;
         background: linear-gradient(180deg, rgba(11,10,18,0.5) 0%, rgba(11,10,18,0.2) 24%, rgba(11,10,18,0) 36%, rgba(11,10,18,0) 52%, rgba(11,10,18,0.32) 66%, rgba(11,10,18,0.32) 78%, rgba(11,10,18,0) 100%); }}
 
@@ -164,6 +168,7 @@ page = f"""<!doctype html>
       <div id="vw">
         <video id="src" class="clip" src="clip.mp4" data-start="0" data-duration="{CLIP}" data-has-audio="true" playsinline></video>
         <div id="shade"></div>
+        <div id="flash"></div>
       </div>
       <audio id="music" src="music.wav" data-start="0" data-duration="{TOTAL}" data-volume="1"></audio>
 
@@ -210,7 +215,8 @@ page = f"""<!doctype html>
       </div>
 
       <audio id="sfx-hook" src="sfx/switch.wav" data-start="0.12" data-duration="0.14" data-volume="0.25"></audio>
-      <audio id="sfx-card" src="sfx/pop.wav" data-start="0.35" data-duration="0.17" data-volume="0.22"></audio>
+      <audio id="sfx-whoosh" src="sfx/fill.wav" data-start="{round(INTRO - 0.2, 2)}" data-duration="0.5" data-volume="0.18"></audio>
+      <audio id="sfx-card" src="sfx/pop.wav" data-start="{round(INTRO + 0.35, 2)}" data-duration="0.17" data-volume="0.22"></audio>
       <audio id="sfx-nm" src="sfx/pop.wav" data-start="{K['name']}" data-duration="0.17" data-volume="0.2"></audio>
       <audio id="sfx-sarah" src="sfx/tick.wav" data-start="{K['sarah']}" data-duration="0.09" data-volume="0.3"></audio>
       <audio id="sfx-i1" src="sfx/pop.wav" data-start="{K['doner']}" data-duration="0.17" data-volume="0.2"></audio>
@@ -243,6 +249,7 @@ page = f"""<!doctype html>
       const CAPS = {json.dumps(cap_js)};
       const AI = {json.dumps(AI)};
       const CLIP = {CLIP};
+      const INTRO = {INTRO};
       const XF = {XF};
       const AION = {{ opacity: 1, color: "#c4b9ff", textShadow: "0 0 22px rgba(143,123,255,0.95), 0 0 6px rgba(143,123,255,0.75), 0 4px 20px rgba(11,10,18,0.95)" }};
       const MEON = {{ opacity: 1, color: "#ffffff", textShadow: "0 0 18px rgba(255,255,255,0.5), 0 4px 20px rgba(11,10,18,0.95)" }};
@@ -252,7 +259,11 @@ page = f"""<!doctype html>
       const flash = (sel, t) => tl.fromTo(sel, {{ color: "#ffffff" }}, {{ color: "#c4b9ff", duration: 0.14, yoyo: true, repeat: 1, immediateRender: false }}, t);
 
       // camera: slow push-ins that hold (no snapping back)
-      tl.fromTo("#vw", {{ scale: 1 }}, {{ scale: 1.05, duration: K.readback, ease: "none" }}, 0);
+      // cold open sits tighter on her reaction, then the call starts wide and pushes in slowly
+      tl.fromTo("#vw", {{ scale: 1.16 }}, {{ scale: 1.2, duration: INTRO, ease: "none" }}, 0);
+      tl.set("#vw", {{ scale: 1 }}, INTRO);
+      tl.fromTo("#vw", {{ scale: 1 }}, {{ scale: 1.05, duration: K.readback - INTRO, ease: "none", immediateRender: false }}, INTRO);
+      tl.fromTo("#flash", {{ opacity: 0.85 }}, {{ opacity: 0, duration: 0.35, ease: "power2.out", immediateRender: false }}, INTRO);
       tl.to("#vw", {{ scale: 1.1, duration: 2.2, ease: "sine.inOut" }}, K.push2 - 0.3);
       tl.to("#vw", {{ scale: 1.2, duration: CLIP - K.cool + 0.2, ease: "sine.inOut" }}, K.cool - 0.2);
 
@@ -261,9 +272,9 @@ page = f"""<!doctype html>
       tl.to("#hook", {{ opacity: 0, y: -50, duration: 0.3, ease: "power3.in" }}, 2.8);
 
       // "AI agent" card under the captions, then it clears for the pills
-      tl.fromTo("#acard", {{ opacity: 0, y: 30, scale: 0.9 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.5)" }}, 0.3);
-      tl.fromTo("#anote", {{ opacity: 0, y: 14 }}, {{ opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }}, 0.55);
-      tl.to("#acard .dot", {{ opacity: 0.35, duration: 0.45, yoyo: true, repeat: 5, ease: "sine.inOut" }}, 0.7);
+      tl.fromTo("#acard", {{ opacity: 0, y: 30, scale: 0.9 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.5)" }}, INTRO + 0.3);
+      tl.fromTo("#anote", {{ opacity: 0, y: 14 }}, {{ opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }}, INTRO + 0.55);
+      tl.to("#acard .dot", {{ opacity: 0.35, duration: 0.45, yoyo: true, repeat: 5, ease: "sine.inOut" }}, INTRO + 0.7);
       tl.to("#agent > *", {{ opacity: 0, y: -16, duration: 0.3, ease: "power3.in", stagger: 0.05 }}, K.name - 0.55);
 
       // waveform moves while the AI talks (fixed pattern, so every render is identical)
