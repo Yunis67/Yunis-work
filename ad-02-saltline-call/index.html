@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="./gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Space Grotesk"; src: url("fonts/SpaceGrotesk-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "Inter"; src: url("fonts/Inter-400.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Inter"; src: url("fonts/Inter-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-400.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Instrument Serif"; src: url("fonts/InstrumentSerif-400-italic.woff2") format("woff2"); font-weight: 400; font-style: italic; }
+      :root { --ink: #0b0a12; --brand: #5b41da; --peri: #8f7bff; --green: #34c759; --cream: #f3efe6; --dk: #16141f; --dkb: #2a2738; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Inter", sans-serif; background: var(--ink); }
+      .clip { position: absolute; inset: 0; }
+      .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.12em; }
+
+      #vw { position: absolute; inset: 0; transform-origin: 540px 880px; }
+      #src { position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #shade { position: absolute; inset: 0;
+        background: linear-gradient(180deg, rgba(11,10,18,0.78) 0%, rgba(11,10,18,0.6) 20%, rgba(11,10,18,0) 31%, rgba(11,10,18,0) 60%, rgba(11,10,18,0.35) 70%, rgba(11,10,18,0.35) 78%, rgba(11,10,18,0) 92%); }
+
+      /* hook */
+      #hook { position: absolute; left: 0; top: 150px; width: 1080px; text-align: center; font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 100px; line-height: 1.02; letter-spacing: -0.03em; color: #fff; }
+      #hook .ln { display: block; overflow: hidden; padding: 0 0 8px; }
+      #hook .ln span { display: inline-block; text-shadow: 0 6px 30px rgba(11,10,18,0.75); }
+      #hook .ai { color: var(--peri); text-shadow: 0 0 26px rgba(143,123,255,0.85), 0 6px 30px rgba(11,10,18,0.75); }
+
+      /* call-flow map (top of frame, above his head) */
+      #vp { position: absolute; left: 0; top: 64px; width: 1080px; height: 430px; overflow: hidden;
+        -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 34px, #000 390px, transparent 430px); mask-image: linear-gradient(180deg, transparent 0, #000 34px, #000 390px, transparent 430px); opacity: 0; }
+      #map { position: absolute; left: 0; top: 0; width: 1080px; height: 954px; }
+      #links { position: absolute; inset: 0; width: 1080px; height: 954px; overflow: visible; }
+      .lb { fill: none; stroke: rgba(185,183,198,0.4); stroke-width: 3; }
+      .lf { fill: none; stroke: var(--peri); stroke-width: 4; filter: drop-shadow(0 0 6px rgba(143,123,255,0.9)); }
+      .node { position: absolute; width: 270px; height: 122px; border-radius: 30px; background: rgba(22,20,31,0.9); border: 2.5px solid var(--dkb);
+        display: flex; align-items: center; gap: 14px; padding: 0 16px; opacity: 0.5; box-shadow: 0 16px 36px rgba(11,10,18,0.45); }
+      .node.anytime { border-style: dashed; border-color: rgba(143,123,255,0.45); }
+      .node .any { position: absolute; right: 18px; top: -15px; font-size: 14px; color: #c9bfff; background: var(--ink); border: 1.5px solid rgba(143,123,255,0.7); padding: 4px 9px; border-radius: 8px; }
+      .tile { width: 58px; height: 58px; border-radius: 18px; background: #221e33; display: flex; align-items: center; justify-content: center; flex: none; }
+      .tile svg { width: 32px; height: 32px; fill: none; stroke: #b9adff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+      .txt { flex: 1; min-width: 0; }
+      .node .t { font-weight: 700; font-size: 25px; line-height: 1.06; color: #fff; }
+      .node .d { font-size: 13px; letter-spacing: 0.08em; color: #b9b5cc; margin-top: 6px; white-space: nowrap; opacity: 0; }
+      .node .tick { position: absolute; right: -10px; top: -10px; width: 34px; height: 34px; border-radius: 50%; background: var(--green); border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center; opacity: 0; }
+      .node .tick svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+      /* captions (on his chest, above the phone) */
+      .cap { position: absolute; left: 110px; bottom: 470px; width: 860px; text-align: center; font-weight: 700; font-size: 60px; line-height: 1.1; letter-spacing: -0.01em; opacity: 0; }
+      .cap .w { display: inline-block; color: #fff; opacity: 0.7; text-shadow: 0 2px 0 rgba(11,10,18,0.45), 0 4px 20px rgba(11,10,18,0.95); }
+
+      /* end banner */
+      #endc { position: absolute; inset: 0; background: radial-gradient(900px 1200px at 50% 44%, #6c53ee 0%, var(--brand) 64%); color: var(--cream);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 180px; }
+      #eR { width: 210px; height: 210px; border-radius: 54px; background: var(--cream); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 140px 30px rgba(243,239,230,0.22); }
+      #eR .rm { width: 150px; height: 150px; overflow: visible; }
+      #eq { margin-top: 54px; font-size: 26px; color: var(--cream); background: rgba(11,10,18,0.22); padding: 14px 24px; border-radius: 14px; }
+      #esee-m { margin-top: 26px; overflow: hidden; padding: 0 60px 10px; text-align: center; }
+      #esee { display: block; font-family: "Instrument Serif", serif; font-style: italic; font-size: 132px; line-height: 1.02; }
+      #eurl { font-size: 28px; margin-top: 18px; }
+      #ebelow { position: absolute; left: 0; top: 1380px; width: 1080px; display: flex; justify-content: center; align-items: center; gap: 16px; font-weight: 700; font-size: 44px; }
+      #ebelow b { display: inline-block; font-size: 50px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="107.61" data-width="1080" data-height="1920">
+      <div id="vw">
+        <video id="src" class="clip" src="clip.mp4" data-start="0" data-duration="104.01" data-has-audio="true" playsinline></video>
+        <div id="shade"></div>
+      </div>
+      <audio id="music" src="music.wav" data-start="0" data-duration="107.61" data-volume="1"></audio>
+
+      <div id="ov" class="clip" data-start="0" data-duration="104.01" style="z-index:20">
+        <div id="hook"><span class="ln"><span>Can you tell</span></span><span class="ln"><span>this is <b class="ai">AI?</b></span></span></div>
+        <div id="vp"><div id="map" data-layout-allow-overflow>
+          <svg id="links" viewBox="0 0 1080 954"><defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8f7bff"/></marker></defs><path class="lb" d="M363,85.0 L395,85.0"/><path id="l0" class="lf" d="M363,85.0 L395,85.0" style="stroke-dasharray:32;stroke-dashoffset:32" marker-end="url(#ah)"/><path class="lb" d="M683,85.0 L715,85.0"/><path id="l1" class="lf" d="M683,85.0 L715,85.0" style="stroke-dasharray:32;stroke-dashoffset:32" marker-end="url(#ah)"/><path class="lb" d="M860.0,154 L860.0,200"/><path id="l2" class="lf" d="M860.0,154 L860.0,200" style="stroke-dasharray:46;stroke-dashoffset:46" marker-end="url(#ah)"/><path class="lb" d="M717,271.0 L685,271.0"/><path id="l3" class="lf" d="M717,271.0 L685,271.0" style="stroke-dasharray:32;stroke-dashoffset:32" marker-end="url(#ah)"/><path class="lb" d="M397,271.0 L365,271.0"/><path id="l4" class="lf" d="M397,271.0 L365,271.0" style="stroke-dasharray:32;stroke-dashoffset:32" marker-end="url(#ah)"/><path class="lb" d="M220.0,340 L220.0,386"/><path id="l5" class="lf" d="M220.0,340 L220.0,386" style="stroke-dasharray:46;stroke-dashoffset:46" marker-end="url(#ah)"/><path class="lb" d="M363,457.0 L395,457.0"/><path id="l6" class="lf" d="M363,457.0 L395,457.0" style="stroke-dasharray:32;stroke-dashoffset:32" marker-end="url(#ah)"/><path class="lb" d="M683,457.0 L715,457.0"/><path id="l7" class="lf" d="M683,457.0 L715,457.0" style="stroke-dasharray:32;stroke-dashoffset:32" marker-end="url(#ah)"/><path class="lb" d="M860.0,526 L860.0,572"/><path id="l8" class="lf" d="M860.0,526 L860.0,572" style="stroke-dasharray:46;stroke-dashoffset:46" marker-end="url(#ah)"/><path class="lb" d="M717,643.0 L685,643.0"/><path id="l9" class="lf" d="M717,643.0 L685,643.0" style="stroke-dasharray:32;stroke-dashoffset:32" marker-end="url(#ah)"/><path class="lb" d="M397,643.0 L365,643.0" stroke-dasharray="6 7"/><path id="l10" class="lf" d="M397,643.0 L365,643.0" style="stroke-dasharray:32;stroke-dashoffset:32" marker-end="url(#ah)"/><path class="lb" d="M220.0,712 L220.0,758" stroke-dasharray="6 7"/><path id="l11" class="lf" d="M220.0,712 L220.0,758" style="stroke-dasharray:46;stroke-dashoffset:46" marker-end="url(#ah)"/><path class="lb" d="M363,829.0 L395,829.0" stroke-dasharray="6 7"/><path id="l12" class="lf" d="M363,829.0 L395,829.0" style="stroke-dasharray:32;stroke-dashoffset:32" marker-end="url(#ah)"/></svg>
+          <div id="n0" class="node" style="left:85px;top:24px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div><div class="txt"><div class="t">Greeting</div><div class="d mono">SaltLine</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n1" class="node" style="left:405px;top:24px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></div><div class="txt"><div class="t">Pickup order</div><div class="d mono">Pickup</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n2" class="node" style="left:725px;top:24px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg></div><div class="txt"><div class="t">Take the order</div><div class="d mono">Fish tacos</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n3" class="node" style="left:725px;top:210px"><div class="tile"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></div><div class="txt"><div class="t">Offer a meal</div><div class="d mono">Meal + yam fries</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n4" class="node" style="left:405px;top:210px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></div><div class="txt"><div class="t">Swap an item</div><div class="d mono">Cod → halibut</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n5" class="node" style="left:85px;top:210px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="txt"><div class="t">Allergy question</div><div class="d mono">Answered</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n6" class="node" style="left:85px;top:396px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M5 4h14v12l-4 4H5z"/><path d="M15 20v-4h4M8 9h8M8 13h5"/></svg></div><div class="txt"><div class="t">Special notes</div><div class="d mono">Tartar on side</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n7" class="node" style="left:405px;top:396px"><div class="tile"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div><div class="txt"><div class="t">Name + time</div><div class="d mono">Jonas · ASAP</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n8" class="node" style="left:725px;top:396px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1.6 14H7.6z"/><path d="M5 7h14M13 7l2-5h3"/></svg></div><div class="txt"><div class="t">Offer add-ons</div><div class="d mono">No thanks</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n9" class="node" style="left:725px;top:582px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.2 1.2L6.5 5M3 12l1.2 1.2 2.3-2.2M3 18l1.2 1.2 2.3-2.2"/></svg></div><div class="txt"><div class="t">Read it back</div><div class="d mono">Confirmed</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n10" class="node" style="left:405px;top:582px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="txt"><div class="t">Total + text</div><div class="d mono">Summary texted</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n11" class="node anytime" style="left:85px;top:582px"><span class="any mono">Any time</span><div class="tile"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4M9 13h.01M15 13h.01M9.5 16h5"/></svg></div><div class="txt"><div class="t">Says it&#x27;s AI</div><div class="d mono">When asked</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n12" class="node anytime" style="left:85px;top:768px"><span class="any mono">Any time</span><div class="tile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></div><div class="txt"><div class="t">Offer a human</div><div class="d mono">Stayed with AI</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div><div id="n13" class="node" style="left:405px;top:768px"><div class="tile"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></div><div class="txt"><div class="t">Wrap up</div><div class="d mono">See you soon</div></div><i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div>
+        </div></div>
+        <div id="c0" class="cap ai"><span class="w">SaltLine</span> <span class="w">Smokehouse,</span></div>
+        <div id="c1" class="cap ai"><span class="w">this</span> <span class="w">is</span> <span class="w">Clint.</span></div>
+        <div id="c2" class="cap ai"><span class="w">How</span> <span class="w">can</span> <span class="w">I</span> <span class="w">help</span></div>
+        <div id="c3" class="cap ai"><span class="w">you?</span></div>
+        <div id="c4" class="cap me"><span class="w">Hey,</span> <span class="w">I&#x27;d</span> <span class="w">like</span> <span class="w">to</span></div>
+        <div id="c5" class="cap me"><span class="w">place</span> <span class="w">a</span> <span class="w">pickup</span> <span class="w">order.</span></div>
+        <div id="c6" class="cap ai"><span class="w">You</span> <span class="w">got</span> <span class="w">it.</span></div>
+        <div id="c7" class="cap ai"><span class="w">Pickup.</span></div>
+        <div id="c8" class="cap ai"><span class="w">What</span> <span class="w">can</span> <span class="w">I</span> <span class="w">get</span></div>
+        <div id="c9" class="cap ai"><span class="w">started</span> <span class="w">for</span> <span class="w">you?</span></div>
+        <div id="c10" class="cap me"><span class="w">Can</span> <span class="w">I</span> <span class="w">get</span> <span class="w">the</span></div>
+        <div id="c11" class="cap me"><span class="w">SaltLine</span> <span class="w">Fish</span> <span class="w">Tacos?</span></div>
+        <div id="c12" class="cap ai"><span class="w">Great</span> <span class="w">choice,</span></div>
+        <div id="c13" class="cap ai"><span class="w">my</span> <span class="w">friend.</span></div>
+        <div id="c14" class="cap ai"><span class="w">Want</span> <span class="w">to</span> <span class="w">make</span> <span class="w">that</span></div>
+        <div id="c15" class="cap ai"><span class="w">a</span> <span class="w">meal?</span></div>
+        <div id="c16" class="cap me"><span class="w">Um,</span> <span class="w">yes.</span></div>
+        <div id="c17" class="cap me"><span class="w">Can</span> <span class="w">I</span> <span class="w">also</span> <span class="w">get</span></div>
+        <div id="c18" class="cap me"><span class="w">yam</span> <span class="w">fries?</span></div>
+        <div id="c19" class="cap ai"><span class="w">Fish</span> <span class="w">tacos</span> <span class="w">as</span> <span class="w">a</span></div>
+        <div id="c20" class="cap ai"><span class="w">meal</span> <span class="w">with</span> <span class="w">yam</span> <span class="w">fries.</span></div>
+        <div id="c21" class="cap ai"><span class="w">Nice.</span></div>
+        <div id="c22" class="cap ai"><span class="w">What</span> <span class="w">else?</span></div>
+        <div id="c23" class="cap me"><span class="w">Um,</span> <span class="w">can</span> <span class="w">I</span> <span class="w">get</span></div>
+        <div id="c24" class="cap me"><span class="w">a</span> <span class="w">one</span> <span class="w">-piece</span> <span class="w">cod?</span></div>
+        <div id="c25" class="cap me"><span class="w">Actually,</span> <span class="w">wait,</span></div>
+        <div id="c26" class="cap me"><span class="w">can</span> <span class="w">you</span> <span class="w">make</span> <span class="w">that</span></div>
+        <div id="c27" class="cap me"><span class="w">halibut?</span></div>
+        <div id="c28" class="cap ai"><span class="w">Halibut.</span></div>
+        <div id="c29" class="cap ai"><span class="w">Solid</span> <span class="w">choice,</span></div>
+        <div id="c30" class="cap ai"><span class="w">man.</span></div>
+        <div id="c31" class="cap ai"><span class="w">Anything</span> <span class="w">else?</span></div>
+        <div id="c32" class="cap me"><span class="w">And</span> <span class="w">is</span> <span class="w">the</span> <span class="w">halibut</span></div>
+        <div id="c33" class="cap me"><span class="w">gluten</span> <span class="w">-free?</span></div>
+        <div id="c34" class="cap me"><span class="w">My</span> <span class="w">girlfriend&#x27;s</span> <span class="w">a</span> <span class="w">celiac.</span></div>
+        <div id="c35" class="cap ai"><span class="w">Not</span> <span class="w">a</span> <span class="w">worry.</span></div>
+        <div id="c36" class="cap ai"><span class="w">Our</span> <span class="w">whole</span> <span class="w">kitchen</span> <span class="w">is</span></div>
+        <div id="c37" class="cap ai"><span class="w">gluten</span> <span class="w">-free.</span></div>
+        <div id="c38" class="cap ai"><span class="w">Batter</span> <span class="w">and</span> <span class="w">fryer&#x27;s</span> <span class="w">included,</span></div>
+        <div id="c39" class="cap ai"><span class="w">so</span> <span class="w">everything</span> <span class="w">is</span> <span class="w">safe</span></div>
+        <div id="c40" class="cap ai"><span class="w">for</span> <span class="w">her.</span></div>
+        <div id="c41" class="cap ai"><span class="w">Any</span> <span class="w">special</span> <span class="w">instructions?</span></div>
+        <div id="c42" class="cap me"><span class="w">Yeah,</span> <span class="w">can</span> <span class="w">I</span> <span class="w">get</span></div>
+        <div id="c43" class="cap me"><span class="w">tartar</span> <span class="w">sauce</span> <span class="w">on</span> <span class="w">the</span></div>
+        <div id="c44" class="cap me"><span class="w">side?</span></div>
+        <div id="c45" class="cap ai"><span class="w">Tartar</span> <span class="w">on</span> <span class="w">the</span> <span class="w">side.</span></div>
+        <div id="c46" class="cap ai"><span class="w">Done.</span></div>
+        <div id="c47" class="cap ai"><span class="w">Can</span> <span class="w">I</span> <span class="w">get</span> <span class="w">a</span></div>
+        <div id="c48" class="cap ai"><span class="w">name</span> <span class="w">for</span> <span class="w">the</span> <span class="w">order?</span></div>
+        <div id="c49" class="cap me"><span class="w">Yeah,</span> <span class="w">Jonas.</span></div>
+        <div id="c50" class="cap ai"><span class="w">Good</span> <span class="w">to</span> <span class="w">have</span> <span class="w">you.</span></div>
+        <div id="c51" class="cap ai"><span class="w">ASAP</span> <span class="w">or</span> <span class="w">specific</span> <span class="w">pickup</span></div>
+        <div id="c52" class="cap ai"><span class="w">time?</span></div>
+        <div id="c53" class="cap me"><span class="w">Can</span> <span class="w">I</span> <span class="w">have</span> <span class="w">it</span></div>
+        <div id="c54" class="cap me"><span class="w">for</span> <span class="w">ASAP?</span></div>
+        <div id="c55" class="cap ai"><span class="w">Perfect.</span></div>
+        <div id="c56" class="cap ai"><span class="w">Ready</span> <span class="w">in</span> <span class="w">about</span> <span class="w">15</span></div>
+        <div id="c57" class="cap ai"><span class="w">minutes.</span></div>
+        <div id="c58" class="cap ai"><span class="w">Can</span> <span class="w">I</span> <span class="w">add</span> <span class="w">a</span></div>
+        <div id="c59" class="cap ai"><span class="w">sauce</span> <span class="w">or</span> <span class="w">a</span> <span class="w">drink?</span></div>
+        <div id="c60" class="cap me"><span class="w">Uh,</span> <span class="w">no,</span></div>
+        <div id="c61" class="cap me"><span class="w">that&#x27;s</span> <span class="w">everything.</span></div>
+        <div id="c62" class="cap ai"><span class="w">So</span> <span class="w">that&#x27;s</span> <span class="w">the</span> <span class="w">fish</span></div>
+        <div id="c63" class="cap ai"><span class="w">tacos</span> <span class="w">as</span> <span class="w">a</span> <span class="w">meal</span></div>
+        <div id="c64" class="cap ai"><span class="w">with</span> <span class="w">yam</span> <span class="w">fries</span> <span class="w">and</span></div>
+        <div id="c65" class="cap ai"><span class="w">a</span> <span class="w">one</span> <span class="w">-piece</span> <span class="w">halibut</span></div>
+        <div id="c66" class="cap ai"><span class="w">and</span> <span class="w">chips</span> <span class="w">with</span> <span class="w">tartar</span></div>
+        <div id="c67" class="cap ai"><span class="w">on</span> <span class="w">the</span> <span class="w">side</span> <span class="w">for</span></div>
+        <div id="c68" class="cap ai"><span class="w">Jonas.</span></div>
+        <div id="c69" class="cap ai"><span class="w">Ready</span> <span class="w">in</span> <span class="w">about</span> <span class="w">15</span></div>
+        <div id="c70" class="cap ai"><span class="w">minutes.</span></div>
+        <div id="c71" class="cap ai"><span class="w">Did</span> <span class="w">I</span> <span class="w">get</span> <span class="w">that</span></div>
+        <div id="c72" class="cap ai"><span class="w">right?</span></div>
+        <div id="c73" class="cap me"><span class="w">Yep,</span> <span class="w">that&#x27;s</span> <span class="w">right.</span></div>
+        <div id="c74" class="cap ai"><span class="w">Your</span> <span class="w">total</span> <span class="w">comes</span> <span class="w">to</span></div>
+        <div id="c75" class="cap ai"><span class="w">$49</span> <span class="w">.72,</span></div>
+        <div id="c76" class="cap ai"><span class="w">tax</span> <span class="w">included.</span></div>
+        <div id="c77" class="cap ai"><span class="w">I&#x27;ve</span> <span class="w">just</span> <span class="w">texted</span> <span class="w">you</span></div>
+        <div id="c78" class="cap ai"><span class="w">your</span> <span class="w">order</span> <span class="w">summary.</span></div>
+        <div id="c79" class="cap me"><span class="w">Am</span> <span class="w">I</span> <span class="w">talking</span> <span class="w">to</span></div>
+        <div id="c80" class="cap me"><span class="w">a</span> <span class="w">real</span> <span class="w">person?</span></div>
+        <div id="c81" class="cap ai"><span class="w">I&#x27;m</span> <span class="w">Clint.</span></div>
+        <div id="c82" class="cap ai"><span class="w">SaltLine&#x27;s</span> <span class="w">AI</span> <span class="w">assistant.</span></div>
+        <div id="c83" class="cap ai"><span class="w">I</span> <span class="w">handle</span> <span class="w">calls</span> <span class="w">so</span></div>
+        <div id="c84" class="cap ai"><span class="w">the</span> <span class="w">team</span> <span class="w">can</span> <span class="w">focus</span></div>
+        <div id="c85" class="cap ai"><span class="w">on</span> <span class="w">your</span> <span class="w">food.</span></div>
+        <div id="c86" class="cap ai"><span class="w">Happy</span> <span class="w">to</span> <span class="w">keep</span> <span class="w">helping,</span></div>
+        <div id="c87" class="cap ai"><span class="w">or</span> <span class="w">I</span> <span class="w">can</span> <span class="w">transfer</span></div>
+        <div id="c88" class="cap ai"><span class="w">you</span> <span class="w">to</span> <span class="w">someone</span> <span class="w">on</span></div>
+        <div id="c89" class="cap ai"><span class="w">our</span> <span class="w">team</span> <span class="w">if</span> <span class="w">you&#x27;d</span></div>
+        <div id="c90" class="cap ai"><span class="w">prefer.</span></div>
+        <div id="c91" class="cap me"><span class="w">No,</span> <span class="w">no,</span></div>
+        <div id="c92" class="cap me"><span class="w">you&#x27;re</span> <span class="w">good.</span></div>
+        <div id="c93" class="cap me"><span class="w">Thanks.</span></div>
+        <div id="c94" class="cap ai"><span class="w">Thanks</span> <span class="w">for</span> <span class="w">calling</span> <span class="w">SaltLine</span></div>
+        <div id="c95" class="cap ai"><span class="w">Smokehouse.</span></div>
+        <div id="c96" class="cap ai"><span class="w">We&#x27;ll</span> <span class="w">see</span> <span class="w">you</span> <span class="w">soon.</span></div>
+      </div>
+
+      <div id="endc" class="clip" data-start="103.31" data-duration="4.3" style="z-index:30">
+        <div id="eR"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div>
+        <div id="eq" class="mono">AI receptionist for restaurants</div>
+        <div id="esee-m"><span id="esee">Never miss<br />a call again.</span></div>
+        <div id="eurl" class="mono">rezflo.ca</div>
+        <div id="ebelow"><span>Fill out the form below</span><b>↓</b></div>
+      </div>
+
+      <audio id="sfx-n1" src="sfx/tick.wav" data-start="6.04" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n2" src="sfx/tick.wav" data-start="9.54" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n3" src="sfx/tick.wav" data-start="13.8" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n4" src="sfx/tick.wav" data-start="27.04" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n5" src="sfx/tick.wav" data-start="33.18" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n6" src="sfx/tick.wav" data-start="43.86" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n7" src="sfx/tick.wav" data-start="49.9" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n8" src="sfx/tick.wav" data-start="61.34" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n9" src="sfx/tick.wav" data-start="66.56" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n10" src="sfx/tick.wav" data-start="78.18" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n11" src="sfx/tick.wav" data-start="85.22" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n12" src="sfx/tick.wav" data-start="93.42" data-duration="0.09" data-volume="0.22"></audio><audio id="sfx-n13" src="sfx/tick.wav" data-start="100.48" data-duration="0.09" data-volume="0.22"></audio>
+      <audio id="sfx-hook" src="sfx/switch.wav" data-start="0.12" data-duration="0.14" data-volume="0.22"></audio>
+      <audio id="sfx-map" src="sfx/pop.wav" data-start="2.9" data-duration="0.17" data-volume="0.2"></audio>
+      <audio id="sfx-text" src="sfx/success.wav" data-start="83.0" data-duration="0.6" data-volume="0.22"></audio>
+      <audio id="sfx-fill" src="sfx/fill.wav" data-start="103.11" data-duration="0.5" data-volume="0.2"></audio>
+      <audio id="sfx-end" src="sfx/chime.wav" data-start="103.76" data-duration="0.95" data-volume="0.3"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const CAPS = [[0, -0.06, 1.4, [0.0, 0.58]], [1, 1.4, 2.36, [1.46, 1.84, 2.02]], [2, 2.36, 3.14, [2.42, 2.66, 2.84, 2.96]], [3, 3.14, 3.56, [3.2]], [4, 3.56, 4.48, [3.62, 4.1, 4.36, 4.44]], [5, 4.48, 5.82, [4.54, 4.74, 4.88, 5.08]], [6, 5.98, 7.0, [6.04, 6.52, 6.7]], [7, 7.0, 7.6, [7.06]], [8, 7.6, 8.52, [7.66, 8.14, 8.28, 8.42]], [9, 8.52, 9.48, [8.58, 8.88, 9.12]], [10, 9.48, 10.06, [9.54, 9.78, 9.88, 10.0]], [11, 10.06, 12.0, [10.12, 10.66, 10.96]], [12, 12.14, 12.98, [12.2, 12.68]], [13, 12.98, 13.74, [13.04, 13.22]], [14, 13.74, 14.58, [13.8, 14.2, 14.34, 14.48]], [15, 14.58, 15.44, [14.64, 14.78]], [16, 15.44, 16.28, [15.5, 16.04]], [17, 16.28, 16.74, [16.34, 16.46, 16.54, 16.62]], [18, 16.74, 17.92, [16.8, 17.22]], [19, 18.06, 19.48, [18.12, 18.6, 18.96, 19.44]], [20, 19.48, 21.0, [19.54, 19.8, 20.06, 20.34]], [21, 21.0, 21.82, [21.06]], [22, 21.82, 23.14, [21.88, 22.36]], [23, 23.4, 24.68, [23.46, 24.04, 24.48, 24.62]], [24, 24.68, 26.52, [24.74, 25.14, 25.46, 25.7]], [25, 26.98, 28.02, [27.04, 27.52]], [26, 28.02, 28.5, [28.08, 28.2, 28.28, 28.42]], [27, 28.5, 29.54, [28.56]], [28, 29.74, 30.42, [29.8]], [29, 30.42, 31.46, [30.48, 30.96]], [30, 31.46, 31.92, [31.52]], [31, 31.92, 33.12, [31.98, 32.46]], [32, 33.12, 34.24, [33.18, 33.62, 33.8, 33.92]], [33, 34.24, 34.84, [34.3, 34.52]], [34, 34.84, 37.06, [34.9, 35.22, 35.92, 35.94]], [35, 37.26, 38.24, [37.32, 37.8, 37.9]], [36, 38.24, 39.5, [38.3, 38.62, 38.92, 39.38]], [37, 39.5, 40.32, [39.56, 39.8]], [38, 40.32, 41.94, [40.38, 40.86, 41.04, 41.54]], [39, 41.94, 43.28, [42.0, 42.34, 42.76, 43.1]], [40, 43.28, 43.8, [43.34, 43.52]], [41, 43.8, 45.56, [43.86, 44.34, 44.62]], [42, 45.56, 46.14, [45.62, 45.86, 45.98, 46.1]], [43, 46.14, 47.16, [46.2, 46.68, 46.86, 47.12]], [44, 47.16, 47.96, [47.22]], [45, 48.1, 49.3, [48.16, 48.64, 48.78, 48.88]], [46, 49.3, 49.84, [49.36]], [47, 49.84, 50.7, [49.9, 50.38, 50.52, 50.66]], [48, 50.7, 51.64, [50.76, 50.94, 51.08, 51.18]], [49, 51.64, 53.08, [51.7, 52.12]], [50, 53.2, 54.8, [53.26, 53.74, 53.86, 54.02]], [51, 55.0, 56.6, [55.06, 55.54, 55.76, 56.04]], [52, 56.6, 57.18, [56.66]], [53, 57.18, 57.68, [57.24, 57.48, 57.58, 57.68]], [54, 57.68, 58.84, [57.74, 57.84]], [55, 58.84, 59.58, [58.9]], [56, 59.58, 60.74, [59.64, 60.16, 60.28, 60.46]], [57, 60.74, 61.28, [60.8]], [58, 61.28, 62.24, [61.34, 61.84, 61.98, 62.18]], [59, 62.24, 63.56, [62.3, 62.54, 62.72, 62.84]], [60, 63.58, 64.2, [63.64, 64.0]], [61, 64.2, 65.12, [64.26, 64.42]], [62, 66.5, 67.62, [66.56, 67.08, 67.36, 67.44]], [63, 67.62, 68.72, [67.68, 68.1, 68.44, 68.54]], [64, 68.72, 70.08, [68.78, 69.04, 69.28, 69.58]], [65, 70.08, 71.06, [70.14, 70.26, 70.48, 70.66]], [66, 71.06, 72.14, [71.12, 71.28, 71.58, 71.86]], [67, 72.14, 73.16, [72.2, 72.3, 72.4, 72.72]], [68, 73.16, 73.6, [73.22]], [69, 73.6, 74.84, [73.66, 74.1, 74.34, 74.52]], [70, 74.84, 75.38, [74.9]], [71, 75.38, 76.16, [75.44, 75.82, 75.92, 76.08]], [72, 76.16, 76.64, [76.22]], [73, 76.64, 77.9, [76.7, 76.98, 77.26]], [74, 78.12, 79.34, [78.18, 78.7, 78.94, 79.14]], [75, 79.34, 81.1, [79.4, 80.16]], [76, 81.2, 82.32, [81.26, 81.88]], [77, 82.32, 83.56, [82.38, 82.8, 83.0, 83.36]], [78, 83.56, 84.96, [83.62, 83.8, 84.12]], [79, 85.16, 86.2, [85.22, 85.74, 85.82, 86.04]], [80, 86.2, 87.32, [86.26, 86.38, 86.52]], [81, 87.48, 88.82, [87.54, 88.06]], [82, 89.06, 90.44, [89.12, 89.58, 89.8]], [83, 90.44, 91.56, [90.5, 90.86, 91.1, 91.36]], [84, 91.56, 92.38, [91.62, 91.76, 92.0, 92.16]], [85, 92.38, 93.36, [92.44, 92.64, 92.8]], [86, 93.36, 94.58, [93.42, 93.88, 94.04, 94.22]], [87, 94.58, 96.02, [94.64, 94.94, 95.46, 95.66]], [88, 96.02, 96.84, [96.08, 96.26, 96.36, 96.64]], [89, 96.84, 97.66, [96.9, 97.04, 97.34, 97.56]], [90, 97.66, 98.22, [97.72]], [91, 98.22, 98.84, [98.28, 98.74]], [92, 98.84, 99.32, [98.9, 99.04]], [93, 99.32, 100.3, [99.38]], [94, 100.42, 101.86, [100.48, 100.94, 101.08, 101.3]], [95, 101.86, 102.54, [101.92]], [96, 102.54, 104.01, [102.6, 103.06, 103.2, 103.34]]];
+      const STEPS = [[0.0, 0], [6.04, 0], [9.54, 0], [13.8, 1], [27.04, 1], [33.18, 1], [43.86, 2], [49.9, 2], [61.34, 2], [66.56, 3], [78.18, 3], [85.22, 3], [93.42, 4], [100.48, 4]];
+      const CLIP = 104.01, XF = 0.7, VPH = 430, MAPH = 954, CH = 122, GY = 64, Y0 = 24;
+      const AION = { opacity: 1, color: "#c4b9ff", textShadow: "0 0 22px rgba(143,123,255,0.95), 0 0 6px rgba(143,123,255,0.75), 0 4px 20px rgba(11,10,18,0.95)" };
+      const MEON = { opacity: 1, color: "#ffffff", textShadow: "0 0 18px rgba(255,255,255,0.5), 0 4px 20px rgba(11,10,18,0.95)" };
+
+      // camera: slow push-ins that hold
+      tl.fromTo("#vw", { scale: 1 }, { scale: 1.04, duration: 66.26, ease: "none" }, 0);
+      tl.to("#vw", { scale: 1.08, duration: 2.2, ease: "sine.inOut" }, 66.56 - 0.3);
+      tl.to("#vw", { scale: 1.13, duration: 2.2, ease: "sine.inOut" }, 85.22 - 0.3);
+
+      // hook, then the map takes the top of the frame
+      tl.fromTo("#hook .ln span", { yPercent: 105 }, { yPercent: 0, duration: 0.5, ease: "power4.out", stagger: 0.12 }, 0.05);
+      tl.to("#hook", { opacity: 0, y: -50, duration: 0.3, ease: "power3.in" }, 2.6);
+      tl.fromTo("#vp", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 2.85);
+      tl.fromTo(".node", { scale: 0.85 }, { scale: 1, duration: 0.45, ease: "back.out(1.6)", stagger: 0.03 }, 2.85);
+
+      // steps: active glows, done gets a tick, the arrow fills, the map pans to keep the active row in view
+      const ACTIVE = { opacity: 1, scale: 1.06, borderColor: "#8f7bff", boxShadow: "0 0 0 2px rgba(143,123,255,0.35), 0 0 34px rgba(143,123,255,0.75), 0 16px 36px rgba(11,10,18,0.45)" };
+      const DONE = { opacity: 1, scale: 1, borderColor: "#3a3550", boxShadow: "0 16px 36px rgba(11,10,18,0.45)" };
+      let lastRow = -1;
+      STEPS.forEach(([t0, row], k) => {
+        const t = Math.max(t0, k === 0 ? 3.0 : t0);
+        const n = "#n" + k;
+        if (k > 0) {
+          tl.to("#l" + (k - 1), { strokeDashoffset: 0, duration: 0.35, ease: "power2.inOut" }, t - 0.35);
+          tl.to("#n" + (k - 1), { ...DONE, duration: 0.3 }, t - 0.05);
+          tl.to("#n" + (k - 1) + " .tile", { backgroundColor: "#221e33", duration: 0.3 }, t - 0.05);
+          tl.fromTo("#n" + (k - 1) + " .tick", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.4)" }, t - 0.05);
+        }
+        tl.to(n, { ...ACTIVE, duration: 0.4, ease: "back.out(1.8)" }, t);
+        tl.to(n + " .tile", { backgroundColor: "#5b41da", duration: 0.3 }, t);
+        tl.to(n + " .tile svg", { stroke: "#ffffff", duration: 0.3 }, t);
+        tl.fromTo(n + " .d", { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.3 }, t + 0.5);
+        if (row !== lastRow) {
+          const center = Y0 + row * (CH + GY) + CH / 2;
+          const ty = Math.max(-(MAPH - VPH), Math.min(0, VPH / 2 - center));
+          tl.to("#map", { y: ty, duration: 0.8, ease: "power2.inOut" }, Math.max(t - 0.6, 3.0));
+          lastRow = row;
+        }
+      });
+      // last step completes as the call wraps up
+      tl.fromTo("#n13 .tick", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.4)" }, 103.2);
+
+      // captions: chunk on/off, each word lights up as it is said
+      CAPS.forEach(([k, a, b, ws]) => {
+        const el = document.getElementById("c" + k);
+        tl.fromTo(el, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.12, ease: "power2.out" }, a);
+        const on = el.classList.contains("ai") ? AION : MEON;
+        el.querySelectorAll(".w").forEach((w, j) => tl.set(w, on, ws[j]));
+        tl.set(el, { opacity: 0 }, b);
+      });
+
+      // end banner: dissolves in over the last moment, then the logo builds
+      const E = CLIP - 0.25;
+      tl.fromTo("#endc", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, CLIP - XF);
+      tl.to("#vp, .cap", { opacity: 0, duration: XF * 0.6, ease: "power2.in" }, CLIP - XF);
+      tl.fromTo("#eR", { scale: 0.6, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.3)" }, E);
+      tl.fromTo("#eR .lane-g", { x: 14, y: -14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, E + 0.06);
+      tl.fromTo("#eR .lane-p", { x: -14, y: 14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, E + 0.11);
+      tl.fromTo("#eR .slash-g, #eR .slash-p", { x: -22, opacity: 0 }, { x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }, E + 0.3);
+      tl.fromTo("#eq", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, E + 0.35);
+      tl.fromTo("#esee", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "power4.out" }, E + 0.55);
+      tl.fromTo("#eurl", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, E + 0.9);
+      tl.fromTo("#ebelow", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, E + 1.15);
+      tl.fromTo("#ebelow b", { y: -4 }, { y: 8, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }, E + 1.45);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -59,13 +59,13 @@ ICON = {
 }
 # (title, detail, icon, start word, "any time" step)
 STEPS = [
-    ("Greeting", "SaltLine Smokehouse", "phone", 0, False),
+    ("Greeting", "SaltLine", "phone", 0, False),
     ("Pickup order", "Pickup", "bag", 19, False),
     ("Take the order", "Fish tacos", "list", 30, False),
-    ("Offer a meal", "+ meal · yam fries", "plus", 42, False),
+    ("Offer a meal", "Meal + yam fries", "plus", 42, False),
     ("Swap an item", "Cod → halibut", "swap", 75, False),
     ("Allergy question", "Answered", "shield", 88, False),
-    ("Special notes", "Tartar on the side", "note", 117, False),
+    ("Special notes", "Tartar on side", "note", 117, False),
     ("Name + time", "Jonas · ASAP", "clock", 134, False),
     ("Offer add-ons", "No thanks", "cup", 165, False),
     ("Read it back", "Confirmed", "check", 177, False),
@@ -144,14 +144,14 @@ page = f"""<!doctype html>
       .lb {{ fill: none; stroke: rgba(185,183,198,0.4); stroke-width: 3; }}
       .lf {{ fill: none; stroke: var(--peri); stroke-width: 4; filter: drop-shadow(0 0 6px rgba(143,123,255,0.9)); }}
       .node {{ position: absolute; width: {CW}px; height: {CH}px; border-radius: 30px; background: rgba(22,20,31,0.9); border: 2.5px solid var(--dkb);
-        display: flex; align-items: center; gap: 16px; padding: 0 18px; opacity: 0.5; box-shadow: 0 16px 36px rgba(11,10,18,0.45); }}
+        display: flex; align-items: center; gap: 14px; padding: 0 16px; opacity: 0.5; box-shadow: 0 16px 36px rgba(11,10,18,0.45); }}
       .node.anytime {{ border-style: dashed; border-color: rgba(143,123,255,0.45); }}
       .node .any {{ position: absolute; right: 18px; top: -15px; font-size: 14px; color: #c9bfff; background: var(--ink); border: 1.5px solid rgba(143,123,255,0.7); padding: 4px 9px; border-radius: 8px; }}
-      .tile {{ width: 66px; height: 66px; border-radius: 20px; background: #221e33; display: flex; align-items: center; justify-content: center; flex: none; }}
-      .tile svg {{ width: 36px; height: 36px; fill: none; stroke: #b9adff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }}
-      .txt {{ min-width: 0; }}
-      .node .t {{ font-weight: 700; font-size: 27px; line-height: 1.1; color: #fff; white-space: nowrap; }}
-      .node .d {{ font-size: 14px; color: #b9b5cc; margin-top: 7px; white-space: nowrap; opacity: 0; }}
+      .tile {{ width: 58px; height: 58px; border-radius: 18px; background: #221e33; display: flex; align-items: center; justify-content: center; flex: none; }}
+      .tile svg {{ width: 32px; height: 32px; fill: none; stroke: #b9adff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }}
+      .txt {{ flex: 1; min-width: 0; }}
+      .node .t {{ font-weight: 700; font-size: 25px; line-height: 1.06; color: #fff; }}
+      .node .d {{ font-size: 13px; letter-spacing: 0.08em; color: #b9b5cc; margin-top: 6px; white-space: nowrap; opacity: 0; }}
       .node .tick {{ position: absolute; right: -10px; top: -10px; width: 34px; height: 34px; border-radius: 50%; background: var(--green); border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center; opacity: 0; }}
       .node .tick svg {{ width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }}
 
@@ -182,7 +182,7 @@ page = f"""<!doctype html>
 
       <div id="ov" class="clip" data-start="0" data-duration="{CLIP}" style="z-index:20">
         <div id="hook"><span class="ln"><span>Can you tell</span></span><span class="ln"><span>this is <b class="ai">AI?</b></span></span></div>
-        <div id="vp"><div id="map">
+        <div id="vp"><div id="map" data-layout-allow-overflow>
           <svg id="links" viewBox="0 0 1080 {MAPH}"><defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8f7bff"/></marker></defs>{"".join(links)}</svg>
           {"".join(cards)}
         </div></div>
@@ -215,7 +215,7 @@ page = f"""<!doctype html>
       const MEON = {{ opacity: 1, color: "#ffffff", textShadow: "0 0 18px rgba(255,255,255,0.5), 0 4px 20px rgba(11,10,18,0.95)" }};
 
       // camera: slow push-ins that hold
-      tl.fromTo("#vw", {{ scale: 1 }}, {{ scale: 1.04, duration: {T(177)}, ease: "none" }}, 0);
+      tl.fromTo("#vw", {{ scale: 1 }}, {{ scale: 1.04, duration: {round(T(177) - 0.3, 2)}, ease: "none" }}, 0);
       tl.to("#vw", {{ scale: 1.08, duration: 2.2, ease: "sine.inOut" }}, {T(177)} - 0.3);
       tl.to("#vw", {{ scale: 1.13, duration: 2.2, ease: "sine.inOut" }}, {T(230)} - 0.3);
 
