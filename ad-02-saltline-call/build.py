@@ -22,7 +22,11 @@ while i < len(words):   # caption words, with "Salt" + "Line…" merged
     w = dict(words[i])
     if w["w"] == "Salt" and i + 1 < len(words) and words[i + 1]["w"].startswith("Line"):
         w["w"] = "SaltLine" + words[i + 1]["w"][4:]; w["e"] = words[i + 1]["e"]; i += 1
-    cw.append(w); i += 1
+    if cw and (w["w"][0] in "-." or w["w"][0].isdigit() and cw[-1]["w"].endswith(".")) and w["s"] - cw[-1]["e"] < 0.8 and cw[-1]["ai"] == w["ai"]:
+        cw[-1]["w"] += w["w"]; cw[-1]["e"] = w["e"]   # "gluten" + "-free", "$49" + ".72", "one" + "-piece"
+    else:
+        cw.append(w)
+    i += 1
 
 chunks, cur = [], []
 for w in cw:
@@ -81,7 +85,7 @@ def cell(k):                     # snake: rows of 3, alternating direction
     return r, c, X0 + c * (CW + GX), Y0 + r * (CH + GY)
 ROWS = (len(STEPS) + 2) // 3
 MAPH = Y0 + ROWS * (CH + GY)
-VPH = 430                        # visible window of the map
+VPH = 2 * (CH + GY) + 6          # visible window: exactly two rows of the map
 
 cards, links = [], []
 for k, (title, detail, icon, _, anytime) in enumerate(STEPS):
@@ -137,8 +141,8 @@ page = f"""<!doctype html>
       #hook .ai {{ color: var(--peri); text-shadow: 0 0 26px rgba(143,123,255,0.85), 0 6px 30px rgba(11,10,18,0.75); }}
 
       /* call-flow map (top of frame, above his head) */
-      #vp {{ position: absolute; left: 0; top: 64px; width: 1080px; height: {VPH}px; overflow: hidden;
-        -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 34px, #000 {VPH - 40}px, transparent {VPH}px); mask-image: linear-gradient(180deg, transparent 0, #000 34px, #000 {VPH - 40}px, transparent {VPH}px); opacity: 0; }}
+      #vp {{ position: absolute; left: 0; top: 70px; width: 1080px; height: {VPH}px; overflow: hidden;
+        opacity: 0; }}
       #map {{ position: absolute; left: 0; top: 0; width: 1080px; height: {MAPH}px; }}
       #links {{ position: absolute; inset: 0; width: 1080px; height: {MAPH}px; overflow: visible; }}
       .lb {{ fill: none; stroke: rgba(185,183,198,0.4); stroke-width: 3; }}
@@ -243,8 +247,8 @@ page = f"""<!doctype html>
         tl.to(n + " .tile svg", {{ stroke: "#ffffff", duration: 0.3 }}, t);
         tl.fromTo(n + " .d", {{ opacity: 0, y: 6 }}, {{ opacity: 1, y: 0, duration: 0.3 }}, t + 0.5);
         if (row !== lastRow) {{
-          const center = Y0 + row * (CH + GY) + CH / 2;
-          const ty = Math.max(-(MAPH - VPH), Math.min(0, VPH / 2 - center));
+          const top = Math.min(row, {ROWS} - 2);           // active row on top, next row under it
+          const ty = -(Y0 + top * (CH + GY)) + 8;
           tl.to("#map", {{ y: ty, duration: 0.8, ease: "power2.inOut" }}, Math.max(t - 0.6, 3.0));
           lastRow = row;
         }}
