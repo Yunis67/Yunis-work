@@ -100,7 +100,7 @@ for k, (title, detail, icon, _, anytime, col, fx) in enumerate(STEPS):
             d = f"M{x1_},{ya} L{x2_},{ya}"; L = abs(x2_ - x1_)
         else:         # down to the next row
             xa = x + CW / 2
-            d = f"M{xa},{y + CH + 14} L{xa},{y2 - 10}"; L = y2 - 10 - (y + CH + 14)
+            d = f"M{xa},{y + CH + 14} L{xa},{y2 - 20}"; L = y2 - 20 - (y + CH + 14)
         dash = ' stroke-dasharray="6 7"' if STEPS[k + 1][4] or anytime else ""
         d = d
         links.append(f'<path class="lb" d="{d}"{dash}/><path id="l{k}" class="lf" d="{d}" style="stroke-dasharray:{L:.0f};stroke-dashoffset:{L:.0f}" marker-end="url(#ah)"/>')
@@ -249,7 +249,7 @@ page = f"""<!doctype html>
         tl.fromTo(n + " .d", {{ opacity: 0, y: 6 }}, {{ opacity: 1, y: 0, duration: 0.3 }}, t + 0.5);
         if (row !== lastRow) {{
           const top = Math.min(row, {ROWS} - 2);           // active row on top, next row under it
-          const ty = -(Y0 + top * (CH + GY)) + 8;
+          const ty = -(Y0 + top * (CH + GY)) + 6;
           tl.to("#map", {{ y: ty, duration: 0.8, ease: "power2.inOut" }}, Math.max(t - 0.6, 3.0));
           lastRow = row;
         }}
