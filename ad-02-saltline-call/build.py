@@ -62,21 +62,17 @@ ICON = {
     "flag": '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
 }
 # (title, detail, icon, start word, "any time" step)
+# (title, detail, icon, start word, "any time" step, colour, icon effect)
 STEPS = [
-    ("Greeting", "SaltLine", "phone", 0, False),
-    ("Pickup order", "Pickup", "bag", 19, False),
-    ("Take the order", "Fish tacos", "list", 30, False),
-    ("Offer a meal", "Meal + yam fries", "plus", 42, False),
-    ("Swap an item", "Cod → halibut", "swap", 75, False),
-    ("Allergy question", "Answered", "shield", 88, False),
-    ("Special notes", "Tartar on side", "note", 117, False),
-    ("Name + time", "Jonas · ASAP", "clock", 134, False),
-    ("Offer add-ons", "No thanks", "cup", 165, False),
-    ("Read it back", "Confirmed", "check", 177, False),
-    ("Total + text", "Summary texted", "msg", 215, False),
-    ("Says it's AI", "When asked", "bot", 230, True),
-    ("Offer a human", "Stayed with AI", "person", 253, True),
-    ("Wrap up", "See you soon", "flag", 275, False),
+    ("Greeting", "SaltLine", "phone", 0, False, "#ffb547", "ring"),
+    ("Take the order", "Fish tacos", "list", 30, False, "#ff8a3d", "pop"),
+    ("Offer a meal", "Meal + yam fries", "plus", 42, False, "#ff6fb5", "spin"),
+    ("Allergy question", "Answered", "shield", 88, False, "#22d3ee", "pulse"),
+    ("Name + time", "Jonas · ASAP", "clock", 134, False, "#4da3ff", "spin"),
+    ("Offer add\u2011ons", "No thanks", "cup", 165, False, "#c86bff", "bounce"),
+    ("Read it back", "Confirmed", "check", 177, False, "#8f7bff", "pop"),
+    ("AI disclosure", "When asked", "bot", 230, True, "#a78bfa", "blink"),
+    ("Transfer to human", "Offered", "person", 253, True, "#ff9a76", "wave"),
 ]
 CW, CH, GX, GY, X0, Y0 = 270, 122, 50, 64, 85, 24
 def cell(k):                     # snake: rows of 3, alternating direction
@@ -85,13 +81,13 @@ def cell(k):                     # snake: rows of 3, alternating direction
     return r, c, X0 + c * (CW + GX), Y0 + r * (CH + GY)
 ROWS = (len(STEPS) + 2) // 3
 MAPH = Y0 + ROWS * (CH + GY)
-VPH = 2 * (CH + GY) + 6          # visible window: exactly two rows of the map
+VPH = 2 * CH + GY + 16           # visible window: exactly two rows, nothing from the row below
 
 cards, links = [], []
-for k, (title, detail, icon, _, anytime) in enumerate(STEPS):
+for k, (title, detail, icon, _, anytime, col, fx) in enumerate(STEPS):
     r, c, x, y = cell(k)
     tag = '<span class="any mono">Any time</span>' if anytime else ""
-    cards.append(f'<div id="n{k}" class="node{" anytime" if anytime else ""}" style="left:{x}px;top:{y}px">{tag}'
+    cards.append(f'<div id="n{k}" class="node{" anytime" if anytime else ""}" style="left:{x}px;top:{y}px;--c:{col}">{tag}<i class="ring"></i>'
                  f'<div class="tile"><svg viewBox="0 0 24 24">{ICON[icon]}</svg></div>'
                  f'<div class="txt"><div class="t">{html.escape(title)}</div><div class="d mono">{html.escape(detail)}</div></div>'
                  f'<i class="tick"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg></i></div>')
@@ -104,11 +100,12 @@ for k, (title, detail, icon, _, anytime) in enumerate(STEPS):
             d = f"M{x1_},{ya} L{x2_},{ya}"; L = abs(x2_ - x1_)
         else:         # down to the next row
             xa = x + CW / 2
-            d = f"M{xa},{y + CH + 8} L{xa},{y2 - 10}"; L = y2 - 10 - (y + CH + 8)
+            d = f"M{xa},{y + CH + 14} L{xa},{y2 - 10}"; L = y2 - 10 - (y + CH + 14)
         dash = ' stroke-dasharray="6 7"' if STEPS[k + 1][4] or anytime else ""
+        d = d
         links.append(f'<path class="lb" d="{d}"{dash}/><path id="l{k}" class="lf" d="{d}" style="stroke-dasharray:{L:.0f};stroke-dashoffset:{L:.0f}" marker-end="url(#ah)"/>')
 
-steps_js = [[round(T(s[3]), 2), cell(k)[0]] for k, s in enumerate(STEPS)]
+steps_js = [[round(T(s[3]), 2), cell(k)[0], s[5], s[6]] for k, s in enumerate(STEPS)]
 
 page = f"""<!doctype html>
 <html lang="en" data-resolution="portrait">
@@ -135,10 +132,9 @@ page = f"""<!doctype html>
         background: linear-gradient(180deg, rgba(11,10,18,0.78) 0%, rgba(11,10,18,0.6) 20%, rgba(11,10,18,0) 31%, rgba(11,10,18,0) 60%, rgba(11,10,18,0.35) 70%, rgba(11,10,18,0.35) 78%, rgba(11,10,18,0) 92%); }}
 
       /* hook */
-      #hook {{ position: absolute; left: 0; top: 150px; width: 1080px; text-align: center; font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 100px; line-height: 1.02; letter-spacing: -0.03em; color: #fff; }}
-      #hook .ln {{ display: block; overflow: hidden; padding: 0 0 8px; }}
-      #hook .ln span {{ display: inline-block; text-shadow: 0 6px 30px rgba(11,10,18,0.75); }}
-      #hook .ai {{ color: var(--peri); text-shadow: 0 0 26px rgba(143,123,255,0.85), 0 6px 30px rgba(11,10,18,0.75); }}
+      #hookw {{ position: absolute; left: 0; top: 190px; width: 1080px; display: flex; justify-content: center; }}
+      #hook {{ padding: 30px 50px 34px; border-radius: 34px; background: var(--brand); box-shadow: 0 0 60px rgba(91,65,218,0.6), 0 24px 60px rgba(11,10,18,0.5);
+        font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 84px; line-height: 1; letter-spacing: -0.03em; color: #fff; white-space: nowrap; opacity: 0; }}
 
       /* call-flow map (top of frame, above his head) */
       #vp {{ position: absolute; left: 0; top: 70px; width: 1080px; height: {VPH}px; overflow: hidden;
@@ -151,8 +147,9 @@ page = f"""<!doctype html>
         display: flex; align-items: center; gap: 14px; padding: 0 16px; opacity: 0.5; box-shadow: 0 16px 36px rgba(11,10,18,0.45); }}
       .node.anytime {{ border-style: dashed; border-color: rgba(143,123,255,0.45); }}
       .node .any {{ position: absolute; right: 18px; top: -15px; font-size: 14px; color: #c9bfff; background: var(--ink); border: 1.5px solid rgba(143,123,255,0.7); padding: 4px 9px; border-radius: 8px; }}
-      .tile {{ width: 58px; height: 58px; border-radius: 18px; background: #221e33; display: flex; align-items: center; justify-content: center; flex: none; }}
-      .tile svg {{ width: 32px; height: 32px; fill: none; stroke: #b9adff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }}
+      .tile {{ position: relative; width: 58px; height: 58px; border-radius: 18px; background: color-mix(in srgb, var(--c) 20%, #16141f); display: flex; align-items: center; justify-content: center; flex: none; }}
+      .tile svg {{ width: 32px; height: 32px; fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }}
+      .node .ring {{ position: absolute; inset: -3px; border-radius: 32px; border: 3px solid var(--c); opacity: 0; pointer-events: none; }}
       .txt {{ flex: 1; min-width: 0; }}
       .node .t {{ font-weight: 700; font-size: 25px; line-height: 1.06; color: #fff; }}
       .node .d {{ font-size: 13px; letter-spacing: 0.08em; color: #b9b5cc; margin-top: 6px; white-space: nowrap; opacity: 0; }}
@@ -160,8 +157,8 @@ page = f"""<!doctype html>
       .node .tick svg {{ width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }}
 
       /* captions (on his chest, above the phone) */
-      .cap {{ position: absolute; left: 110px; bottom: 470px; width: 860px; text-align: center; font-weight: 700; font-size: 60px; line-height: 1.1; letter-spacing: -0.01em; opacity: 0; }}
-      .cap .w {{ display: inline-block; color: #fff; opacity: 0.7; text-shadow: 0 2px 0 rgba(11,10,18,0.45), 0 4px 20px rgba(11,10,18,0.95); }}
+      .cap {{ position: absolute; left: 90px; bottom: 450px; width: 900px; text-align: center; font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 80px; line-height: 1.04; letter-spacing: -0.02em; opacity: 0; }}
+      .cap .w {{ display: inline-block; color: #fff; opacity: 0.6; transform-origin: 50% 80%; -webkit-text-stroke: 7px rgba(11,10,18,0.6); paint-order: stroke fill; text-shadow: 0 6px 24px rgba(11,10,18,0.9); }}
 
       /* end banner */
       #endc {{ position: absolute; inset: 0; background: radial-gradient(900px 1200px at 50% 44%, #6c53ee 0%, var(--brand) 64%); color: var(--cream);
@@ -185,7 +182,7 @@ page = f"""<!doctype html>
       <audio id="music" src="music.wav" data-start="0" data-duration="{TOTAL}" data-volume="1"></audio>
 
       <div id="ov" class="clip" data-start="0" data-duration="{CLIP}" style="z-index:20">
-        <div id="hook"><span class="ln"><span>Can you tell</span></span><span class="ln"><span>this is <b class="ai">AI?</b></span></span></div>
+        <div id="hookw"><div id="hook">It answers every call.</div></div>
         <div id="vp"><div id="map" data-layout-allow-overflow>
           <svg id="links" viewBox="0 0 1080 {MAPH}"><defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8f7bff"/></marker></defs>{"".join(links)}</svg>
           {"".join(cards)}
@@ -201,7 +198,7 @@ page = f"""<!doctype html>
         <div id="ebelow"><span>Fill out the form below</span><b>↓</b></div>
       </div>
 
-      {"".join(f'<audio id="sfx-n{k}" src="sfx/tick.wav" data-start="{t}" data-duration="0.09" data-volume="0.22"></audio>' for k, (t, _) in enumerate(steps_js) if k)}
+      {"".join(f'<audio id="sfx-n{k}" src="sfx/tick.wav" data-start="{t}" data-duration="0.09" data-volume="0.22"></audio>' for k, (t, *_) in enumerate(steps_js) if k)}
       <audio id="sfx-hook" src="sfx/switch.wav" data-start="0.12" data-duration="0.14" data-volume="0.22"></audio>
       <audio id="sfx-map" src="sfx/pop.wav" data-start="2.9" data-duration="0.17" data-volume="0.2"></audio>
       <audio id="sfx-text" src="sfx/success.wav" data-start="{T(225)}" data-duration="0.6" data-volume="0.22"></audio>
@@ -215,8 +212,8 @@ page = f"""<!doctype html>
       const CAPS = {json.dumps(cap_js)};
       const STEPS = {json.dumps(steps_js)};
       const CLIP = {CLIP}, XF = {XF}, VPH = {VPH}, MAPH = {MAPH}, CH = {CH}, GY = {GY}, Y0 = {Y0};
-      const AION = {{ opacity: 1, color: "#c4b9ff", textShadow: "0 0 22px rgba(143,123,255,0.95), 0 0 6px rgba(143,123,255,0.75), 0 4px 20px rgba(11,10,18,0.95)" }};
-      const MEON = {{ opacity: 1, color: "#ffffff", textShadow: "0 0 18px rgba(255,255,255,0.5), 0 4px 20px rgba(11,10,18,0.95)" }};
+      const AION = {{ opacity: 1, color: "#c9bdff", textShadow: "0 0 26px rgba(143,123,255,0.95), 0 6px 24px rgba(11,10,18,0.9)" }};
+      const MEON = {{ opacity: 1, color: "#ffffff", textShadow: "0 0 20px rgba(255,255,255,0.45), 0 6px 24px rgba(11,10,18,0.9)" }};
 
       // camera: slow push-ins that hold
       tl.fromTo("#vw", {{ scale: 1 }}, {{ scale: 1.04, duration: {round(T(177) - 0.3, 2)}, ease: "none" }}, 0);
@@ -224,27 +221,31 @@ page = f"""<!doctype html>
       tl.to("#vw", {{ scale: 1.13, duration: 2.2, ease: "sine.inOut" }}, {T(230)} - 0.3);
 
       // hook, then the map takes the top of the frame
-      tl.fromTo("#hook .ln span", {{ yPercent: 105 }}, {{ yPercent: 0, duration: 0.5, ease: "power4.out", stagger: 0.12 }}, 0.05);
-      tl.to("#hook", {{ opacity: 0, y: -50, duration: 0.3, ease: "power3.in" }}, 2.6);
+      tl.fromTo("#hook", {{ opacity: 0, scale: 0.8, y: 20 }}, {{ opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(1.7)" }}, 0.05);
+      tl.to("#hook", {{ opacity: 0, scale: 0.96, duration: 0.45, ease: "power2.in" }}, 2.4);
       tl.fromTo("#vp", {{ opacity: 0, y: 30 }}, {{ opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }}, 2.85);
       tl.fromTo(".node", {{ scale: 0.85 }}, {{ scale: 1, duration: 0.45, ease: "back.out(1.6)", stagger: 0.03 }}, 2.85);
 
       // steps: active glows, done gets a tick, the arrow fills, the map pans to keep the active row in view
-      const ACTIVE = {{ opacity: 1, scale: 1.06, borderColor: "#8f7bff", boxShadow: "0 0 0 2px rgba(143,123,255,0.35), 0 0 34px rgba(143,123,255,0.75), 0 16px 36px rgba(11,10,18,0.45)" }};
-      const DONE = {{ opacity: 1, scale: 1, borderColor: "#3a3550", boxShadow: "0 16px 36px rgba(11,10,18,0.45)" }};
+      const ACTIVE = (c) => ({{ opacity: 1, scale: 1.06, borderColor: c, boxShadow: `0 0 0 2px ${{c}}55, 0 0 36px ${{c}}bb, 0 16px 36px rgba(11,10,18,0.45)` }});
+      const DONE = (c) => ({{ opacity: 1, scale: 1, borderColor: c + "66", boxShadow: "0 16px 36px rgba(11,10,18,0.45)" }});
+      const FX = {{ ring: {{ rotation: 14, duration: 0.07, yoyo: true, repeat: 7, ease: "sine.inOut" }}, pop: {{ scale: 1.3, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out" }}, spin: {{ rotation: 360, duration: 0.7, ease: "back.out(1.4)" }}, pulse: {{ scale: 1.25, duration: 0.22, yoyo: true, repeat: 3, ease: "sine.inOut" }}, bounce: {{ y: -8, duration: 0.16, yoyo: true, repeat: 3, ease: "power2.out" }}, blink: {{ scaleY: 0.15, duration: 0.09, yoyo: true, repeat: 3, ease: "none" }}, wave: {{ rotation: -16, duration: 0.12, yoyo: true, repeat: 5, ease: "sine.inOut", transformOrigin: "50% 90%" }} }};
       let lastRow = -1;
-      STEPS.forEach(([t0, row], k) => {{
+      STEPS.forEach(([t0, row, col, fx], k) => {{
         const t = Math.max(t0, k === 0 ? 3.0 : t0);
         const n = "#n" + k;
         if (k > 0) {{
-          tl.to("#l" + (k - 1), {{ strokeDashoffset: 0, duration: 0.35, ease: "power2.inOut" }}, t - 0.35);
-          tl.to("#n" + (k - 1), {{ ...DONE, duration: 0.3 }}, t - 0.05);
-          tl.to("#n" + (k - 1) + " .tile", {{ backgroundColor: "#221e33", duration: 0.3 }}, t - 0.05);
+          tl.to("#l" + (k - 1), {{ strokeDashoffset: 0, stroke: col, duration: 0.35, ease: "power2.inOut" }}, t - 0.35);
+          tl.to("#n" + (k - 1), {{ ...DONE(STEPS[k - 1][2]), duration: 0.3 }}, t - 0.05);
+          tl.to("#n" + (k - 1) + " .tile", {{ background: `${{STEPS[k - 1][2]}}33`, duration: 0.3 }}, t - 0.05);
+          tl.to("#n" + (k - 1) + " .tile svg", {{ stroke: STEPS[k - 1][2], duration: 0.3 }}, t - 0.05);
           tl.fromTo("#n" + (k - 1) + " .tick", {{ opacity: 0, scale: 0.4 }}, {{ opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.4)" }}, t - 0.05);
         }}
-        tl.to(n, {{ ...ACTIVE, duration: 0.4, ease: "back.out(1.8)" }}, t);
-        tl.to(n + " .tile", {{ backgroundColor: "#5b41da", duration: 0.3 }}, t);
-        tl.to(n + " .tile svg", {{ stroke: "#ffffff", duration: 0.3 }}, t);
+        tl.to(n, {{ ...ACTIVE(col), duration: 0.4, ease: "back.out(1.8)" }}, t);
+        tl.to(n + " .tile", {{ background: col, duration: 0.3 }}, t);
+        tl.to(n + " .tile svg", {{ stroke: "#0b0a12", duration: 0.3 }}, t);
+        tl.fromTo(n + " .ring", {{ opacity: 0.9, scale: 1 }}, {{ opacity: 0, scale: 1.18, duration: 0.8, ease: "power2.out", repeat: 1, immediateRender: false }}, t);
+        tl.to(n + " .tile svg", {{ ...FX[fx], immediateRender: false }}, t + 0.1);
         tl.fromTo(n + " .d", {{ opacity: 0, y: 6 }}, {{ opacity: 1, y: 0, duration: 0.3 }}, t + 0.5);
         if (row !== lastRow) {{
           const top = Math.min(row, {ROWS} - 2);           // active row on top, next row under it
@@ -254,14 +255,17 @@ page = f"""<!doctype html>
         }}
       }});
       // last step completes as the call wraps up
-      tl.fromTo("#n{len(STEPS) - 1} .tick", {{ opacity: 0, scale: 0.4 }}, {{ opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.4)" }}, {T(282)});
+      tl.fromTo("#n{len(STEPS) - 1} .tick", {{ opacity: 0, scale: 0.4 }}, {{ opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.4)" }}, {T(270)});
 
       // captions: chunk on/off, each word lights up as it is said
       CAPS.forEach(([k, a, b, ws]) => {{
         const el = document.getElementById("c" + k);
         tl.fromTo(el, {{ opacity: 0, y: 12 }}, {{ opacity: 1, y: 0, duration: 0.12, ease: "power2.out" }}, a);
         const on = el.classList.contains("ai") ? AION : MEON;
-        el.querySelectorAll(".w").forEach((w, j) => tl.set(w, on, ws[j]));
+        el.querySelectorAll(".w").forEach((w, j) => {{
+          tl.set(w, on, ws[j]);
+          tl.fromTo(w, {{ scale: 1.2, y: -6 }}, {{ scale: 1, y: 0, duration: 0.24, ease: "back.out(3)", immediateRender: false }}, ws[j]);
+        }});
         tl.set(el, {{ opacity: 0 }}, b);
       }});
 
