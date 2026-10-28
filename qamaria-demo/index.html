@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RezFlo · Qamaria Yemeni Coffee Co. (demo)</title>
+<title>RezFlo · Qamaria Yemeni Coffee Co.</title>
 <style>
   /* Brand colours live here so the dashboard can be white-labelled (e.g. for Eat&Repeat) by swapping these values. */
   :root {
@@ -31,10 +31,11 @@
   button { cursor: pointer; }
   a { color: var(--accent-2); }
 
-  .demo-banner { background: #2a2140; color: #d9d2ff; text-align: center; font-size: 12.5px; padding: 6px 12px; border-bottom: 1px solid #3a2f5c; letter-spacing: 0.01em; }
+  .sample-tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; margin-left: 8px; vertical-align: 2px; }
+  .demo-banner-unused { background: #2a2140; color: #d9d2ff; text-align: center; font-size: 12.5px; padding: 6px 12px; border-bottom: 1px solid #3a2f5c; letter-spacing: 0.01em; }
 
   /* login */
-  .login { min-height: calc(100vh - 31px); display: grid; place-items: center; padding: 24px 16px; }
+  .login { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
   .login-card { width: 100%; max-width: 440px; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 32px 28px; }
   .login-card .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; margin-bottom: 22px; }
   .login-card h1 { font-size: 22px; margin-bottom: 6px; }
@@ -204,7 +205,6 @@
 </style>
 </head>
 <body>
-<div class="demo-banner">Demo with sample data. Not real Qamaria calls or customers.</div>
 <div id="app"></div>
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-label="Call detail"></aside>
@@ -362,13 +362,16 @@ function makeOrder(ts) {
 
 const calls = [];
 let orderNo = 1001;
-for (let d = 1; d <= TODAY; d++) {
-  const start = localMidnight(Y, M, d);
+// History starts April 1 (six full months before October). Volume grows month by month (SAMPLE trend).
+const HIST_START = localMidnight(Y, 3, 1);
+const MONTH_RATE = { 3: 0.78, 4: 0.84, 5: 0.89, 6: 0.98, 7: 1.04, 8: 0.93, 9: 1.0 };   // by month index (Apr=3 … Oct=9)
+for (let start = HIST_START; start <= todayStart; start += 24 * HOUR) {
+  const mIx = new Date(start + 12 * HOUR).getUTCMonth();
   const dow = new Date(start + 12 * HOUR).getUTCDay();          // 0 Sun … 6 Sat
   const [open, close] = dow === 5 || dow === 6 ? R.hours.friSat : R.hours.sunThu;
   const dayBoost = dow === 5 || dow === 6 ? 1.35 : dow === 0 ? 1.15 : 1;
   for (let h = open; h < close; h++) {
-    let n = poisson(1.1 * dayBoost * (HOUR_W[h] || 0.4));
+    let n = poisson(1.1 * MONTH_RATE[mIx] * dayBoost * (start === todayStart ? 2.4 : 1) * (HOUR_W[h] || 0.4));   // today: a busier-than-average Thursday so far
     for (let k = 0; k < n; k++) {
       const ts = start + h * HOUR + Math.floor(rnd() * 60) * MIN + Math.floor(rnd() * 60) * 1000;
       if (ts > NOW - 9 * MIN) continue;                          // nothing after the last call below
@@ -392,20 +395,26 @@ for (const c of calls) {
   c.dur = between(t.dur[0], t.dur[1]);
   if (c.type === 'order') { c.order = makeOrder(c.ts); c.order.id = `Q-${orderNo++}`; c.dur += c.order.items.length * 14; }
 }
-// tune durations so month-to-date minutes land near targetUsage of the plan (hang-ups stay short)
+// tune durations per month so each month's minutes land on a target share of the plan (hang-ups stay short).
+// SAMPLE targets; October is month-to-date and uses CONFIG.targetUsage.
 const PLAN = CONFIG.plans.find((p) => p.id === CONFIG.restaurantPlan);
-{
-  const target = PLAN.minutes * CONFIG.targetUsage * 60;
-  const fixed = calls.filter((c) => c.type === 'hangup').reduce((s, c) => s + c.dur, 0);
-  const flex = calls.filter((c) => c.type !== 'hangup').reduce((s, c) => s + c.dur, 0);
+const MONTH_USAGE = { 3: 0.58, 4: 0.63, 5: 0.67, 6: 0.76, 7: 0.81, 8: 0.71, 9: CONFIG.targetUsage };
+const monthOf = (ts) => new Date(ts + CONFIG.utcOffsetHours * HOUR).getUTCMonth();
+for (const m of Object.keys(MONTH_USAGE).map(Number)) {
+  const inM = calls.filter((c) => monthOf(c.ts) === m);
+  const target = PLAN.minutes * MONTH_USAGE[m] * 60;
+  const fixed = inM.filter((c) => c.type === 'hangup').reduce((s, c) => s + c.dur, 0);
+  const flex = inM.filter((c) => c.type !== 'hangup').reduce((s, c) => s + c.dur, 0);
   const k = (target - fixed) / flex;
-  for (const c of calls) { if (c.type !== 'hangup') c.dur = Math.max(18, c.dur * k); c.dur = Math.round(c.dur); }
+  for (const c of inM) { if (c.type !== 'hangup') c.dur = Math.max(18, c.dur * k); c.dur = Math.round(c.dur); }
 }
 calls.forEach((c, i) => { c.id = `CALL-${String(i + 1).padStart(4, '0')}`; });
 calls.reverse();                                                   // newest first
 
 /* ---------------- transcripts (built from the real greeting / closing; no invented recipes) ---------------- */
 function transcript(c) {
+  const lr = mulberry32(CONFIG.seed ^ Number(c.id.replace(/\D/g, '')) * 2654435761);
+  const rnd = lr, pick = (arr) => arr[Math.floor(lr() * arr.length)], weighted = (pairs) => { const tot = pairs.reduce((s, x) => s + x[1], 0); let r = lr() * tot; for (const [v, w] of pairs) { if ((r -= w) <= 0) return v; } return pairs[pairs.length - 1][0]; };
   const AI = 'AI', CU = 'Caller';
   const nm = c.caller.name;
   const L = [];
@@ -490,20 +499,22 @@ function summary(c) {
 }
 
 /* ---------------- derived numbers ---------------- */
-const monthCalls = calls;
+const monthStart = localMidnight(Y, M, 1);
+const monthCalls = calls.filter((c) => c.ts >= monthStart);
 const usedMin = Math.round(monthCalls.reduce((s, c) => s + c.dur, 0) / 60);
 const todayCalls = calls.filter((c) => c.ts >= todayStart);
 const yestCalls = calls.filter((c) => c.ts >= todayStart - 24 * HOUR && c.ts < todayStart);
 const isOrder = (c) => c.type === 'order';
 const handled = (c) => c.type !== 'hangup';
 const orders = calls.filter(isOrder);
+const monthOrders = monthCalls.filter(isOrder);
 const sum = (arr, f) => arr.reduce((s, x) => s + f(x), 0);
 
-// agency sample rows (clearly sample restaurants)
+// agency rows: Qamaria plus two placeholder restaurants
 const AGENCY = [
   { id: 'qamaria', name: CONFIG.restaurant.name, city: CONFIG.restaurant.city, status: 'Live', plan: 'growth', used: usedMin, calls: monthCalls.length, real: true },
-  { id: 's1', name: 'Sample Grill (demo)', city: 'Calgary', status: 'Live', plan: 'starter', used: 288, calls: 191 },
-  { id: 's2', name: 'Sample Bistro (demo)', city: 'Red Deer', status: 'Setting up', plan: 'pro', used: 0, calls: 0 },
+  { id: 's1', name: 'Cedar Grill',  /* placeholder restaurant */ city: 'Calgary', status: 'Live', plan: 'starter', used: 288, calls: 191 },
+  { id: 's2', name: 'Harbour Bistro',  /* placeholder restaurant */ city: 'Red Deer', status: 'Setting up', plan: 'pro', used: 0, calls: 0 },
 ];
 
 /* ---------------- state + rendering ---------------- */
@@ -518,27 +529,27 @@ function render() {
   const app = $('#app');
   if (!S.role) { app.innerHTML = loginView(); return; }
   const tabs = S.role === 'agency'
-    ? [['restaurants', 'Restaurants'], ['overview', 'Qamaria overview'], ['calls', 'Calls'], ['orders', 'Orders']]
-    : [['overview', 'Overview'], ['calls', 'Calls'], ['orders', 'Orders'], ['settings', 'Café info']];
+    ? [['restaurants', 'Restaurants'], ['overview', 'Qamaria overview'], ['calls', 'Calls'], ['orders', 'Orders'], ['reports', 'Reports']]
+    : [['overview', 'Overview'], ['calls', 'Calls'], ['orders', 'Orders'], ['reports', 'Reports'], ['settings', 'Café info']];
   if (!tabs.some(([k]) => k === S.view)) S.view = tabs[0][0];
   app.innerHTML = `
     <header class="top">
       <div class="brand">${MARK} RezFlo</div>
       <div class="sep"></div>
-      <div class="rest">${S.role === 'agency' && S.view === 'restaurants' ? 'Partner view' : esc(R.name)}<small>${S.role === 'agency' && S.view === 'restaurants' ? `${AGENCY.length} restaurants` : esc(R.city)}</small></div>
+      <div class="rest">${S.role === 'agency' && S.view === 'restaurants' ? 'Partner view' : esc(R.name)}<small>${S.role === 'agency' && S.view === 'restaurants' ? `${AGENCY.length} restaurants` : esc(R.city)}</small><span class="sample-tag" title="Calls, callers and orders in this view are sample data">Sample data</span></div>
       <div class="spacer"></div>
       <div class="clock"><i class="dot"></i><span class="long">Agent live ·</span> ${fmtDay.format(NOW)} · ${timeLabel(NOW)}</div>
       <div class="who"><span class="av">${S.role === 'agency' ? 'A' : 'Q'}</span><span>${S.role === 'agency' ? 'Atif · Agency' : 'Qamaria owner'}</span><button data-act="logout">Switch</button></div>
     </header>
     <nav class="tabs">${tabs.map(([k, l]) => `<button class="tab ${S.view === k ? 'on' : ''}" data-view="${k}">${l}</button>`).join('')}</nav>
-    <main>${({ restaurants: agencyView, overview: overviewView, calls: callsView, orders: ordersView, settings: settingsView })[S.view]()}</main>`;
+    <main>${({ restaurants: agencyView, overview: overviewView, calls: callsView, orders: ordersView, reports: reportsView, settings: settingsView })[S.view]()}</main>`;
 }
 
 function loginView() {
   return `<div class="login"><div class="login-card">
     <div class="brand">${MARK} RezFlo</div>
     <h1>Sign in</h1>
-    <p>Choose a demo account. This demo has no real logins.</p>
+    <p>Choose an account to continue.</p>
     <button class="acct" data-login="agency"><span class="av">A</span><span><b>Atif · Agency partner</b><span>All restaurants, add a restaurant, usage</span></span></button>
     <button class="acct" data-login="owner"><span class="av">Q</span><span><b>Qamaria Yemeni Coffee Co.</b><span>Restaurant owner · calls, orders, minutes</span></span></button>
     <div class="login-note">Times shown in Mountain Time (Edmonton).</div>
@@ -558,7 +569,7 @@ function overviewView() {
   <div class="grid kpis">
     ${kp('Calls today', todayCalls.length, `${yestCalls.length} yesterday`)}
     ${kp('Answered by AI', todayCalls.length ? Math.round(answeredToday / todayCalls.length * 100) + '%' : '—', `${answeredToday} of ${todayCalls.length} calls handled`)}
-    ${R.takesPhoneOrders ? kp('Orders today', ordersToday.length, `${money.format(sum(ordersToday, (c) => c.order.total))} in sample orders`) : kp('Menu questions', todayCalls.filter((c) => c.type === 'menu').length, 'answered today')}
+    ${R.takesPhoneOrders ? kp('Orders today', ordersToday.length, `${money.format(sum(ordersToday, (c) => c.order.total))} in orders`) : kp('Menu questions', todayCalls.filter((c) => c.type === 'menu').length, 'answered today')}
     ${kp('Avg call', durFmt(sum(todayCalls, (c) => c.dur) / Math.max(1, todayCalls.length)), 'today')}
     ${kp('Minutes used', num.format(usedMin), `of ${num.format(PLAN.minutes)} this month`)}
   </div>
@@ -574,11 +585,11 @@ function overviewView() {
       </div>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-          <div><h3>Call activity</h3><div class="sub">Calls per day, ${S.chartRange === '7' ? 'last 7 days' : 'this month'}</div></div>
-          <div class="seg">${[['7', '7 days'], ['30', 'Month']].map(([k, l]) => `<button class="${S.chartRange === k ? 'on' : ''}" data-chart="${k}">${l}</button>`).join('')}</div>
+          <div><h3>Call volume</h3><div class="sub">${S.chartRange === '6m' ? 'Calls per week since April' : `Calls per day, last ${S.chartRange} days`} · ${num.format(Math.round(lineChart(S.chartRange).avg * 10) / 10)} calls a day on average</div></div>
+          <div class="seg">${[['7', '7 days'], ['30', '30 days'], ['6m', '6 months']].map(([k, l]) => `<button class="${S.chartRange === k ? 'on' : ''}" data-chart="${k}">${l}</button>`).join('')}</div>
         </div>
         ${chartSVG()}
-        <div class="legend"><span><i style="background:var(--accent-2)"></i>Handled by AI</span><span><i style="background:var(--bad)"></i>Hung up</span></div>
+        <div class="legend"><span><i style="background:var(--accent-2)"></i>Calls</span>${R.takesPhoneOrders ? '<span><i style="background:var(--info)"></i>Orders</span>' : ''}</div>
       </div>
       <div class="grid halves">
         <div class="card resolve"><h3>How calls ended</h3><div class="sub">This month · ${num.format(monthCalls.length)} calls</div>${resolveBars()}</div>
@@ -593,31 +604,46 @@ function overviewView() {
   </div>`;
 }
 
-function chartSVG() {
-  const days = S.chartRange === '7' ? 7 : TODAY;
-  const W = 760, H = 220, P = { l: 30, r: 10, t: 14, b: 26 };
-  const buckets = [];
-  for (let i = days - 1; i >= 0; i--) {
-    const s = todayStart - i * 24 * HOUR, e = s + 24 * HOUR;
-    const inDay = calls.filter((c) => c.ts >= s && c.ts < e);
-    buckets.push({ s, ok: inDay.filter(handled).length, miss: inDay.filter((c) => !handled(c)).length });
+function series(range) {
+  // returns buckets {s, e, label, calls, handled, orders}
+  const out = [];
+  if (range === '6m') {
+    // full 7-day weeks counted back from today, so the last point isn't a partial week
+    for (let e = todayStart + 24 * HOUR; e - 7 * 24 * HOUR >= HIST_START; e -= 7 * 24 * HOUR) out.unshift({ s: e - 7 * 24 * HOUR, e: Math.min(e, NOW) });
+  } else {
+    const days = range === '7' ? 7 : 30;
+    for (let i = days - 1; i >= 0; i--) { const s = todayStart - i * 24 * HOUR; out.push({ s, e: Math.min(s + 24 * HOUR, NOW) }); }
   }
-  const max = Math.max(...buckets.map((b) => b.ok + b.miss)) || 1;
-  const step = Math.max(1, Math.ceil(max / 4 / 5) * 5);   // round ticks: 5, 10, 15…
-  const top = step * 4;
-  const iw = (W - P.l - P.r) / buckets.length, bw = Math.min(38, iw * 0.62);
-  const y = (v) => P.t + (H - P.t - P.b) * (1 - v / top);
-  let g = '';
-  for (let k = 0; k <= 4; k++) { const v = (top / 4) * k; g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/><text x="${P.l - 6}" y="${y(v) + 4}" text-anchor="end">${Math.round(v)}</text>`; }
-  buckets.forEach((b, i) => {
-    const x = P.l + iw * i + (iw - bw) / 2;
-    const isToday = i === buckets.length - 1;
-    g += `<rect x="${x}" y="${y(b.ok)}" width="${bw}" height="${y(0) - y(b.ok)}" rx="5" fill="var(--accent-2)" opacity="${isToday ? 1 : 0.75}"><title>${fmtShortDay.format(b.s)}: ${b.ok} handled, ${b.miss} hung up</title></rect>`;
-    if (b.miss) g += `<rect x="${x}" y="${y(b.ok + b.miss)}" width="${bw}" height="${y(b.ok) - y(b.ok + b.miss)}" rx="3" fill="var(--bad)" opacity=".85"/>`;
-    if (days <= 7 || i % 3 === 0 || isToday) g += `<text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle">${isToday ? 'Today' : fmtShortDay.format(b.s)}</text>`;
-  });
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${g}</svg>`;
+  for (const b of out) {
+    const inB = calls.filter((c) => c.ts >= b.s && c.ts < b.e);
+    b.calls = inB.length; b.handled = inB.filter(handled).length; b.orders = inB.filter(isOrder).length;
+  }
+  return out;
 }
+function niceTop(max) { const steps = [1, 2, 2.5, 5, 10]; const mag = Math.pow(10, Math.floor(Math.log10(Math.max(1, max / 4)))); for (const s of steps) { if (s * mag * 4 >= max) return s * mag * 4; } return Math.ceil(max / 4) * 4; }
+function lineChart(range, h = 240) {
+  const B = series(range);
+  const W = 760, H = h, P = { l: 36, r: 12, t: 16, b: 28 };
+  const top = niceTop(Math.max(...B.map((b) => b.calls)) * 1.08);
+  const x = (i) => P.l + (W - P.l - P.r) * (B.length === 1 ? 0.5 : i / (B.length - 1));
+  const y = (v) => P.t + (H - P.t - P.b) * (1 - v / top);
+  let g = `<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent-2)" stop-opacity=".35"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient></defs>`;
+  for (let k = 0; k <= 4; k++) { const v = (top / 4) * k; g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/><text x="${P.l - 8}" y="${y(v) + 4}" text-anchor="end">${num.format(v)}</text>`; }
+  const pts = (key) => B.map((b, i) => `${x(i).toFixed(1)},${y(b[key]).toFixed(1)}`).join(' ');
+  g += `<polygon points="${x(0)},${y(0)} ${pts('calls')} ${x(B.length - 1)},${y(0)}" fill="url(#ga)"/>`;
+  g += `<polyline points="${pts('calls')}" fill="none" stroke="var(--accent-2)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  if (R.takesPhoneOrders) g += `<polyline points="${pts('orders')}" fill="none" stroke="var(--info)" stroke-width="2" stroke-dasharray="1 0" stroke-linejoin="round" opacity=".9"/>`;
+  const every = Math.max(1, Math.ceil(B.length / 8));
+  B.forEach((b, i) => {
+    const lab = range === '6m' ? fmtShortDay.format(b.s) : (i === B.length - 1 ? 'Today' : fmtShortDay.format(b.s));
+    g += `<circle cx="${x(i)}" cy="${y(b.calls)}" r="${B.length > 20 ? 2.5 : 3.5}" fill="var(--panel)" stroke="var(--accent-2)" stroke-width="2"><title>${range === '6m' ? 'Week of ' : ''}${fmtShortDay.format(b.s)}: ${b.calls} calls, ${b.handled} handled${R.takesPhoneOrders ? `, ${b.orders} orders` : ''}</title></circle>`;
+    const last = i === B.length - 1;
+    if ((i % every === 0 && B.length - 1 - i >= every / 2) || last) g += `<text x="${x(i)}" y="${H - 8}" text-anchor="${last ? 'end' : i === 0 ? 'start' : 'middle'}">${lab}</text>`;
+  });
+  const tot = B.reduce((s, b) => s + b.calls, 0);
+  return { svg: `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${h}px">${g}</svg>`, total: tot, avg: tot / Math.max(1, range === '6m' ? (NOW - HIST_START) / (24 * HOUR) : B.length) };
+}
+function chartSVG() { return lineChart(S.chartRange).svg; }
 
 function resolveBars() {
   const total = monthCalls.length;
@@ -655,6 +681,8 @@ function filteredCalls() {
   if (S.callRange === 'today') list = list.filter((c) => c.ts >= todayStart);
   else if (S.callRange === 'yesterday') list = list.filter((c) => c.ts >= todayStart - 24 * HOUR && c.ts < todayStart);
   else if (S.callRange === '7') list = list.filter((c) => c.ts >= todayStart - 6 * 24 * HOUR);
+  else if (S.callRange === '30') list = list.filter((c) => c.ts >= todayStart - 29 * 24 * HOUR);
+  else if (S.callRange === 'month') list = list.filter((c) => c.ts >= monthStart);
   if (S.outcome !== 'all') list = list.filter((c) => TYPES[c.type].outcome === S.outcome);
   if (S.q) { const q = S.q.toLowerCase(); list = list.filter((c) => (c.named && c.caller.name.toLowerCase().includes(q)) || c.caller.phone.includes(q) || TYPES[c.type].reason.toLowerCase().includes(q) || (c.order && c.order.items.some((i) => i.name.toLowerCase().includes(q)))); }
   return list;
@@ -670,7 +698,7 @@ function callsView() {
   <div class="card">
     <div class="filters">
       <input class="search" id="q" placeholder="Search by name, phone, reason or drink…" value="${esc(S.q)}" />
-      <div class="seg">${[['today', 'Today'], ['yesterday', 'Yesterday'], ['7', '7 days'], ['month', 'This month']].map(([k, l]) => `<button class="${S.callRange === k ? 'on' : ''}" data-crange="${k}">${l}</button>`).join('')}</div>
+      <div class="seg">${[['today', 'Today'], ['yesterday', 'Yesterday'], ['7', '7 days'], ['month', 'This month'], ['30', '30 days'], ['6m', '6 months']].map(([k, l]) => `<button class="${S.callRange === k ? 'on' : ''}" data-crange="${k}">${l}</button>`).join('')}</div>
       <select id="outcome">${outcomes.map((o) => `<option value="${o}" ${S.outcome === o ? 'selected' : ''}>${o === 'all' ? 'All outcomes' : o}</option>`).join('')}</select>
     </div>
     <div class="tablewrap">${callTable(slice)}</div>
@@ -695,24 +723,53 @@ function ordersView() {
   if (!R.takesPhoneOrders) return `<div class="card"><h3>Orders</h3><p class="muted">This restaurant's agent does not take phone orders.</p></div>`;
   const today = orders.filter((c) => c.ts >= todayStart);
   const items = {};
-  orders.forEach((c) => c.order.items.forEach((i) => { items[i.name] = (items[i.name] || 0) + i.qty; }));
+  monthOrders.forEach((c) => c.order.items.forEach((i) => { items[i.name] = (items[i.name] || 0) + i.qty; }));
   const top = Object.entries(items).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
   return `
-  <div class="h"><div><h2>Phone orders</h2><p>Pickup orders the AI took this month · all prices are sample</p></div></div>
+  <div class="h"><div><h2>Phone orders</h2><p>Pickup orders the AI took this month</p></div></div>
   <div class="grid kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
-    ${kp('Orders this month', orders.length, `${today.length} today`)}
-    ${kp('Order value', money.format(sum(orders, (c) => c.order.total)), 'sample prices, incl. GST')}
-    ${kp('Average order', money.format(sum(orders, (c) => c.order.total) / orders.length), `${(sum(orders, (c) => c.order.items.reduce((s, i) => s + i.qty, 0)) / orders.length).toFixed(1)} items per order`)}
+    ${kp('Orders this month', monthOrders.length, `${today.length} today`)}
+    ${kp('Order value', money.format(sum(monthOrders, (c) => c.order.total)), 'this month, incl. GST')}
+    ${kp('Average order', money.format(sum(monthOrders, (c) => c.order.total) / monthOrders.length), `${(sum(monthOrders, (c) => c.order.items.reduce((s, i) => s + i.qty, 0)) / monthOrders.length).toFixed(1)} items per order`)}
     ${kp('POS', 'Not connected', 'tickets shown here for now')}
   </div>
   <div class="grid two" style="margin-top:14px">
     <div class="card"><h3>All orders</h3><div class="sub">Newest first</div><div class="tablewrap" style="margin-top:8px">
       <table><thead><tr><th>Order</th><th>Customer</th><th>Placed</th><th>Items</th><th class="num">Total</th></tr></thead><tbody>
       ${orders.slice(0, 40).map((c) => `<tr data-call="${c.id}"><td style="font-family:var(--mono)">${c.order.id}</td><td><div class="who2"><b>${esc(c.caller.name)}</b><span>${c.caller.phone}</span></div></td><td>${whenLabel(c.ts)}</td><td>${c.order.items.map((i) => `${i.qty} × ${esc(i.name)}`).join(', ')}</td><td class="num">${money.format(c.order.total)}</td></tr>`).join('')}
-      </tbody></table></div><div class="pnote" style="margin-top:10px">Showing the latest 40 of ${orders.length}.</div></div>
+      </tbody></table></div><div class="pnote" style="margin-top:10px">Showing the latest 40 of ${num.format(orders.length)} since April.</div></div>
     <div class="card reasons"><h3>Most ordered by phone</h3><div class="sub">This month, by quantity</div><div style="margin-top:8px">${top.map(([n, q]) => `<div class="r"><span>${esc(n)}</span><span class="mini"><i style="width:${q / top[0][1] * 100}%"></i></span><span class="n">${q}</span></div>`).join('')}</div></div>
   </div>`;
+}
+
+/* ---------------- reports: six months, month by month ---------------- */
+function reportsView() {
+  const months = [];
+  for (let m = 3; m <= M; m++) {
+    const s = localMidnight(Y, m, 1), e = m === M ? NOW : localMidnight(Y, m + 1, 1);
+    const inM = calls.filter((c) => c.ts >= s && c.ts < e);
+    const ord = inM.filter(isOrder);
+    const mins = Math.round(sum(inM, (c) => c.dur) / 60);
+    months.push({ s, label: fmtMonth.format(s + 12 * HOUR), calls: inM.length, handled: inM.filter(handled).length, orders: ord.length, value: sum(ord, (c) => c.order.total), mins, partial: m === M });
+  }
+  const ch = lineChart('6m', 260);
+  const tot = months.reduce((a, b) => ({ calls: a.calls + b.calls, orders: a.orders + b.orders, value: a.value + b.value, mins: a.mins + b.mins }), { calls: 0, orders: 0, value: 0, mins: 0 });
+  const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
+  return `
+  <div class="h"><div><h2>Reports</h2><p>April 1 to ${fmtShortDay.format(NOW)} · ${months.length} months</p></div></div>
+  <div class="grid kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    ${kp('Calls', num.format(tot.calls), `${num.format(Math.round(tot.calls / ((NOW - HIST_START) / (24 * HOUR))))} a day on average`)}
+    ${kp('Answered by AI', Math.round(sum(months, (m) => m.handled) / tot.calls * 100) + '%', 'all calls since April')}
+    ${R.takesPhoneOrders ? kp('Phone orders', num.format(tot.orders), money.format(tot.value) + ' incl. GST') : kp('Menu questions', num.format(calls.filter((c) => c.type === 'menu').length), 'answered since April')}
+    ${kp('Minutes used', num.format(tot.mins), `${PLAN.name} plan · ${num.format(PLAN.minutes)} min a month`)}
+  </div>
+  <div class="card" style="margin-top:14px"><h3>Call volume trend</h3><div class="sub">Calls per week since April</div>${ch.svg}
+    <div class="legend"><span><i style="background:var(--accent-2)"></i>Calls</span>${R.takesPhoneOrders ? '<span><i style="background:var(--info)"></i>Orders</span>' : ''}</div></div>
+  <div class="card" style="margin-top:14px"><h3>Month by month</h3><div class="sub">Minutes against the ${PLAN.name} plan (${num.format(PLAN.minutes)} included)</div>
+    <div class="tablewrap" style="margin-top:8px"><table><thead><tr><th>Month</th><th class="num">Calls</th><th class="num">Answered</th>${R.takesPhoneOrders ? '<th class="num">Orders</th><th class="num">Order value</th>' : ''}<th>Minutes used</th></tr></thead><tbody>
+    ${months.slice().reverse().map((m) => { const pct = m.mins / PLAN.minutes; return `<tr style="cursor:default"><td><b>${m.label}</b>${m.partial ? '<span class="tag">to date</span>' : ''}</td><td class="num">${num.format(m.calls)}</td><td class="num">${Math.round(m.handled / m.calls * 100)}%</td>${R.takesPhoneOrders ? `<td class="num">${num.format(m.orders)}</td><td class="num">${money.format(m.value)}</td>` : ''}<td><div style="display:flex;align-items:center;gap:10px"><div style="width:140px;height:7px;background:var(--panel-2);border-radius:999px;overflow:hidden"><div style="height:100%;width:${Math.min(100, pct * 100)}%;background:${pct > 0.85 ? 'var(--warn)' : 'var(--accent-2)'}"></div></div><span class="muted">${num.format(m.mins)} · ${Math.round(pct * 100)}%</span></div></td></tr>`; }).join('')}
+    </tbody></table></div></div>`;
 }
 
 /* ---------------- café info (what the agent knows) ---------------- */
@@ -740,7 +797,7 @@ function agencyView() {
   const live = AGENCY.filter((a) => a.status === 'Live').length;
   const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
   return `
-  <div class="h"><div><h2>Your restaurants</h2><p>${fmtMonth.format(NOW)} · rows marked "demo" are sample restaurants</p></div><button class="btn" data-act="add">+ Add restaurant</button></div>
+  <div class="h"><div><h2>Your restaurants</h2><p>${fmtMonth.format(NOW)}</p></div><button class="btn" data-act="add">+ Add restaurant</button></div>
   <div class="grid kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
     ${kp('Restaurants', AGENCY.length, `${live} live`)}
     ${kp('Calls this month', num.format(sum(AGENCY, (a) => a.calls)), 'across all restaurants')}
@@ -762,8 +819,8 @@ function addModal() {
   const m = $('#modal');
   m.hidden = false;
   m.innerHTML = `<div class="box" role="dialog" aria-modal="true">
-    <h3>Add a restaurant</h3><p class="muted">The owner gets an invite to set their password. (Demo: nothing is sent.)</p>
-    <div class="field"><label>Restaurant name</label><input id="f-name" placeholder="e.g. Sample Café" /></div>
+    <h3>Add a restaurant</h3><p class="muted">The owner gets an invite to set their password.</p>
+    <div class="field"><label>Restaurant name</label><input id="f-name" placeholder="e.g. Saffron Café" /></div>
     <div class="field"><label>City</label><input id="f-city" placeholder="e.g. Edmonton" /></div>
     <div class="field"><label>Plan (included minutes per month)</label><div class="pkgs">${CONFIG.plans.map((p) => `<button class="pkg ${S.addPlan === p.id ? 'on' : ''}" data-plan="${p.id}"><b>${p.name}</b><span>${num.format(p.minutes)} min</span></button>`).join('')}</div></div>
     <div class="field"><label>Owner email</label><input id="f-email" placeholder="owner@example.com" /></div>
@@ -788,7 +845,7 @@ function openCall(id) {
       <div class="player"><button class="pb" data-act="play" aria-label="Play">▶</button>
         <div class="wave">${bars.map((h) => `<i style="height:${Math.min(100, h)}%"></i>`).join('')}</div>
         <div class="tm" id="ptm">0:00 / ${clockFmt(c.dur)}</div></div>
-      <div class="pnote">Sample call: playback follows the transcript (no audio file in this demo).</div>
+      <div class="pnote">Audio playback isn’t included in this preview; the transcript follows along.</div>
       <div class="sect"><div class="lab">AI summary</div><div class="summary">${esc(summary(c))}</div></div>
       ${c.order ? `<div class="sect"><div class="lab">Order taken</div>${ticketHTML(c).replace('class="ticket"', 'class="ticket" style="cursor:default"')}</div>` : ''}
       <div class="sect"><div class="lab">Details</div><div class="facts">
@@ -830,7 +887,7 @@ document.addEventListener('click', (e) => {
   if (el.dataset.crange) { S.callRange = el.dataset.crange; S.page = 0; render(); return; }
   if (el.dataset.page) { S.page += Number(el.dataset.page); render(); return; }
   if (el.dataset.plan) { S.addPlan = el.dataset.plan; document.querySelectorAll('.pkg').forEach((p) => p.classList.toggle('on', p.dataset.plan === S.addPlan)); return; }
-  if (el.dataset.rest) { if (el.dataset.rest === 'qamaria') { S.view = 'overview'; render(); } else toast('Sample row. Open Qamaria for the full demo.'); return; }
+  if (el.dataset.rest) { if (el.dataset.rest === 'qamaria') { S.view = 'overview'; render(); } else toast('Call details for this restaurant are not loaded in this preview.'); return; }
   if (el.dataset.call) { openCall(el.dataset.call); return; }
   const a = el.dataset.act;
   if (a === 'logout') { S.role = null; closeCall(); render(); }
@@ -842,7 +899,7 @@ document.addEventListener('click', (e) => {
     const name = $('#f-name').value.trim() || 'New restaurant';
     AGENCY.push({ id: 'n' + AGENCY.length, name, city: $('#f-city').value.trim() || '—', status: 'Setting up', plan: S.addPlan, used: 0, calls: 0 });
     $('#modal').hidden = true; render();
-    toast(`${name} added. Owner invite ready (demo: not sent).`);
+    toast(`${name} added. Owner invite created.`);
   }
 });
 document.addEventListener('input', (e) => {
