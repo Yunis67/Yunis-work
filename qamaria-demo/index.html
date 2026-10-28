@@ -4,12 +4,18 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RezFlo · Qamaria Yemeni Coffee Co.</title>
+<!--
+  RezFlo partner dashboard for Qamaria (Edmonton + Mississauga).
+  Everything here runs in the browser from this one file. Calls, callers, orders and minutes are generated
+  sample data (seeded, so they're the same on every load). There is no backend, no real login and no live agent.
+-->
 <style>
-  /* Brand colours live here so the dashboard can be white-labelled (e.g. for Eat&Repeat) by swapping these values. */
+  /* Brand colours live here so the dashboard can be white-labelled by swapping these values. */
   :root {
     --accent: #5B41DA;          /* RezFlo purple */
     --accent-2: #8F7BFF;        /* accent for text and lines on dark */
     --accent-soft: rgba(91, 65, 218, 0.16);
+    --loc2: #ff9a76;            /* second location's line on comparison charts */
     --bg: #0f0e17;
     --panel: #17151f;
     --panel-2: #1e1b29;
@@ -31,69 +37,107 @@
   button { cursor: pointer; }
   a { color: var(--accent-2); }
 
-  .sample-tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; margin-left: 8px; vertical-align: 2px; }
-  .demo-banner-unused { background: #2a2140; color: #d9d2ff; text-align: center; font-size: 12.5px; padding: 6px 12px; border-bottom: 1px solid #3a2f5c; letter-spacing: 0.01em; }
-
-  /* login */
-  .login { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
-  .login-card { width: 100%; max-width: 440px; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 32px 28px; }
-  .login-card .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; margin-bottom: 22px; }
-  .login-card h1 { font-size: 22px; margin-bottom: 6px; }
-  .login-card p { color: var(--muted); margin-bottom: 22px; }
+  /* sign in + picker */
+  .gate { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; background: radial-gradient(900px 500px at 50% -10%, rgba(91,65,218,.22), transparent 70%), var(--bg); }
+  .gate-card { width: 100%; max-width: 460px; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 32px 28px; box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+  .gate-card .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; margin-bottom: 24px; }
+  .gate-card h1 { font-size: 23px; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .gate-card > p { color: var(--muted); margin-bottom: 22px; }
+  .gate-card .field input { padding: 12px 14px; }
+  .gate-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 13px; color: var(--muted); }
+  .gate-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .gate-row input { accent-color: var(--accent); }
+  .linkbtn { background: none; border: 0; color: var(--accent-2); font-size: 13px; padding: 0; }
+  .err { color: #ff8a8e; font-size: 12.5px; margin-top: 6px; min-height: 18px; }
+  .btn.wide { width: 100%; padding: 12px 16px; margin-top: 16px; font-size: 15px; }
+  .gate-foot { color: var(--faint); font-size: 12.5px; margin-top: 18px; text-align: center; }
   .acct { width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; transition: border-color .15s, transform .15s; }
   .acct:hover { border-color: var(--accent-2); transform: translateY(-1px); }
-  .acct .av { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 700; background: var(--accent-soft); color: var(--accent-2); flex: none; }
-  .acct b { display: block; }
+  .acct .av { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-weight: 700; background: var(--accent-soft); color: var(--accent-2); flex: none; }
+  .acct .av svg { width: 20px; height: 20px; }
+  .acct b { display: block; color: var(--text); font-size: 14.5px; }
   .acct span { color: var(--muted); font-size: 13px; }
-  .login-note { color: var(--faint); font-size: 12px; margin-top: 10px; }
+  .acct .cnt { margin-left: auto; text-align: right; white-space: nowrap; }
+  .acct .cnt b { font-size: 16px; }
+  .acct .cnt + .go { margin-left: 4px; }
+  .acct .go { margin-left: auto; color: var(--faint); font-size: 18px; }
 
-  /* app shell */
-  .top { display: flex; align-items: center; gap: 14px; padding: 12px 22px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 20; flex-wrap: wrap; }
-  .top .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; }
-  .top .sep { width: 1px; height: 22px; background: var(--line); }
-  .top .rest { font-weight: 600; }
-  .top .rest small { color: var(--muted); font-weight: 400; margin-left: 6px; }
+  /* app shell: sidebar + content */
+  .shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+  .side { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: var(--panel); border-right: 1px solid var(--line); padding: 18px 12px 12px; }
+  .side .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 17px; padding: 2px 8px 16px; }
+  .scope { margin: 0 4px 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2); }
+  .scope b { display: block; font-size: 13.5px; }
+  .scope span { color: var(--muted); font-size: 12px; }
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav button { display: flex; align-items: center; gap: 11px; width: 100%; background: none; border: 0; border-radius: 10px; padding: 9px 12px; color: var(--muted); font-weight: 600; text-align: left; }
+  .nav button svg { width: 18px; height: 18px; flex: none; }
+  .nav button:hover { background: var(--panel-2); color: var(--text); }
+  .nav button.on { background: var(--accent-soft); color: var(--text); }
+  .nav button.on svg { color: var(--accent-2); }
+  .status { margin: auto 4px 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(52,199,89,.25); background: rgba(52,199,89,.07); font-size: 12.5px; }
+  .status b { display: flex; align-items: center; gap: 8px; color: #7be39a; }
+  .status span { color: var(--muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px rgba(52,199,89,.18); flex: none; }
+  .acctwrap { position: relative; }
+  .acctbtn { width: 100%; display: flex; align-items: center; gap: 10px; background: none; border: 1px solid var(--line); border-radius: 12px; padding: 9px 10px; text-align: left; }
+  .acctbtn:hover, .acctbtn.on { background: var(--panel-2); }
+  .acctbtn .av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--accent); color: #fff; flex: none; }
+  .acctbtn .who { min-width: 0; flex: 1; }
+  .acctbtn .who b { display: block; font-size: 13px; }
+  .acctbtn .who span { display: block; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .acctbtn .chev { color: var(--faint); }
+  .menu { position: absolute; left: 0; right: 0; bottom: calc(100% + 8px); background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 6px; box-shadow: 0 18px 50px rgba(0,0,0,.45); z-index: 30; }
+  .menu[hidden] { display: none; }
+  .menu .mh { padding: 8px 10px 10px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+  .menu .mh b { display: block; font-size: 13px; }
+  .menu .mh span { color: var(--muted); font-size: 12px; word-break: break-all; }
+  .menu .ml { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); padding: 6px 10px 4px; }
+  .menu button { width: 100%; display: flex; align-items: center; gap: 10px; background: none; border: 0; border-radius: 9px; padding: 8px 10px; text-align: left; font-size: 13px; }
+  .menu button:hover { background: var(--panel-2); }
+  .menu button .ck { margin-left: auto; color: var(--accent-2); }
+  .menu button small { display: block; color: var(--muted); font-size: 11.5px; }
+  .menu hr { border: 0; border-top: 1px solid var(--line); margin: 6px 0; }
+
+  .content { min-width: 0; }
+  .top { display: flex; align-items: center; gap: 14px; padding: 14px 26px; border-bottom: 1px solid var(--line); background: rgba(15,14,23,.85); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 20; flex-wrap: wrap; }
+  .top h1 { font-size: 17px; }
+  .pill { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: var(--panel-2); border-radius: 999px; padding: 4px 11px; font-size: 12.5px; color: var(--muted); }
   .top .spacer { flex: 1; }
-  .clock { color: var(--muted); font-size: 13px; display: flex; align-items: center; gap: 8px; }
-  .clock .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px rgba(52,199,89,.18); }
-  .who { display: flex; align-items: center; gap: 8px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px 5px 6px; }
-  .who .av { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--accent); color: #fff; }
-  .who button { background: none; border: 0; color: var(--accent-2); font-size: 13px; }
+  .clock { color: var(--muted); font-size: 13px; font-family: var(--mono); }
 
-  .tabs { display: flex; gap: 6px; padding: 12px 22px 0; flex-wrap: wrap; }
-  .tab { background: none; border: 1px solid transparent; border-radius: 999px; padding: 7px 14px; color: var(--muted); font-weight: 600; }
-  .tab.on { background: var(--panel-2); border-color: var(--line); color: var(--text); }
-
-  main { padding: 18px 22px 40px; max-width: 1360px; margin: 0 auto; }
+  main { padding: 20px 26px 44px; max-width: 1360px; }
   .h { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
   .h h2 { font-size: 22px; letter-spacing: -0.01em; }
   .h p { color: var(--muted); font-size: 13px; }
+  .h .ctl { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
   .grid { display: grid; gap: 14px; }
   .kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .kpis.k4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; min-width: 0; }
   .card h3 { font-size: 15px; margin-bottom: 2px; }
   .card .sub { color: var(--muted); font-size: 12.5px; }
-  .kpi .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); }
+  .kpi .label { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); }
   .kpi .val { font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -0.02em; }
   .kpi .delta { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
 
   .two { grid-template-columns: minmax(0, 1fr) 340px; align-items: start; }
   .halves { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .row-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
 
   .usage .barwrap { height: 12px; background: var(--panel-2); border-radius: 999px; overflow: hidden; margin: 12px 0 8px; border: 1px solid var(--line); }
   .usage .bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 999px; }
   .usage .row { display: flex; justify-content: space-between; color: var(--muted); font-size: 12.5px; gap: 10px; flex-wrap: wrap; }
   .usage .big { font-size: 24px; font-weight: 700; }
   .usage .big small { font-size: 14px; color: var(--muted); font-weight: 500; }
+  .minibar { display: flex; align-items: center; gap: 10px; }
+  .minibar .tr { width: 96px; height: 7px; background: var(--panel-2); border-radius: 999px; overflow: hidden; flex: none; }
+  .minibar .tr i { display: block; height: 100%; border-radius: 999px; }
 
-  .seg { display: inline-flex; background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
-  .seg button { background: none; border: 0; padding: 5px 12px; border-radius: 999px; color: var(--muted); font-size: 12.5px; font-weight: 600; }
-  .seg button.on { background: var(--text); color: var(--bg); }
-
-  .chart { width: 100%; height: 220px; display: block; margin-top: 10px; }
+  .chart { width: 100%; display: block; margin-top: 10px; }
   .chart text { fill: var(--faint); font-size: 11px; font-family: var(--font); }
-  .legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 4px; flex-wrap: wrap; }
   .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
 
   .resolve .item { margin-top: 12px; }
@@ -105,20 +149,22 @@
   .reasons .r { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
   .reasons .r:last-child { border-bottom: 0; }
   .reasons .r .n { margin-left: auto; color: var(--muted); font-family: var(--mono); font-size: 12px; }
-  .reasons .r .mini { width: 90px; height: 6px; background: var(--panel-2); border-radius: 999px; overflow: hidden; }
+  .reasons .r .mini { width: 90px; height: 6px; background: var(--panel-2); border-radius: 999px; overflow: hidden; flex: none; }
   .reasons .r .mini i { display: block; height: 100%; background: var(--accent-2); border-radius: 999px; }
 
   /* tables */
   .tablewrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--faint); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; font-family: var(--mono); }
-  td { padding: 11px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--faint); font-weight: 600; padding: 10px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; font-family: var(--mono); }
+  td { padding: 11px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td.wrap { white-space: normal; min-width: 200px; }
   tbody tr { cursor: pointer; transition: background .12s; }
   tbody tr:hover { background: var(--panel-2); }
   td .who2 b { display: block; font-weight: 600; }
   td .who2 span { color: var(--muted); font-size: 12.5px; font-family: var(--mono); }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .muted { color: var(--muted); }
+  .locdot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; }
 
   .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
   .chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
@@ -133,12 +179,13 @@
   .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
   .search { flex: 1; min-width: 200px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; }
   select { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; }
+  select.msel { padding: 8px 34px 8px 12px; font-weight: 600; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 17px) 52%, calc(100% - 12px) 52%; background-size: 5px 5px; background-repeat: no-repeat; }
   .pager { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12.5px; padding-top: 12px; }
   .pager button { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 5px 12px; }
   .pager button:disabled { opacity: .35; cursor: default; }
 
   /* order ticket rail */
-  .rail { display: flex; flex-direction: column; gap: 12px; max-height: 980px; overflow-y: auto; padding-right: 2px; }
+  .rail { display: flex; flex-direction: column; gap: 12px; max-height: 1040px; overflow-y: auto; padding-right: 2px; }
   .ticket { background: #f6f3ea; color: #1b1a22; border-radius: 12px; padding: 14px 16px 12px; position: relative; cursor: pointer; font-size: 13px; transition: transform .12s; }
   .ticket:hover { transform: translateY(-2px); }
   .ticket::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 12px; background: radial-gradient(circle at 6px -2px, transparent 6px, #f6f3ea 6.5px) 0 0 / 12px 12px repeat-x; }
@@ -148,6 +195,15 @@
   .ticket .tk-i small { display: block; color: #6b6780; font-size: 11.5px; }
   .ticket .tk-t { display: flex; justify-content: space-between; border-top: 1px dashed #c9c3b4; margin-top: 8px; padding-top: 8px; font-weight: 700; }
   .ticket .tk-s { margin-top: 6px; font-size: 11.5px; color: #6b6780; }
+
+  /* location cards */
+  .loccard .lh { display: flex; align-items: center; gap: 12px; }
+  .loccard .lav { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 700; flex: none; }
+  .loccard .facts { margin-top: 14px; }
+  .loccard .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+  .loccard .stats div { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .loccard .stats b { display: block; font-size: 18px; }
+  .loccard .stats span { color: var(--faint); font-size: 11.5px; }
 
   /* call drawer */
   .scrim { position: fixed; inset: 0; background: rgba(5,4,10,.55); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s; }
@@ -167,7 +223,6 @@
   .player .wave i { flex: 1; background: var(--line); border-radius: 2px; }
   .player .wave i.p { background: var(--accent-2); }
   .player .tm { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 86px; text-align: right; }
-  .pnote { color: var(--faint); font-size: 11.5px; margin-top: 6px; }
   .summary { background: var(--accent-soft); border: 1px solid rgba(143,123,255,.3); border-radius: 12px; padding: 12px 14px; }
   .tx { display: flex; flex-direction: column; gap: 10px; }
   .tx .ln { display: flex; gap: 10px; padding: 6px 8px; border-radius: 10px; transition: background .2s; }
@@ -180,8 +235,9 @@
   .facts div { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
   .facts span { display: block; color: var(--faint); font-size: 11.5px; }
 
-  /* agency */
+  /* buttons, modal, toast */
   .btn { background: var(--accent); border: 0; color: #fff; border-radius: 12px; padding: 9px 16px; font-weight: 600; }
+  .btn:disabled { opacity: .7; cursor: default; }
   .btn.ghost { background: var(--panel-2); border: 1px solid var(--line); color: var(--text); }
   .modal { position: fixed; inset: 0; display: grid; place-items: center; z-index: 60; padding: 16px; background: rgba(5,4,10,.6); }
   .modal[hidden] { display: none; }
@@ -190,6 +246,7 @@
   .field { margin-top: 12px; }
   .field label { display: block; color: var(--muted); font-size: 12.5px; margin-bottom: 5px; }
   .field input, .field select { width: 100%; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .field input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent-2); }
   .pkgs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .pkg { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px; text-align: center; }
   .pkg b { display: block; }
@@ -200,8 +257,21 @@
   .toast.on { opacity: 1; transform: translateX(-50%); }
   .tag { font-family: var(--mono); font-size: 10.5px; color: var(--faint); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px; }
 
-  @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(3, minmax(0,1fr)); } .two { grid-template-columns: 1fr; } .rail { max-height: none; flex-direction: row; overflow-x: auto; } .ticket { min-width: 260px; } }
-  @media (max-width: 700px) { .kpis { grid-template-columns: repeat(2, minmax(0,1fr)); } .halves { grid-template-columns: 1fr; } main, .top, .tabs { padding-left: 14px; padding-right: 14px; } .clock span.long { display: none; } .facts { grid-template-columns: 1fr; } }
+  @media (max-width: 1200px) { .kpis, .kpis.k4 { grid-template-columns: repeat(3, minmax(0,1fr)); } .two { grid-template-columns: 1fr; } .rail { max-height: none; flex-direction: row; overflow-x: auto; padding-bottom: 8px; } .ticket { min-width: 260px; } }
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: minmax(0, 1fr); }
+    .side { min-width: 0; position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .brand { padding: 0 6px 0 4px; }
+    .scope, .status { display: none; }
+    .nav { flex-direction: row; overflow-x: auto; order: 3; width: 100%; min-width: 0; }
+    .h .ctl, .h .ctl select { max-width: 100%; }
+    .nav button { width: auto; white-space: nowrap; }
+    .acctwrap { margin-left: auto; }
+    .acctbtn .who span { max-width: 140px; }
+    .menu { left: auto; right: 0; width: 260px; bottom: auto; top: calc(100% + 8px); }
+    .top { position: static; }
+  }
+  @media (max-width: 700px) { .kpis, .kpis.k4 { grid-template-columns: repeat(2, minmax(0,1fr)); } .halves { grid-template-columns: 1fr; } main, .top { padding-left: 14px; padding-right: 14px; } .facts { grid-template-columns: 1fr; } .clock { display: none; } }
 </style>
 </head>
 <body>
@@ -213,45 +283,21 @@
 
 <script>
 /* =====================================================================
-   The demo clock. Every timestamp is generated relative to this moment,
-   never the real current time.
+   The dashboard clock. Every timestamp is generated relative to this moment,
+   never the real current time. (2:00 PM in Edmonton = 4:00 PM in Mississauga.)
    ===================================================================== */
 const DEMO_NOW = '2026-10-29T14:00:00-06:00';
 
 /* =====================================================================
-   CONFIG: everything that changes per restaurant / per country.
-   Swap this block for a UK restaurant later (GBP, en-GB, Europe/London).
+   CONFIG: everything that changes per business / per location / per country.
    ===================================================================== */
 const CONFIG = {
   locale: 'en-CA',
   currency: 'CAD',
-  timeZone: 'America/Edmonton',
-  tzLabel: 'MT',
-  utcOffsetHours: -6,          // Mountain Daylight Time for all of October 2026 (DST ends Nov 1)
-  salesTaxRate: 0.05,          // Alberta GST
-  salesTaxLabel: 'GST 5%',
   seed: 20261029,
-
-  restaurant: {                // real details, from the agent's setup
-    name: 'Qamaria Yemeni Coffee Co.',
-    city: 'Edmonton',
-    address: '395 Parsons Road SW, Edmonton, Alberta',
-    area: 'South Edmonton, near Ellerslie Road',
-    parking: 'Free on-site parking',
-    hours: { sunThu: [8, 24], friSat: [8, 25] },   // 8:00 AM to midnight; Fri/Sat to 1:00 AM
-    hoursText: 'Sunday to Thursday 8 AM to 12 AM, Friday and Saturday 8 AM to 1 AM',
-    reservations: false,
-    onlineOrdering: false,
-    cateringEmail: 'qamariacanada@gmail.com',
-    milkOptions: ['oat', 'almond', 'soy', 'skim'],
-    instagram: '@QamariaEdmonton',
-    greeting: "Hi there! You've reached Qamaria Yemeni Coffee Co., How can I help you today?",
-    closing: 'Is there anything else I can help you with today?',
-    // SAMPLE / TO CONFIRM: the facts above say orders are placed in person. This demo shows the AI taking
-    // phone pickup orders (paid in store). If Qamaria's agent does not take phone orders, set this to false
-    // and those calls become "menu question, told to order in store".
-    takesPhoneOrders: true,
-  },
+  brand: 'Qamaria Yemeni Coffee Co.',
+  owner: { name: 'Salman', role: 'Owner' },
+  historyStart: { year: 2026, month: 3 },   // April 2026 (months are 0-based): six full months before October
 
   // SAMPLE: RezFlo plan tiers until Yousef's real price sheet exists. Included minutes only, no prices shown.
   plans: [
@@ -259,10 +305,75 @@ const CONFIG = {
     { id: 'growth',  name: 'Growth',  minutes: 1000 },
     { id: 'pro',     name: 'Pro',     minutes: 5000 },
   ],
-  restaurantPlan: 'growth',
-  targetUsage: 0.70,           // tune generated call durations so month-to-date usage lands near 70%
 
-  // Menu. Drink NAMES in `bestSellers` are real (Qamaria's best sellers). Every PRICE is a SAMPLE placeholder (CAD).
+  locations: [
+    {
+      id: 'edm',
+      name: 'Qamaria Edmonton',
+      city: 'Edmonton',
+      prefix: 'E',
+      color: 'var(--accent-2)',
+      timeZone: 'America/Edmonton',
+      tzLabel: 'MT',
+      utcOffsetHours: -6,        // Mountain Daylight Time from April through Oct 31 2026 (DST ends Nov 1)
+      areaCode: 780,
+      salesTaxRate: 0.05, salesTaxLabel: 'GST 5%',   // Alberta
+      // real details, from the agent's setup
+      address: '395 Parsons Road SW, Edmonton, Alberta',
+      street: '395 Parsons Road SW',
+      area: 'South Edmonton, near Ellerslie Road',
+      parking: 'Free on-site parking',
+      hours: { sunThu: [8, 24], friSat: [8, 25] },   // 8:00 AM to midnight; Fri/Sat to 1:00 AM
+      hoursText: 'Sunday to Thursday 8 AM to 12 AM, Friday and Saturday 8 AM to 1 AM',
+      instagram: '@QamariaEdmonton',
+      plan: 'growth',
+      // SAMPLE targets: share of plan minutes used each month (Oct is month to date) and relative call volume
+      usage: { 3: 0.58, 4: 0.63, 5: 0.67, 6: 0.76, 7: 0.81, 8: 0.71, 9: 0.70 },
+      rate:  { 3: 0.78, 4: 0.84, 5: 0.89, 6: 0.98, 7: 1.04, 8: 0.93, 9: 1.0 },
+      todayBoost: 2.4,           // today is a busy Thursday so far
+      lastCallMinAgo: 10,
+    },
+    {
+      id: 'mis',
+      name: 'Qamaria Mississauga',
+      city: 'Mississauga',
+      prefix: 'M',
+      color: 'var(--loc2)',
+      timeZone: 'America/Toronto',
+      tzLabel: 'ET',
+      utcOffsetHours: -4,        // Eastern Daylight Time from April through Oct 31 2026
+      areaCode: 905,
+      salesTaxRate: 0.13, salesTaxLabel: 'HST 13%',  // Ontario
+      // TO CONFIRM: address is from public listings (Zabihah, INsauga), not from Qamaria. Parking not known.
+      address: '271 Queen Street South, Mississauga, Ontario',
+      street: '271 Queen Street South',
+      area: 'Streetsville, Mississauga',
+      parking: null,
+      // TO CONFIRM: the only public hours found were Mon/Tue 7 AM to 11 PM; assumed the same every day.
+      hours: { sunThu: [7, 23], friSat: [7, 23] },
+      hoursText: 'every day 7 AM to 11 PM',
+      instagram: null,
+      plan: 'growth',
+      usage: { 3: 0.49, 4: 0.55, 5: 0.61, 6: 0.69, 7: 0.75, 8: 0.70, 9: 0.64 },
+      rate:  { 3: 0.68, 4: 0.74, 5: 0.80, 6: 0.88, 7: 0.94, 8: 0.86, 9: 0.92 },
+      todayBoost: 1.9,
+      lastCallMinAgo: 8,
+    },
+  ],
+
+  // shared by both locations (real details, from the agent's setup)
+  reservations: false,
+  onlineOrdering: false,
+  cateringEmail: 'qamariacanada@gmail.com',
+  milkOptions: ['oat', 'almond', 'soy', 'skim'],
+  greeting: "Hi there! You've reached Qamaria Yemeni Coffee Co., How can I help you today?",
+  closing: 'Is there anything else I can help you with today?',
+  // TO CONFIRM: the setup notes say orders are placed in person. This dashboard shows the AI taking phone
+  // pickup orders (paid in store). If Qamaria's agent does not take phone orders, set this to false and
+  // those calls become "menu question, told to order in store".
+  takesPhoneOrders: true,
+
+  // Menu. Drink NAMES marked best:true are real (Qamaria's best sellers). Every PRICE is a SAMPLE placeholder (CAD).
   // Items marked placeholder:true are generic café items added for realism and are NOT confirmed on Qamaria's menu.
   menu: [
     { name: 'Qamaria Latte',                          price: 7.25, milk: true,  best: true },
@@ -291,44 +402,35 @@ const CONFIG = {
 
 /* ---------------- seeded random (same numbers on every load) ---------------- */
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-const rnd = mulberry32(CONFIG.seed);
-const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
-const between = (a, b) => a + rnd() * (b - a);
-const weighted = (pairs) => { const tot = pairs.reduce((s, p) => s + p[1], 0); let r = rnd() * tot; for (const [v, w] of pairs) { if ((r -= w) <= 0) return v; } return pairs[pairs.length - 1][0]; };
-function poisson(lambda) { const L = Math.exp(-lambda); let k = 0, p = 1; do { k++; p *= rnd(); } while (p > L); return k - 1; }
+function rngKit(seed) {
+  const rnd = mulberry32(seed);
+  const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
+  const between = (a, b) => a + rnd() * (b - a);
+  const weighted = (pairs) => { const tot = pairs.reduce((s, p) => s + p[1], 0); let r = rnd() * tot; for (const [v, w] of pairs) { if ((r -= w) <= 0) return v; } return pairs[pairs.length - 1][0]; };
+  const poisson = (lambda) => { const L = Math.exp(-lambda); let k = 0, p = 1; do { k++; p *= rnd(); } while (p > L); return k - 1; };
+  return { rnd, pick, between, weighted, poisson };
+}
 
-/* ---------------- time helpers (café time zone, never the real clock) ---------------- */
+/* ---------------- shared helpers ---------------- */
 const NOW = Date.parse(DEMO_NOW);
-const HOUR = 3600e3, MIN = 60e3;
-const fmtTime = new Intl.DateTimeFormat(CONFIG.locale, { timeZone: CONFIG.timeZone, hour: 'numeric', minute: '2-digit' });
-const fmtDay = new Intl.DateTimeFormat(CONFIG.locale, { timeZone: CONFIG.timeZone, weekday: 'short', month: 'short', day: 'numeric' });
-const fmtShortDay = new Intl.DateTimeFormat(CONFIG.locale, { timeZone: CONFIG.timeZone, month: 'short', day: 'numeric' });
-const fmtMonth = new Intl.DateTimeFormat(CONFIG.locale, { timeZone: CONFIG.timeZone, month: 'long', year: 'numeric' });
+const HOUR = 3600e3, MIN = 60e3, DAY = 24 * HOUR;
 const money = new Intl.NumberFormat(CONFIG.locale, { style: 'currency', currency: CONFIG.currency });
 const num = new Intl.NumberFormat(CONFIG.locale);
-// local midnight (café time) of day d of October 2026, as epoch ms
-const localMidnight = (y, m, d) => Date.UTC(y, m, d) - CONFIG.utcOffsetHours * HOUR;
-const nowLocal = new Date(NOW + CONFIG.utcOffsetHours * HOUR);   // fields read with getUTC* = café wall clock
-const Y = nowLocal.getUTCFullYear(), M = nowLocal.getUTCMonth(), TODAY = nowLocal.getUTCDate();
-const todayStart = localMidnight(Y, M, TODAY);
-const dayIndex = (ts) => Math.floor((ts - localMidnight(Y, M, 1)) / (24 * HOUR)) + 1;   // day of month (Oct)
+const sum = (arr, f) => arr.reduce((s, x) => s + f(x), 0);
 const durFmt = (s) => `${Math.floor(s / 60)}m ${String(Math.round(s % 60)).padStart(2, '0')}s`;
 const clockFmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-function ago(ts) { const m = Math.round((NOW - ts) / MIN); if (m < 60) return `${m}m ago`; const h = Math.round(m / 60); if (h < 24) return `${h}h ago`; return fmtShortDay.format(ts); }
-const timeLabel = (ts) => `${fmtTime.format(ts)} ${CONFIG.tzLabel}`;
-const whenLabel = (ts) => (ts >= todayStart ? 'Today' : ts >= todayStart - 24 * HOUR ? 'Yesterday' : fmtDay.format(ts)) + ', ' + timeLabel(ts);
+const hourLabel = (h) => { const x = h % 24; return `${x % 12 === 0 ? 12 : x % 12}:00 ${x < 12 ? 'a.m.' : 'p.m.'}`; };   // en-CA style, matches Intl times
+const pctOf = (a, b) => (b ? Math.round(a / b * 100) : 0);
 
-/* ---------------- invented callers (fake numbers, first names only) ---------------- */
 const FIRST = ['Amira','Omar','Layla','Yusuf','Noor','Hana','Zaid','Sara','Ali','Maya','Liam','Emma','Noah','Olivia','Ethan','Jordan','Priya','Arjun','Mei','Daniel','Fatima','Khalid','Rania','Tariq','Chloe','Lucas','Sophia','Malik','Iman','Hassan','Leila','Adam','Mariam','Samir','Grace','Owen','Aisha','Ryan','Nadia','Karim','Jasmine','Ben','Dina','Marcus','Huda','Isaac','Salma','Tyler','Reem','Kevin'];
-const CALLERS = Array.from({ length: 100 }, (_, i) => ({ phone: `(780) 555-01${String(i).padStart(2, '0')}`, name: FIRST[i % FIRST.length] }));
 
-/* ---------------- call types ---------------- */
-const R = CONFIG.restaurant;
+/* call types (shared by both locations) */
+const PH = CONFIG.takesPhoneOrders;
 const TYPES = {
-  order:    { reason: 'Pickup order',        outcome: 'Order taken',        chip: 'c-order',  w: R.takesPhoneOrders ? 33 : 0, dur: [70, 190] },
+  order:    { reason: 'Pickup order',        outcome: 'Order taken',        chip: 'c-order',  w: PH ? 33 : 0, dur: [70, 190] },
   hours:    { reason: 'Hours',               outcome: 'Question answered',  chip: 'c-answer', w: 15, dur: [25, 55] },
   location: { reason: 'Location & parking',  outcome: 'Question answered',  chip: 'c-answer', w: 12, dur: [30, 70] },
-  menu:     { reason: 'Menu question',       outcome: 'Question answered',  chip: 'c-answer', w: R.takesPhoneOrders ? 12 : 30, dur: [35, 90] },
+  menu:     { reason: 'Menu question',       outcome: 'Question answered',  chip: 'c-answer', w: PH ? 12 : 30, dur: [35, 90] },
   reserve:  { reason: 'Reservation request', outcome: 'Question answered',  chip: 'c-answer', w: 6, dur: [30, 60] },
   catering: { reason: 'Catering',            outcome: 'Referred to email',  chip: 'c-ref',    w: 5, dur: [40, 80] },
   online:   { reason: 'Online ordering',     outcome: 'Question answered',  chip: 'c-answer', w: 4, dur: [30, 60] },
@@ -336,95 +438,150 @@ const TYPES = {
   hangup:   { reason: 'Hung up',             outcome: 'Hung up',            chip: 'c-miss',   w: 5, dur: [3, 12] },
 };
 const typeWeights = Object.entries(TYPES).filter(([, t]) => t.w > 0).map(([k, t]) => [k, t.w]);
-
+const isOrder = (c) => c.type === 'order';
+const handled = (c) => c.type !== 'hangup';
 /* hour-of-day weights (café rhythm: morning coffee, lunch, evening hangout) */
-const HOUR_W = { 8: 1.3, 9: 1.5, 10: 1.1, 11: 1.0, 12: 1.2, 13: 1.0, 14: 0.8, 15: 0.8, 16: 0.9, 17: 1.0, 18: 1.2, 19: 1.4, 20: 1.4, 21: 1.2, 22: 0.9, 23: 0.6, 24: 0.4 };
+const HOUR_W = { 7: 0.9, 8: 1.3, 9: 1.5, 10: 1.1, 11: 1.0, 12: 1.2, 13: 1.0, 14: 0.8, 15: 0.8, 16: 0.9, 17: 1.0, 18: 1.2, 19: 1.4, 20: 1.4, 21: 1.2, 22: 0.9, 23: 0.6, 24: 0.4 };
 
-/* ---------------- generate the month to date ---------------- */
-function makeOrder(ts) {
-  const items = [];
-  const nItems = weighted([[1, 45], [2, 35], [3, 15], [4, 5]]);
-  const drinks = CONFIG.menu.filter((m) => !m.sweets);
-  for (let i = 0; i < nItems; i++) {
-    const it = i === nItems - 1 && rnd() < 0.25 ? pick(CONFIG.menu.filter((m) => m.sweets)) : (rnd() < 0.8 ? pick(drinks.filter((d) => d.best)) : pick(drinks));
-    const qty = it.sweets ? 1 : weighted([[1, 75], [2, 20], [3, 5]]);
-    let milk = null;
-    if (it.milk && rnd() < 0.35) milk = pick(CONFIG.restaurant.milkOptions);
-    const extra = milk && milk !== 'skim' ? CONFIG.plantMilkExtra : 0;
-    const same = items.find((x) => x.name === it.name && x.milk === milk);   // same drink twice → one line, higher qty
-    if (same) same.qty += qty; else items.push({ name: it.name, qty, milk, unit: it.price + extra, placeholder: !!it.placeholder });
-  }
-  const subtotal = items.reduce((s, i) => s + i.qty * i.unit, 0);
-  const tax = Math.round(subtotal * CONFIG.salesTaxRate * 100) / 100;
-  const pickupMin = pick([10, 15, 15, 20, 20, 25, 30]);
-  return { items, subtotal, tax, total: subtotal + tax, pickup: ts + pickupMin * MIN, pickupMin, note: rnd() < 0.15 ? pick(['Extra hot, please', 'Less ice', 'Can you write the name on the cups?', 'Picking up at the counter']) : '' };
-}
+/* =====================================================================
+   Build one location: its clock, its calls since April, orders and minutes.
+   ===================================================================== */
+function buildLocation(cfg, seedOffset) {
+  const K = rngKit(CONFIG.seed + seedOffset);
+  const off = cfg.utcOffsetHours;
+  const mid = (y, m, d) => Date.UTC(y, m, d) - off * HOUR;          // local midnight as epoch ms
+  const wall = new Date(NOW + off * HOUR);                           // read with getUTC* = local wall clock
+  const Y = wall.getUTCFullYear(), M = wall.getUTCMonth(), TODAY = wall.getUTCDate();
+  const todayStart = mid(Y, M, TODAY);
+  const tz = { timeZone: cfg.timeZone };
+  const fTime = new Intl.DateTimeFormat(CONFIG.locale, { ...tz, hour: 'numeric', minute: '2-digit' });
+  const fDay = new Intl.DateTimeFormat(CONFIG.locale, { ...tz, weekday: 'short', month: 'short', day: 'numeric' });
+  const fShort = new Intl.DateTimeFormat(CONFIG.locale, { ...tz, month: 'short', day: 'numeric' });
+  const plan = CONFIG.plans.find((p) => p.id === cfg.plan);
+  const hoursFor = (dow) => (dow === 5 || dow === 6 ? cfg.hours.friSat : cfg.hours.sunThu);
 
-const calls = [];
-let orderNo = 1001;
-// History starts April 1 (six full months before October). Volume grows month by month (SAMPLE trend).
-const HIST_START = localMidnight(Y, 3, 1);
-const MONTH_RATE = { 3: 0.78, 4: 0.84, 5: 0.89, 6: 0.98, 7: 1.04, 8: 0.93, 9: 1.0 };   // by month index (Apr=3 … Oct=9)
-for (let start = HIST_START; start <= todayStart; start += 24 * HOUR) {
-  const mIx = new Date(start + 12 * HOUR).getUTCMonth();
-  const dow = new Date(start + 12 * HOUR).getUTCDay();          // 0 Sun … 6 Sat
-  const [open, close] = dow === 5 || dow === 6 ? R.hours.friSat : R.hours.sunThu;
-  const dayBoost = dow === 5 || dow === 6 ? 1.35 : dow === 0 ? 1.15 : 1;
-  for (let h = open; h < close; h++) {
-    let n = poisson(1.1 * MONTH_RATE[mIx] * dayBoost * (start === todayStart ? 2.4 : 1) * (HOUR_W[h] || 0.4));   // today: a busier-than-average Thursday so far
-    for (let k = 0; k < n; k++) {
-      const ts = start + h * HOUR + Math.floor(rnd() * 60) * MIN + Math.floor(rnd() * 60) * 1000;
-      if (ts > NOW - 9 * MIN) continue;                          // nothing after the last call below
-      calls.push({ ts, type: weighted(typeWeights) });
+  const callers = Array.from({ length: 100 }, (_, i) => ({ phone: `(${cfg.areaCode}) 555-01${String(i).padStart(2, '0')}`, name: FIRST[(i * 7 + seedOffset) % FIRST.length] }));
+
+  function makeOrder(ts) {
+    const items = [];
+    const nItems = K.weighted([[1, 45], [2, 35], [3, 15], [4, 5]]);
+    const drinks = CONFIG.menu.filter((m) => !m.sweets);
+    for (let i = 0; i < nItems; i++) {
+      const it = i === nItems - 1 && K.rnd() < 0.25 ? K.pick(CONFIG.menu.filter((m) => m.sweets)) : (K.rnd() < 0.8 ? K.pick(drinks.filter((d) => d.best)) : K.pick(drinks));
+      const qty = it.sweets ? 1 : K.weighted([[1, 75], [2, 20], [3, 5]]);
+      const milk = it.milk && K.rnd() < 0.35 ? K.pick(CONFIG.milkOptions) : null;
+      const extra = milk && milk !== 'skim' ? CONFIG.plantMilkExtra : 0;
+      const same = items.find((x) => x.name === it.name && x.milk === milk);   // same drink twice → one line, higher qty
+      if (same) same.qty += qty; else items.push({ name: it.name, qty, milk, unit: it.price + extra });
     }
+    const subtotal = items.reduce((s, i) => s + i.qty * i.unit, 0);
+    const tax = Math.round(subtotal * cfg.salesTaxRate * 100) / 100;
+    const pickupMin = K.pick([10, 15, 15, 20, 20, 25, 30]);
+    return { items, subtotal, tax, total: subtotal + tax, pickup: ts + pickupMin * MIN, pickupMin, note: K.rnd() < 0.15 ? K.pick(['Extra hot, please', 'Less ice', 'Can you write the name on the cups?', 'Picking up at the counter']) : '' };
   }
-  // a few after-hours hang-ups (2:00 to 6:00 AM)
-  if (rnd() < 0.22) calls.push({ ts: start + (2 + Math.floor(rnd() * 4)) * HOUR + Math.floor(rnd() * 59) * MIN, type: 'hangup', afterHours: true });
-}
-// the most recent call: about 10 minutes before the demo clock
-calls.push({ ts: NOW - 10 * MIN - 24 * 1000, type: R.takesPhoneOrders ? 'order' : 'menu' });
-calls.sort((a, b) => a.ts - b.ts);
 
-// fill in callers, durations, orders
-const order = CALLERS.map((c) => [rnd(), c]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);   // shuffled, so numbers don't run in sequence
-let callerIx = 0;
-for (const c of calls) {
-  const t = TYPES[c.type];
-  c.caller = rnd() < 0.2 && callerIx > 5 ? order[Math.floor(rnd() * Math.min(callerIx, 100))] : order[callerIx++ % 100];
-  c.named = c.type === 'order' || c.type === 'staff' || (c.type !== 'hangup' && rnd() < 0.35);
-  c.dur = between(t.dur[0], t.dur[1]);
-  if (c.type === 'order') { c.order = makeOrder(c.ts); c.order.id = `Q-${orderNo++}`; c.dur += c.order.items.length * 14; }
+  // calls, day by day from April 1 to now
+  const calls = [];
+  const histStart = mid(CONFIG.historyStart.year, CONFIG.historyStart.month, 1);
+  const lastCallAt = NOW - cfg.lastCallMinAgo * MIN - 24 * 1000;
+  for (let start = histStart; start <= todayStart; start += DAY) {
+    const d = new Date(start + off * HOUR + 12 * HOUR);              // local noon of this day
+    const mIx = d.getUTCMonth(), dow = d.getUTCDay();
+    const [open, close] = hoursFor(dow);
+    const dayBoost = dow === 5 || dow === 6 ? 1.35 : dow === 0 ? 1.15 : 1;
+    for (let h = open; h < close; h++) {
+      const n = K.poisson(1.1 * cfg.rate[mIx] * dayBoost * (start === todayStart ? cfg.todayBoost : 1) * (HOUR_W[h] || 0.4));
+      for (let k = 0; k < n; k++) {
+        const ts = start + h * HOUR + Math.floor(K.rnd() * 60) * MIN + Math.floor(K.rnd() * 60) * 1000;
+        if (ts >= lastCallAt) continue;                              // nothing after the latest call below
+        calls.push({ ts, type: K.weighted(typeWeights) });
+      }
+    }
+    // a few after-hours hang-ups (2:00 to 6:00 AM)
+    if (K.rnd() < 0.22) calls.push({ ts: start + (2 + Math.floor(K.rnd() * 4)) * HOUR + Math.floor(K.rnd() * 59) * MIN, type: 'hangup', afterHours: true });
+  }
+  calls.push({ ts: lastCallAt, type: PH ? 'order' : 'menu' });       // the latest call, a few minutes ago
+  calls.sort((a, b) => a.ts - b.ts);
+
+  // callers, durations, orders
+  const shuffled = callers.map((c) => [K.rnd(), c]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
+  let callerIx = 0, orderNo = 1001;
+  for (const c of calls) {
+    const t = TYPES[c.type];
+    c.loc = cfg.id;
+    c.caller = K.rnd() < 0.2 && callerIx > 5 ? shuffled[Math.floor(K.rnd() * Math.min(callerIx, 100))] : shuffled[callerIx++ % 100];
+    c.named = c.type === 'order' || c.type === 'staff' || (c.type !== 'hangup' && K.rnd() < 0.35);
+    c.dur = K.between(t.dur[0], t.dur[1]);
+    if (c.type === 'order') { c.order = makeOrder(c.ts); c.order.id = `${cfg.prefix}-${orderNo++}`; c.dur += c.order.items.length * 14; }
+  }
+  const monthRange = (m) => [mid(Y, m, 1), m === M ? NOW : mid(Y, m + 1, 1)];
+  // tune durations per month so each month's minutes land on its target share of the plan (hang-ups stay short)
+  for (const m of Object.keys(cfg.usage).map(Number)) {
+    const [s, e] = monthRange(m);
+    const inM = calls.filter((c) => c.ts >= s && c.ts < e);
+    const target = plan.minutes * cfg.usage[m] * 60;
+    const fixed = sum(inM.filter((c) => c.type === 'hangup'), (c) => c.dur);
+    const flex = sum(inM.filter((c) => c.type !== 'hangup'), (c) => c.dur);
+    const k = (target - fixed) / flex;
+    for (const c of inM) { if (c.type !== 'hangup') c.dur = Math.max(18, c.dur * k); c.dur = Math.round(c.dur); }
+  }
+  calls.forEach((c, i) => { c.id = `${cfg.prefix}-${String(i + 1).padStart(4, '0')}`; c.n = i + 1; });
+  calls.reverse();                                                   // newest first
+
+  const L = {
+    cfg, plan, calls, Y, M, TODAY, todayStart, histStart, mid,
+    fmtTime: (ts) => fTime.format(ts), fmtDay: (ts) => fDay.format(ts), fmtShortDay: (ts) => fShort.format(ts),
+    dow: (ts) => new Date(ts + off * HOUR).getUTCDay(),
+    monthRange,
+    inRange: (s, e) => calls.filter((c) => c.ts >= s && c.ts < e),
+    monthCalls: (m) => { const [s, e] = monthRange(m); return calls.filter((c) => c.ts >= s && c.ts < e); },
+    minutes: (list) => Math.round(sum(list, (c) => c.dur) / 60),
+  };
+  L.timeLabel = (ts) => `${L.fmtTime(ts)} ${cfg.tzLabel}`;
+  L.whenLabel = (ts) => (ts >= todayStart ? 'Today' : ts >= todayStart - DAY ? 'Yesterday' : L.fmtDay(ts)) + ', ' + L.timeLabel(ts);
+  L.ago = (ts) => { const m = Math.round((NOW - ts) / MIN); if (m < 60) return `${m}m ago`; const h = Math.round(m / 60); if (h < 24) return `${h}h ago`; return L.fmtShortDay(ts); };
+  L.today = L.inRange(todayStart, NOW + 1);
+  L.yesterday = L.inRange(todayStart - DAY, todayStart);
+  L.closesAt = hourLabel(hoursFor(L.dow(NOW))[1]);
+  return L;
 }
-// tune durations per month so each month's minutes land on a target share of the plan (hang-ups stay short).
-// SAMPLE targets; October is month-to-date and uses CONFIG.targetUsage.
-const PLAN = CONFIG.plans.find((p) => p.id === CONFIG.restaurantPlan);
-const MONTH_USAGE = { 3: 0.58, 4: 0.63, 5: 0.67, 6: 0.76, 7: 0.81, 8: 0.71, 9: CONFIG.targetUsage };
-const monthOf = (ts) => new Date(ts + CONFIG.utcOffsetHours * HOUR).getUTCMonth();
-for (const m of Object.keys(MONTH_USAGE).map(Number)) {
-  const inM = calls.filter((c) => monthOf(c.ts) === m);
-  const target = PLAN.minutes * MONTH_USAGE[m] * 60;
-  const fixed = inM.filter((c) => c.type === 'hangup').reduce((s, c) => s + c.dur, 0);
-  const flex = inM.filter((c) => c.type !== 'hangup').reduce((s, c) => s + c.dur, 0);
-  const k = (target - fixed) / flex;
-  for (const c of inM) { if (c.type !== 'hangup') c.dur = Math.max(18, c.dur * k); c.dur = Math.round(c.dur); }
-}
-calls.forEach((c, i) => { c.id = `CALL-${String(i + 1).padStart(4, '0')}`; });
-calls.reverse();                                                   // newest first
+
+const LOCS = {};
+CONFIG.locations.forEach((cfg, i) => { LOCS[cfg.id] = buildLocation(cfg, i * 7919); });
+const LOC_IDS = Object.keys(LOCS);
+const ALL = new Map();
+LOC_IDS.forEach((id) => LOCS[id].calls.forEach((c) => ALL.set(c.id, c)));
+const allCallsSorted = [...ALL.values()].sort((a, b) => b.ts - a.ts);
+
+const REF = LOCS[LOC_IDS[0]];                       // month boundaries / labels (same calendar month at both)
+const CUR_M = REF.M;
+const MONTHS = [];
+for (let m = CUR_M; m >= CONFIG.historyStart.month; m--) MONTHS.push(m);   // Oct, Sep, … Apr
+const fMonth = new Intl.DateTimeFormat(CONFIG.locale, { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const fMonthName = new Intl.DateTimeFormat(CONFIG.locale, { month: 'long', timeZone: 'UTC' });
+const fMonthShort = new Intl.DateTimeFormat(CONFIG.locale, { month: 'short', timeZone: 'UTC' });
+const monthLabel = (m) => fMonth.format(Date.UTC(REF.Y, m, 15)) + (m === CUR_M ? ' (to date)' : '');
+const monthName = (m) => fMonthName.format(Date.UTC(REF.Y, m, 15));
+const daysIn = (m) => new Date(Date.UTC(REF.Y, m + 1, 0)).getUTCDate();
 
 /* ---------------- transcripts (built from the real greeting / closing; no invented recipes) ---------------- */
+function locationAnswer(cfg, askedParking) {
+  let s = `We're at ${cfg.street} in ${cfg.area}.`;
+  if (cfg.parking) s += ` There's ${cfg.parking.charAt(0).toLowerCase() + cfg.parking.slice(1)}.`;
+  else if (askedParking) s += ` I don't have parking details for this location, but Google Maps will show what's close by.`;
+  return s;
+}
 function transcript(c) {
-  const lr = mulberry32(CONFIG.seed ^ Number(c.id.replace(/\D/g, '')) * 2654435761);
-  const rnd = lr, pick = (arr) => arr[Math.floor(lr() * arr.length)], weighted = (pairs) => { const tot = pairs.reduce((s, x) => s + x[1], 0); let r = lr() * tot; for (const [v, w] of pairs) { if ((r -= w) <= 0) return v; } return pairs[pairs.length - 1][0]; };
-  const AI = 'AI', CU = 'Caller';
-  const nm = c.caller.name;
+  const cfg = LOCS[c.loc].cfg;
+  const K = rngKit(CONFIG.seed ^ (c.n * 2654435761 + (c.loc === 'edm' ? 0 : 99991)));
+  const AI = 'AI', CU = 'Caller', nm = c.caller.name, G = CONFIG;
   const L = [];
   const say = (who, text) => L.push({ who, text });
+  say(AI, G.greeting);
   if (c.type === 'hangup') {
-    say(AI, R.greeting);
     say(CU, c.afterHours ? '(caller hung up; call came in after hours)' : '(caller hung up without speaking)');
     return timeLines(L, c.dur);
   }
-  say(AI, R.greeting);
   if (c.type === 'order') {
     const o = c.order;
     say(CU, `Hi, can I place an order for pickup?`);
@@ -436,42 +593,42 @@ function transcript(c) {
     say(CU, o.note ? `That's it. ${o.note}` : `No, that's everything.`);
     say(AI, `Perfect. Can I get a name for the order?`);
     say(CU, `${nm}.`);
-    say(AI, `Thanks, ${nm}. It'll be ready in about ${o.pickupMin} minutes at 395 Parsons Road SW. Your total is ${money.format(o.total)} with tax, and you'll pay when you pick it up. ${R.closing}`);
+    say(AI, `Thanks, ${nm}. It'll be ready in about ${o.pickupMin} minutes at ${cfg.street}. Your total is ${money.format(o.total)} with tax, and you'll pay when you pick it up. ${G.closing}`);
     say(CU, `No, that's all. Thank you!`);
     say(AI, `See you soon, ${nm}!`);
   } else if (c.type === 'hours') {
-    const late = rnd() < 0.5;
-    say(CU, late ? `Hey, how late are you open tonight?` : `Hi, what are your hours?`);
-    say(AI, `We're open ${R.hoursText}. ${R.closing}`);
+    say(CU, K.rnd() < 0.5 ? `Hey, how late are you open tonight?` : `Hi, what are your hours?`);
+    say(AI, `We're open ${cfg.hoursText}. ${G.closing}`);
     say(CU, `That's it, thanks.`);
   } else if (c.type === 'location') {
-    say(CU, pick([`Where exactly are you located?`, `Is there parking at your location?`, `What's your address?`]));
-    say(AI, `We're at 395 Parsons Road SW in South Edmonton, near Ellerslie Road, and there's free on-site parking. ${R.closing}`);
+    const q = K.pick(['where', 'parking', 'address']);
+    say(CU, { where: `Where exactly are you located?`, parking: `Is there parking at your location?`, address: `What's your address?` }[q]);
+    say(AI, `${locationAnswer(cfg, q === 'parking')} ${G.closing}`);
     say(CU, `Perfect, see you soon.`);
   } else if (c.type === 'menu') {
-    const q = weighted([['milk', 4], ['best', 4], ['item', 3]]);
-    if (q === 'milk') { say(CU, `Do you have non-dairy milk?`); say(AI, `Yes, we have oat, almond, soy and skim milk. ${R.closing}`); }
-    else if (q === 'best') { say(CU, `What do people usually get there?`); say(AI, `Some of our most popular drinks are the Qamaria Latte, Pistachio Latte, Adeni Tea and the Mango Dragonfruit Refresher. ${R.closing}`); }
-    else { const it = pick(CONFIG.menu.filter((m) => m.best)); say(CU, `Do you have the ${it.name} today?`); say(AI, `Yes, the ${it.name} is on our menu. ${R.takesPhoneOrders ? 'I can put in a pickup order for you if you like.' : 'You can order it in store.'} ${R.closing}`); }
+    const q = K.weighted([['milk', 4], ['best', 4], ['item', 3]]);
+    if (q === 'milk') { say(CU, `Do you have non-dairy milk?`); say(AI, `Yes, we have oat, almond, soy and skim milk. ${G.closing}`); }
+    else if (q === 'best') { say(CU, `What do people usually get there?`); say(AI, `Some of our most popular drinks are the Qamaria Latte, Pistachio Latte, Adeni Tea and the Mango Dragonfruit Refresher. ${G.closing}`); }
+    else { const it = K.pick(G.menu.filter((m) => m.best)); say(CU, `Do you have the ${it.name} today?`); say(AI, `Yes, the ${it.name} is on our menu. ${PH ? 'I can put in a pickup order for you if you like.' : 'You can order it in store.'} ${G.closing}`); }
     say(CU, `No, that's it. Thanks!`);
   } else if (c.type === 'reserve') {
-    say(CU, `Can I book a table for ${pick([4, 5, 6, 8])} on ${pick(['Friday', 'Saturday', 'Sunday'])} evening?`);
-    say(AI, `We don't take reservations, but you're welcome to come by any time. We're open ${R.hoursText}. ${R.closing}`);
+    say(CU, `Can I book a table for ${K.pick([4, 5, 6, 8])} on ${K.pick(['Friday', 'Saturday', 'Sunday'])} evening?`);
+    say(AI, `We don't take reservations, but you're welcome to come by any time. We're open ${cfg.hoursText}. ${G.closing}`);
     say(CU, `Okay, we'll just come by. Thanks.`);
   } else if (c.type === 'catering') {
     say(CU, `Hi, do you do catering for events?`);
-    say(AI, `For catering, please email our team at ${R.cateringEmail} and they'll take care of you. ${R.closing}`);
+    say(AI, `For catering, please email our team at ${G.cateringEmail} and they'll take care of you. ${G.closing}`);
     say(CU, `Great, I'll send an email. Thanks.`);
   } else if (c.type === 'online') {
     say(CU, `Can I order online for pickup?`);
-    say(AI, `We don't have online ordering. ${R.takesPhoneOrders ? `I can take your pickup order right now over the phone, and you pay when you pick it up.` : `Orders are placed in person at the café.`} ${R.closing}`);
-    say(CU, pick([`Oh okay, I'll just come in.`, `No worries, I'll call back when I'm ready to order.`]));
+    say(AI, `We don't have online ordering. ${PH ? `I can take your pickup order right now over the phone, and you pay when you pick it up.` : `Orders are placed in person at the café.`} ${G.closing}`);
+    say(CU, K.pick([`Oh okay, I'll just come in.`, `No worries, I'll call back when I'm ready to order.`]));
   } else if (c.type === 'staff') {
-    const why = pick(['I think I left my sunglasses there yesterday', 'I wanted to ask about job openings', 'I have a question about a gift card', 'I wanted to give some feedback about my visit']);
+    const why = K.pick(['I think I left my sunglasses there yesterday', 'I wanted to ask about job openings', 'I have a question about a gift card', 'I wanted to give some feedback about my visit']);
     say(CU, `Hi, ${why}.`);
-    say(AI, `I'm sorry about that, I'll pass a message to the team. Can I get your name?`);
+    say(AI, `Thanks for letting us know, I'll pass a message to the team. Can I get your name?`);
     say(CU, `It's ${nm}.`);
-    say(AI, `Thanks, ${nm}. The team will call you back at this number. ${R.closing}`);
+    say(AI, `Thanks, ${nm}. The team will call you back at this number. ${G.closing}`);
     say(CU, `No, that's all. Thanks.`);
   }
   if (c.type !== 'order') say(AI, `Thanks for calling Qamaria. Have a great day!`);
@@ -484,368 +641,462 @@ function timeLines(lines, dur) {
   return lines.map((l, i) => { const at = t; t += (w[i] / tot) * dur; return { ...l, at }; });
 }
 function summary(c) {
+  const cfg = LOCS[c.loc].cfg;
   const nm = c.named ? c.caller.name : 'The caller';
   switch (c.type) {
     case 'order': return `${nm} placed a pickup order: ${c.order.items.map((i) => `${i.qty} × ${i.name}`).join(', ')}. Ready in about ${c.order.pickupMin} minutes; pays in store.`;
-    case 'hours': return `${nm} asked about opening hours. The AI gave today's hours.`;
-    case 'location': return `${nm} asked for the address and parking. The AI gave the Parsons Road address and mentioned free on-site parking.`;
+    case 'hours': return `${nm} asked about opening hours. The AI gave the café's hours.`;
+    case 'location': return `${nm} asked where the café is. The AI gave the ${cfg.street} address${cfg.parking ? ' and mentioned ' + cfg.parking.toLowerCase() : ''}.`;
     case 'menu': return `${nm} had a menu question. The AI answered from the café's menu and milk options.`;
     case 'reserve': return `${nm} asked to book a table. The AI explained there are no reservations and invited them to walk in.`;
-    case 'catering': return `${nm} asked about catering. The AI referred them to ${R.cateringEmail}.`;
-    case 'online': return `${nm} asked about online ordering. The AI explained it isn't available${R.takesPhoneOrders ? ' and offered a phone pickup order' : ''}.`;
+    case 'catering': return `${nm} asked about catering. The AI referred them to ${CONFIG.cateringEmail}.`;
+    case 'online': return `${nm} asked about online ordering. The AI explained it isn't available${PH ? ' and offered a phone pickup order' : ''}.`;
     case 'staff': return `${nm} left a message for the team. Staff should call back.`;
     case 'hangup': return c.afterHours ? 'Call came in after hours; the caller hung up.' : 'The caller hung up before saying anything.';
   }
 }
 
-/* ---------------- derived numbers ---------------- */
-const monthStart = localMidnight(Y, M, 1);
-const monthCalls = calls.filter((c) => c.ts >= monthStart);
-const usedMin = Math.round(monthCalls.reduce((s, c) => s + c.dur, 0) / 60);
-const todayCalls = calls.filter((c) => c.ts >= todayStart);
-const yestCalls = calls.filter((c) => c.ts >= todayStart - 24 * HOUR && c.ts < todayStart);
-const isOrder = (c) => c.type === 'order';
-const handled = (c) => c.type !== 'hangup';
-const orders = calls.filter(isOrder);
-const monthOrders = monthCalls.filter(isOrder);
-const sum = (arr, f) => arr.reduce((s, x) => s + f(x), 0);
-
-// agency rows: Qamaria plus two placeholder restaurants
-const AGENCY = [
-  { id: 'qamaria', name: CONFIG.restaurant.name, city: CONFIG.restaurant.city, status: 'Live', plan: 'growth', used: usedMin, calls: monthCalls.length, real: true },
-  { id: 's1', name: 'Cedar Grill',  /* placeholder restaurant */ city: 'Calgary', status: 'Live', plan: 'starter', used: 288, calls: 191 },
-  { id: 's2', name: 'Harbour Bistro',  /* placeholder restaurant */ city: 'Red Deer', status: 'Setting up', plan: 'pro', used: 0, calls: 0 },
-];
-
-/* ---------------- state + rendering ---------------- */
-const S = { role: null, view: 'overview', range: '7', callRange: 'month', outcome: 'all', q: '', page: 0, chartRange: '7', addPlan: 'growth' };
+/* =====================================================================
+   State + rendering
+   ===================================================================== */
+const S = { stage: 'signin', email: '', scope: 'all', view: 'owner', month: CUR_M, callRange: 'm' + CUR_M, outcome: 'all', q: '', page: 0, addPlan: 'growth', menu: false, extra: [] };
 const $ = (sel, el = document) => el.querySelector(sel);
 const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const MARK = `<svg width="26" height="26" viewBox="23.15 10.56 50.59 50.44" aria-hidden="true"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#B9B7C6"/><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#B9B7C6"/><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="var(--accent-2)"/><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="var(--accent-2)"/></svg>`;
-
-function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2600); }
+const ico = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ICONS = {
+  owner: ico('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'),
+  locations: ico('<path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>'),
+  overview: ico('<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/>'),
+  calls: ico('<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>'),
+  orders: ico('<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>'),
+  reports: ico('<path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/>'),
+  settings: ico('<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.5"/>'),
+  store: ico('<path d="M4 9h16l-1.5-5h-13z"/><path d="M5 9v11h14V9"/><path d="M10 20v-5h4v5"/>'),
+};
+const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2800); }
+const scopeName = (s) => (s === 'all' ? 'Owner overview' : LOCS[s].cfg.name);
+const greet = () => { const h = new Date(NOW + REF.cfg.utcOffsetHours * HOUR).getUTCHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; };
 
 function render() {
   const app = $('#app');
-  if (!S.role) { app.innerHTML = loginView(); return; }
-  const tabs = S.role === 'agency'
-    ? [['restaurants', 'Restaurants'], ['overview', 'Qamaria overview'], ['calls', 'Calls'], ['orders', 'Orders'], ['reports', 'Reports']]
+  if (S.stage === 'signin') { app.innerHTML = signInView(); setTimeout(() => { const e = $('#si-email'); if (e) e.focus(); }, 30); return; }
+  if (S.stage === 'pick') { app.innerHTML = pickerView(); return; }
+  const owner = S.scope === 'all';
+  const nav = owner
+    ? [['owner', 'Owner overview'], ['locations', 'Locations'], ['oreports', 'Reports']]
     : [['overview', 'Overview'], ['calls', 'Calls'], ['orders', 'Orders'], ['reports', 'Reports'], ['settings', 'Café info']];
-  if (!tabs.some(([k]) => k === S.view)) S.view = tabs[0][0];
-  app.innerHTML = `
-    <header class="top">
+  if (!nav.some(([k]) => k === S.view)) S.view = nav[0][0];
+  const L = owner ? null : LOCS[S.scope];
+  const title = nav.find(([k]) => k === S.view)[1];
+  const clock = owner
+    ? LOC_IDS.map((id) => `${LOCS[id].cfg.city} ${LOCS[id].timeLabel(NOW)}`).join(' · ')
+    : `${L.fmtDay(NOW)} · ${L.timeLabel(NOW)}`;
+  const views = { owner: ownerView, locations: locationsView, oreports: ownerReportsView, overview: () => locOverview(L), calls: () => callsView(L), orders: () => ordersView(L), reports: () => reportsView(L), settings: () => settingsView(L) };
+  app.innerHTML = `<div class="shell">
+    <aside class="side">
       <div class="brand">${MARK} RezFlo</div>
-      <div class="sep"></div>
-      <div class="rest">${S.role === 'agency' && S.view === 'restaurants' ? 'Partner view' : esc(R.name)}<small>${S.role === 'agency' && S.view === 'restaurants' ? `${AGENCY.length} restaurants` : esc(R.city)}</small><span class="sample-tag" title="Calls, callers and orders in this view are sample data">Sample data</span></div>
-      <div class="spacer"></div>
-      <div class="clock"><i class="dot"></i><span class="long">Agent live ·</span> ${fmtDay.format(NOW)} · ${timeLabel(NOW)}</div>
-      <div class="who"><span class="av">${S.role === 'agency' ? 'A' : 'Q'}</span><span>${S.role === 'agency' ? 'Atif · Agency' : 'Qamaria owner'}</span><button data-act="logout">Switch</button></div>
-    </header>
-    <nav class="tabs">${tabs.map(([k, l]) => `<button class="tab ${S.view === k ? 'on' : ''}" data-view="${k}">${l}</button>`).join('')}</nav>
-    <main>${({ restaurants: agencyView, overview: overviewView, calls: callsView, orders: ordersView, reports: reportsView, settings: settingsView })[S.view]()}</main>`;
-}
-
-function loginView() {
-  return `<div class="login"><div class="login-card">
-    <div class="brand">${MARK} RezFlo</div>
-    <h1>Sign in</h1>
-    <p>Choose an account to continue.</p>
-    <button class="acct" data-login="agency"><span class="av">A</span><span><b>Atif · Agency partner</b><span>All restaurants, add a restaurant, usage</span></span></button>
-    <button class="acct" data-login="owner"><span class="av">Q</span><span><b>Qamaria Yemeni Coffee Co.</b><span>Restaurant owner · calls, orders, minutes</span></span></button>
-    <div class="login-note">Times shown in Mountain Time (Edmonton).</div>
-  </div></div>`;
-}
-
-/* ---------------- overview ---------------- */
-function overviewView() {
-  const ordersToday = todayCalls.filter(isOrder);
-  const pct = usedMin / PLAN.minutes;
-  const daysInMonth = new Date(Date.UTC(Y, M + 1, 0)).getUTCDate();
-  const projected = Math.round(usedMin / ((NOW - localMidnight(Y, M, 1)) / (24 * HOUR)) * daysInMonth);
-  const answeredToday = todayCalls.filter(handled).length;
-  const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
-  return `
-  <div class="h"><div><h2>${S.role === 'agency' ? esc(R.name) : 'Good afternoon, Qamaria'}</h2><p>${fmtDay.format(NOW)} · open until ${new Date(NOW).getUTCDay() === 5 || new Date(NOW).getUTCDay() === 6 ? '1:00 AM' : '12:00 AM'} · last call ${ago(calls[0].ts)}</p></div></div>
-  <div class="grid kpis">
-    ${kp('Calls today', todayCalls.length, `${yestCalls.length} yesterday`)}
-    ${kp('Answered by AI', todayCalls.length ? Math.round(answeredToday / todayCalls.length * 100) + '%' : '—', `${answeredToday} of ${todayCalls.length} calls handled`)}
-    ${R.takesPhoneOrders ? kp('Orders today', ordersToday.length, `${money.format(sum(ordersToday, (c) => c.order.total))} in orders`) : kp('Menu questions', todayCalls.filter((c) => c.type === 'menu').length, 'answered today')}
-    ${kp('Avg call', durFmt(sum(todayCalls, (c) => c.dur) / Math.max(1, todayCalls.length)), 'today')}
-    ${kp('Minutes used', num.format(usedMin), `of ${num.format(PLAN.minutes)} this month`)}
-  </div>
-  <div class="grid two" style="margin-top:14px">
-    <div class="grid">
-      <div class="card usage">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
-          <div><h3>Minutes this month</h3><div class="sub">${PLAN.name} plan · ${num.format(PLAN.minutes)} minutes included · resets Nov 1</div></div>
-          <div class="big">${num.format(usedMin)} <small>/ ${num.format(PLAN.minutes)} min</small></div>
+      <div class="scope"><b>${esc(owner ? CONFIG.brand : L.cfg.name)}</b><span>${owner ? `${LOC_IDS.length} locations` : esc(L.cfg.area)}</span></div>
+      <nav class="nav">${nav.map(([k, l]) => `<button class="${S.view === k ? 'on' : ''}" data-view="${k}">${ICONS[k === 'oreports' ? 'reports' : k]}${l}</button>`).join('')}</nav>
+      <div class="status"><b><i class="dot"></i>Active</b><span>Answering calls${owner ? ' at both locations' : ''}</span></div>
+      <div class="acctwrap">
+        <div class="menu" id="acctmenu" ${S.menu ? '' : 'hidden'}>
+          <div class="mh"><b>${esc(CONFIG.owner.name)} · ${esc(CONFIG.owner.role)}</b><span>${esc(S.email)}</span></div>
+          <div class="ml">Switch view</div>
+          ${['all', ...LOC_IDS].map((s) => `<button data-scope="${s}"><span>${s === 'all' ? ICONS.owner : ICONS.store}</span><span>${scopeName(s)}<small>${s === 'all' ? 'Both locations' : esc(LOCS[s].cfg.street)}</small></span>${S.scope === s ? '<span class="ck">✓</span>' : ''}</button>`).join('')}
+          <hr />
+          <button data-act="signout">Sign out</button>
         </div>
-        <div class="barwrap"><div class="bar" style="width:${Math.min(100, pct * 100).toFixed(1)}%"></div></div>
-        <div class="row"><span>${Math.round(pct * 100)}% used · ${num.format(PLAN.minutes - usedMin)} minutes left</span><span>On pace for about ${num.format(projected)} by Oct 31 ${projected > PLAN.minutes ? '· will go over' : '· within plan'}</span></div>
+        <button class="acctbtn ${S.menu ? 'on' : ''}" data-act="acct" aria-haspopup="true" aria-expanded="${S.menu}"><span class="av">${esc(CONFIG.owner.name[0])}</span><span class="who"><b>${esc(CONFIG.owner.name)}</b><span>${esc(S.email)}</span></span><span class="chev">⌄</span></button>
       </div>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-          <div><h3>Call volume</h3><div class="sub">${S.chartRange === '6m' ? 'Calls per week since April' : `Calls per day, last ${S.chartRange} days`} · ${num.format(Math.round(lineChart(S.chartRange).avg * 10) / 10)} calls a day on average</div></div>
-          <div class="seg">${[['7', '7 days'], ['30', '30 days'], ['6m', '6 months']].map(([k, l]) => `<button class="${S.chartRange === k ? 'on' : ''}" data-chart="${k}">${l}</button>`).join('')}</div>
-        </div>
-        ${chartSVG()}
-        <div class="legend"><span><i style="background:var(--accent-2)"></i>Calls</span>${R.takesPhoneOrders ? '<span><i style="background:var(--info)"></i>Orders</span>' : ''}</div>
-      </div>
-      <div class="grid halves">
-        <div class="card resolve"><h3>How calls ended</h3><div class="sub">This month · ${num.format(monthCalls.length)} calls</div>${resolveBars()}</div>
-        <div class="card reasons"><h3>Why people call</h3><div class="sub">Top reasons this month</div><div style="margin-top:8px">${reasonRows()}</div></div>
-      </div>
-      <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div><h3>Latest calls</h3><div class="sub">Click a call to hear it and read the transcript</div></div><button class="btn ghost" data-view="calls">All calls</button></div>
-        <div class="tablewrap" style="margin-top:8px">${callTable(calls.slice(0, 6), true)}</div></div>
-    </div>
-    <div class="card"><h3>${R.takesPhoneOrders ? "Today's order tickets" : 'Today at a glance'}</h3><div class="sub" style="margin-bottom:12px">${R.takesPhoneOrders ? `${ordersToday.length} pickup orders · pay in store` : ''}</div>
-      <div class="rail">${R.takesPhoneOrders ? ordersToday.map(ticketHTML).join('') || '<div class="muted">No orders yet today.</div>' : ''}</div>
+    </aside>
+    <div class="content">
+      <header class="top">
+        <h1>${title}</h1>
+        <span class="pill"><i class="dot"></i>${owner ? 'Both locations live' : esc(L.cfg.name) + ' · Live'}</span>
+        <div class="spacer"></div>
+        <div class="clock">${clock}</div>
+      </header>
+      <main>${views[S.view]()}</main>
     </div>
   </div>`;
 }
 
-function series(range) {
-  // returns buckets {s, e, label, calls, handled, orders}
+/* ---------------- sign in ---------------- */
+function signInView() {
+  return `<div class="gate"><form class="gate-card" id="signin" novalidate>
+    <div class="brand">${MARK} RezFlo</div>
+    <h1>Welcome back</h1>
+    <p>Sign in to see your calls, orders and minutes.</p>
+    <div class="field"><label for="si-email">Email</label><input id="si-email" type="email" autocomplete="username" placeholder="you@yourcafe.com" value="${esc(S.email)}" /></div>
+    <div class="field"><label for="si-pass">Password</label><input id="si-pass" type="password" autocomplete="current-password" placeholder="••••••••" /></div>
+    <div class="err" id="si-err"></div>
+    <div class="gate-row"><label><input type="checkbox" checked /> Keep me signed in</label><button type="button" class="linkbtn" data-act="forgot">Forgot password?</button></div>
+    <button class="btn wide" type="submit" id="si-go">Sign in</button>
+    <div class="gate-foot">Need access? Ask your RezFlo contact for an invite.</div>
+  </form></div>`;
+}
+function pickerView() {
+  const card = (s, av, title, sub, today) => `<button class="acct" data-pick="${s}"><span class="av">${av}</span><span><b>${title}</b><span>${sub}</span></span><span class="cnt"><b>${num.format(today)}</b><span>calls today</span></span><span class="go">›</span></button>`;
+  return `<div class="gate"><div class="gate-card">
+    <div class="brand">${MARK} RezFlo</div>
+    <h1>Welcome back, ${esc(CONFIG.owner.name)}</h1>
+    <p>Where would you like to start?</p>
+    ${card('all', ICONS.owner, 'Owner overview', 'Both locations, side by side', sum(LOC_IDS, (id) => LOCS[id].today.length))}
+    ${LOC_IDS.map((id) => { const L = LOCS[id]; return card(id, ICONS.store, esc(L.cfg.name), `${esc(L.cfg.street)} · ${L.timeLabel(NOW)}`, L.today.length); }).join('')}
+    <div class="gate-foot">Signed in as ${esc(S.email)} · <button class="linkbtn" data-act="signout">Not you?</button></div>
+  </div></div>`;
+}
+
+/* ---------------- month picker ---------------- */
+function monthSelect() {
+  return `<select id="month" class="msel" aria-label="Month">${MONTHS.map((m) => `<option value="${m}" ${S.month === m ? 'selected' : ''}>${monthLabel(m)}</option>`).join('')}</select>`;
+}
+
+/* ---------------- charts ---------------- */
+let chartN = 0;
+function niceTop(max) { const steps = [1, 2, 2.5, 5, 10]; const mag = Math.pow(10, Math.floor(Math.log10(Math.max(1, max / 4)))); for (const s of steps) { if (s * mag * 4 >= max) return s * mag * 4; } return Math.ceil(max / 4) * 4; }
+// labels: x labels; lines: [{ values, color, fill, width }]; tips: tooltip text per point
+function lineChart(labels, lines, tips, h = 240) {
+  const W = 760, H = h, P = { l: 38, r: 14, t: 16, b: 28 }, n = labels.length;
+  const top = niceTop(Math.max(1, ...lines.flatMap((l) => l.values)) * 1.08);
+  const x = (i) => P.l + (W - P.l - P.r) * (n === 1 ? 0.5 : i / (n - 1));
+  const y = (v) => P.t + (H - P.t - P.b) * (1 - v / top);
+  const id = 'g' + (++chartN);
+  let g = '';
+  for (let k = 0; k <= 4; k++) { const v = (top / 4) * k; g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/><text x="${P.l - 8}" y="${y(v) + 4}" text-anchor="end">${num.format(v)}</text>`; }
+  lines.forEach((ln, li) => {
+    const pts = ln.values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    if (ln.fill) g += `<defs><linearGradient id="${id}-${li}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ln.color}" stop-opacity=".32"/><stop offset="1" stop-color="${ln.color}" stop-opacity="0"/></linearGradient></defs><polygon points="${x(0)},${y(0)} ${pts} ${x(n - 1)},${y(0)}" fill="url(#${id}-${li})"/>`;
+    g += `<polyline points="${pts}" fill="none" stroke="${ln.color}" stroke-width="${ln.width || 2.5}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if (ln.dots !== false) ln.values.forEach((v, i) => { g += `<circle cx="${x(i)}" cy="${y(v)}" r="${n > 20 ? 2.5 : 3.5}" fill="var(--panel)" stroke="${ln.color}" stroke-width="2"><title>${esc(tips[i])}</title></circle>`; });
+  });
+  const every = Math.max(1, Math.ceil(n / 8));
+  labels.forEach((lab, i) => {
+    const last = i === n - 1;
+    if ((i % every === 0 && n - 1 - i >= every * 0.75) || last) g += `<text x="${x(i)}" y="${H - 8}" text-anchor="${last && n > 1 ? 'end' : i === 0 && n > 1 ? 'start' : 'middle'}">${lab}</text>`;
+  });
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${h}px">${g}</svg>`;
+}
+// one bucket per day of month m, in this location's time zone
+function dayBuckets(L, m) {
   const out = [];
-  if (range === '6m') {
-    // full 7-day weeks counted back from today, so the last point isn't a partial week
-    for (let e = todayStart + 24 * HOUR; e - 7 * 24 * HOUR >= HIST_START; e -= 7 * 24 * HOUR) out.unshift({ s: e - 7 * 24 * HOUR, e: Math.min(e, NOW) });
-  } else {
-    const days = range === '7' ? 7 : 30;
-    for (let i = days - 1; i >= 0; i--) { const s = todayStart - i * 24 * HOUR; out.push({ s, e: Math.min(s + 24 * HOUR, NOW) }); }
-  }
-  for (const b of out) {
-    const inB = calls.filter((c) => c.ts >= b.s && c.ts < b.e);
-    b.calls = inB.length; b.handled = inB.filter(handled).length; b.orders = inB.filter(isOrder).length;
+  for (let d = 1; d <= daysIn(m); d++) {
+    const s = L.mid(L.Y, m, d);
+    if (s > NOW) break;
+    const inB = L.inRange(s, Math.min(s + DAY, NOW + 1));
+    out.push({ s, label: s === L.todayStart ? 'Today' : L.fmtShortDay(s), calls: inB.length, handled: inB.filter(handled).length, orders: inB.filter(isOrder).length });
   }
   return out;
 }
-function niceTop(max) { const steps = [1, 2, 2.5, 5, 10]; const mag = Math.pow(10, Math.floor(Math.log10(Math.max(1, max / 4)))); for (const s of steps) { if (s * mag * 4 >= max) return s * mag * 4; } return Math.ceil(max / 4) * 4; }
-function lineChart(range, h = 240) {
-  const B = series(range);
-  const W = 760, H = h, P = { l: 36, r: 12, t: 16, b: 28 };
-  const top = niceTop(Math.max(...B.map((b) => b.calls)) * 1.08);
-  const x = (i) => P.l + (W - P.l - P.r) * (B.length === 1 ? 0.5 : i / (B.length - 1));
-  const y = (v) => P.t + (H - P.t - P.b) * (1 - v / top);
-  let g = `<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent-2)" stop-opacity=".35"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient></defs>`;
-  for (let k = 0; k <= 4; k++) { const v = (top / 4) * k; g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/><text x="${P.l - 8}" y="${y(v) + 4}" text-anchor="end">${num.format(v)}</text>`; }
-  const pts = (key) => B.map((b, i) => `${x(i).toFixed(1)},${y(b[key]).toFixed(1)}`).join(' ');
-  g += `<polygon points="${x(0)},${y(0)} ${pts('calls')} ${x(B.length - 1)},${y(0)}" fill="url(#ga)"/>`;
-  g += `<polyline points="${pts('calls')}" fill="none" stroke="var(--accent-2)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-  if (R.takesPhoneOrders) g += `<polyline points="${pts('orders')}" fill="none" stroke="var(--info)" stroke-width="2" stroke-dasharray="1 0" stroke-linejoin="round" opacity=".9"/>`;
-  const every = Math.max(1, Math.ceil(B.length / 8));
-  B.forEach((b, i) => {
-    const lab = range === '6m' ? fmtShortDay.format(b.s) : (i === B.length - 1 ? 'Today' : fmtShortDay.format(b.s));
-    g += `<circle cx="${x(i)}" cy="${y(b.calls)}" r="${B.length > 20 ? 2.5 : 3.5}" fill="var(--panel)" stroke="var(--accent-2)" stroke-width="2"><title>${range === '6m' ? 'Week of ' : ''}${fmtShortDay.format(b.s)}: ${b.calls} calls, ${b.handled} handled${R.takesPhoneOrders ? `, ${b.orders} orders` : ''}</title></circle>`;
-    const last = i === B.length - 1;
-    if ((i % every === 0 && B.length - 1 - i >= every / 2) || last) g += `<text x="${x(i)}" y="${H - 8}" text-anchor="${last ? 'end' : i === 0 ? 'start' : 'middle'}">${lab}</text>`;
-  });
-  const tot = B.reduce((s, b) => s + b.calls, 0);
-  return { svg: `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${h}px">${g}</svg>`, total: tot, avg: tot / Math.max(1, range === '6m' ? (NOW - HIST_START) / (24 * HOUR) : B.length) };
+function monthStats(L, m) {
+  const list = L.monthCalls(m), ord = list.filter(isOrder);
+  return { m, list, calls: list.length, handled: list.filter(handled).length, orders: ord.length, value: sum(ord, (c) => c.order.total), mins: L.minutes(list), days: m === CUR_M ? (NOW - L.mid(L.Y, m, 1)) / DAY : daysIn(m) };
 }
-function chartSVG() { return lineChart(S.chartRange).svg; }
 
-function resolveBars() {
-  const total = monthCalls.length;
+function resolveBars(list) {
+  const total = list.length;
   const groups = [['Order taken', 'var(--accent-2)'], ['Question answered', 'var(--info)'], ['Referred to email', 'var(--warn)'], ['Message for staff', '#ff9a76'], ['Hung up', 'var(--bad)']];
   return groups.map(([o, col]) => {
-    const n = monthCalls.filter((c) => TYPES[c.type].outcome === o).length;
+    const n = list.filter((c) => TYPES[c.type].outcome === o).length;
     if (!n) return '';
-    return `<div class="item"><div class="t"><b>${o}</b><span>${Math.round(n / total * 100)}% · ${n} calls</span></div><div class="track"><div class="fill" style="width:${(n / total * 100).toFixed(1)}%;background:${col}"></div></div></div>`;
+    return `<div class="item"><div class="t"><b>${o}</b><span>${pctOf(n, total)}% · ${num.format(n)} calls</span></div><div class="track"><div class="fill" style="width:${(n / total * 100).toFixed(1)}%;background:${col}"></div></div></div>`;
   }).join('');
 }
-
-function reasonRows() {
+function reasonRows(list) {
   const counts = {};
-  monthCalls.forEach((c) => { const r = TYPES[c.type].reason; counts[r] = (counts[r] || 0) + 1; });
+  list.forEach((c) => { const r = TYPES[c.type].reason; counts[r] = (counts[r] || 0) + 1; });
   const rows = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 7);
-  const max = rows[0][1];
-  return rows.map(([r, n]) => `<div class="r"><span>${r}</span><span class="mini"><i style="width:${n / max * 100}%"></i></span><span class="n">${n}</span></div>`).join('');
+  if (!rows.length) return '<div class="muted">No calls yet.</div>';
+  return rows.map(([r, n]) => `<div class="r"><span>${r}</span><span class="mini"><i style="width:${n / rows[0][1] * 100}%"></i></span><span class="n">${num.format(n)}</span></div>`).join('');
+}
+function usageBar(used, total) {
+  const pct = used / total;
+  return `<div class="minibar"><div class="tr"><i style="width:${Math.min(100, pct * 100)}%;background:${pct > 0.85 ? 'var(--warn)' : 'var(--accent-2)'}"></i></div><span class="muted">${num.format(used)} · ${Math.round(pct * 100)}%</span></div>`;
+}
+
+/* ---------------- location overview ---------------- */
+function locOverview(L) {
+  const m = S.month, cur = m === CUR_M, st = monthStats(L, m);
+  const pct = st.mins / L.plan.minutes;
+  const projected = Math.round(st.mins / st.days * daysIn(m));
+  const ords = st.list.filter(isOrder);
+  const B = dayBuckets(L, m);
+  const tickets = cur ? L.today.filter(isOrder) : ords.slice(0, 6);
+  const latest = st.list.slice(0, 6);
+  return `
+  <div class="h"><div><h2>${cur ? `${greet()}, ${esc(CONFIG.owner.name)}` : esc(L.cfg.name)}</h2><p>${cur ? `${esc(L.cfg.name)} · ${L.fmtDay(NOW)} · open until ${L.closesAt} · last call ${L.ago(L.calls[0].ts)}` : `${monthLabel(m)} · ${num.format(st.calls)} calls`}</p></div><div class="ctl">${monthSelect()}</div></div>
+  <div class="grid kpis">
+    ${kp(cur ? 'Calls this month' : 'Calls', num.format(st.calls), cur ? `${L.today.length} today · ${L.yesterday.length} yesterday` : `${(st.calls / st.days).toFixed(1)} a day on average`)}
+    ${kp('Answered by AI', pctOf(st.handled, st.calls) + '%', `${num.format(st.handled)} of ${num.format(st.calls)} calls handled`)}
+    ${PH ? kp('Phone orders', num.format(st.orders), `${money.format(st.value)} incl. tax`) : kp('Menu questions', st.list.filter((c) => c.type === 'menu').length, 'answered')}
+    ${kp('Avg call', durFmt(sum(st.list, (c) => c.dur) / Math.max(1, st.calls)), cur ? `${durFmt(sum(L.today, (c) => c.dur) / Math.max(1, L.today.length))} today` : 'per call')}
+    ${kp('Minutes used', num.format(st.mins), `of ${num.format(L.plan.minutes)} · ${Math.round(pct * 100)}%`)}
+  </div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="grid">
+      <div class="card usage">
+        <div class="row-head">
+          <div><h3>${cur ? 'Minutes this month' : `Minutes in ${monthName(m)}`}</h3><div class="sub">${L.plan.name} plan · ${num.format(L.plan.minutes)} minutes included${cur ? ' · resets Nov 1' : ''}</div></div>
+          <div class="big">${num.format(st.mins)} <small>/ ${num.format(L.plan.minutes)} min</small></div>
+        </div>
+        <div class="barwrap"><div class="bar" style="width:${Math.min(100, pct * 100).toFixed(1)}%"></div></div>
+        <div class="row"><span>${Math.round(pct * 100)}% used · ${num.format(Math.max(0, L.plan.minutes - st.mins))} minutes ${cur ? 'left' : 'unused'}</span><span>${cur ? `On pace for about ${num.format(projected)} by Oct 31 · ${projected > L.plan.minutes ? 'will go over' : 'within plan'}` : (st.mins > L.plan.minutes ? 'Went over plan' : 'Stayed within plan')}</span></div>
+      </div>
+      <div class="card">
+        <h3>Calls per day</h3><div class="sub">${monthLabel(m)} · ${(st.calls / st.days).toFixed(1)} calls a day on average</div>
+        ${lineChart(B.map((b) => b.label), [{ values: B.map((b) => b.calls), color: 'var(--accent-2)', fill: true }, ...(PH ? [{ values: B.map((b) => b.orders), color: 'var(--info)', width: 2, dots: false }] : [])], B.map((b) => `${L.fmtShortDay(b.s)}: ${b.calls} calls, ${b.handled} handled${PH ? `, ${b.orders} orders` : ''}`))}
+        <div class="legend"><span><i style="background:var(--accent-2)"></i>Calls</span>${PH ? '<span><i style="background:var(--info)"></i>Orders</span>' : ''}</div>
+      </div>
+      <div class="grid halves">
+        <div class="card resolve"><h3>How calls ended</h3><div class="sub">${monthLabel(m)} · ${num.format(st.calls)} calls</div>${resolveBars(st.list)}</div>
+        <div class="card reasons"><h3>Why people call</h3><div class="sub">Top reasons · ${monthName(m)}</div><div style="margin-top:8px">${reasonRows(st.list)}</div></div>
+      </div>
+      <div class="card"><div class="row-head" style="align-items:center"><div><h3>${cur ? 'Latest calls' : `Last calls in ${monthName(m)}`}</h3><div class="sub">Click a call to hear it and read the transcript</div></div><button class="btn ghost" data-view="calls">All calls</button></div>
+        <div class="tablewrap" style="margin-top:8px">${callTable(latest, { compact: true })}</div></div>
+    </div>
+    <div class="card"><h3>${PH ? (cur ? "Today's order tickets" : `Last orders in ${monthName(m)}`) : 'At a glance'}</h3><div class="sub" style="margin-bottom:12px">${PH ? `${cur ? `${tickets.length} pickup orders today` : `${num.format(st.orders)} pickup orders in ${monthName(m)}`} · pay in store` : ''}</div>
+      <div class="rail">${PH ? tickets.map(ticketHTML).join('') || '<div class="muted">No orders yet today.</div>' : ''}</div>
+    </div>
+  </div>`;
 }
 
 function ticketHTML(c) {
-  const o = c.order;
+  const o = c.order, L = LOCS[c.loc];
   return `<div class="ticket" data-call="${c.id}">
-    <div class="tk-h"><span>${o.id} · phone</span><span>${fmtTime.format(c.ts)}</span></div>
-    <div class="tk-n">${esc(c.caller.name)} <span style="font-weight:500;color:#6b6780">· pickup ${fmtTime.format(o.pickup)}</span></div>
+    <div class="tk-h"><span>${o.id} · phone</span><span>${c.ts >= L.todayStart ?L.fmtTime(c.ts) : L.fmtShortDay(c.ts) + ' · ' + L.fmtTime(c.ts)}</span></div>
+    <div class="tk-n">${esc(c.caller.name)} <span style="font-weight:500;color:#6b6780">· pickup ${L.fmtTime(o.pickup)}</span></div>
     ${o.items.map((i) => `<div class="tk-i"><span>${i.qty} × ${esc(i.name)}${i.milk ? `<small>${i.milk} milk</small>` : ''}</span><span>${money.format(i.qty * i.unit)}</span></div>`).join('')}
     ${o.note ? `<div class="tk-s">Note: ${esc(o.note)}</div>` : ''}
-    <div class="tk-t"><span>Total (${CONFIG.salesTaxLabel})</span><span>${money.format(o.total)}</span></div>
+    <div class="tk-t"><span>Total (${L.cfg.salesTaxLabel})</span><span>${money.format(o.total)}</span></div>
     <div class="tk-s">Pays in store · POS not connected yet</div>
   </div>`;
 }
 
 /* ---------------- calls ---------------- */
-function filteredCalls() {
-  let list = calls;
-  if (S.callRange === 'today') list = list.filter((c) => c.ts >= todayStart);
-  else if (S.callRange === 'yesterday') list = list.filter((c) => c.ts >= todayStart - 24 * HOUR && c.ts < todayStart);
-  else if (S.callRange === '7') list = list.filter((c) => c.ts >= todayStart - 6 * 24 * HOUR);
-  else if (S.callRange === '30') list = list.filter((c) => c.ts >= todayStart - 29 * 24 * HOUR);
-  else if (S.callRange === 'month') list = list.filter((c) => c.ts >= monthStart);
+function rangeOptions() {
+  return [['today', 'Today'], ['yesterday', 'Yesterday'], ['7', 'Last 7 days'], ...MONTHS.map((m) => ['m' + m, monthLabel(m)])];
+}
+function filteredCalls(L) {
+  let list;
+  const r = S.callRange;
+  if (r === 'today') list = L.today;
+  else if (r === 'yesterday') list = L.yesterday;
+  else if (r === '7') list = L.inRange(L.todayStart - 6 * DAY, NOW + 1);
+  else list = L.monthCalls(Number(r.slice(1)));
   if (S.outcome !== 'all') list = list.filter((c) => TYPES[c.type].outcome === S.outcome);
-  if (S.q) { const q = S.q.toLowerCase(); list = list.filter((c) => (c.named && c.caller.name.toLowerCase().includes(q)) || c.caller.phone.includes(q) || TYPES[c.type].reason.toLowerCase().includes(q) || (c.order && c.order.items.some((i) => i.name.toLowerCase().includes(q)))); }
+  if (S.q) { const q = S.q.toLowerCase(); list = list.filter((c) => (c.named && c.caller.name.toLowerCase().includes(q)) || c.caller.phone.includes(q) || TYPES[c.type].reason.toLowerCase().includes(q) || (c.order && (c.order.id.toLowerCase().includes(q) || c.order.items.some((i) => i.name.toLowerCase().includes(q))))); }
   return list;
 }
-function callsView() {
-  const list = filteredCalls();
+function callsView(L) {
+  const list = filteredCalls(L);
   const per = 25, pages = Math.max(1, Math.ceil(list.length / per));
   S.page = Math.min(S.page, pages - 1);
   const slice = list.slice(S.page * per, S.page * per + per);
   const outcomes = ['all', ...new Set(Object.values(TYPES).filter((t) => t.w > 0).map((t) => t.outcome))];
   return `
-  <div class="h"><div><h2>Calls</h2><p>${num.format(list.length)} calls · click any call to listen and read the transcript</p></div></div>
+  <div class="h"><div><h2>Calls</h2><p>${esc(L.cfg.name)} · ${num.format(list.length)} calls · click any call to listen and read the transcript</p></div></div>
   <div class="card">
     <div class="filters">
-      <input class="search" id="q" placeholder="Search by name, phone, reason or drink…" value="${esc(S.q)}" />
-      <div class="seg">${[['today', 'Today'], ['yesterday', 'Yesterday'], ['7', '7 days'], ['month', 'This month'], ['30', '30 days'], ['6m', '6 months']].map(([k, l]) => `<button class="${S.callRange === k ? 'on' : ''}" data-crange="${k}">${l}</button>`).join('')}</div>
-      <select id="outcome">${outcomes.map((o) => `<option value="${o}" ${S.outcome === o ? 'selected' : ''}>${o === 'all' ? 'All outcomes' : o}</option>`).join('')}</select>
+      <input class="search" id="q" placeholder="Search by name, phone, reason, order or drink…" value="${esc(S.q)}" />
+      <select id="crange" aria-label="Date range">${rangeOptions().map(([k, l]) => `<option value="${k}" ${S.callRange === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <select id="outcome" aria-label="Outcome">${outcomes.map((o) => `<option value="${o}" ${S.outcome === o ? 'selected' : ''}>${o === 'all' ? 'All outcomes' : o}</option>`).join('')}</select>
     </div>
-    <div class="tablewrap">${callTable(slice)}</div>
+    <div class="tablewrap">${callTable(slice, {})}</div>
     <div class="pager"><span>Page ${S.page + 1} of ${pages}</span><span><button data-page="-1" ${S.page === 0 ? 'disabled' : ''}>‹ Prev</button> <button data-page="1" ${S.page >= pages - 1 ? 'disabled' : ''}>Next ›</button></span></div>
   </div>`;
 }
-function callTable(list, compact) {
+function callTable(list, { compact, showLoc }) {
   if (!list.length) return '<div class="muted" style="padding:20px 4px">No calls match these filters.</div>';
-  return `<table><thead><tr><th>Caller</th><th>When</th><th>Reason</th><th>Outcome</th>${compact ? '' : '<th class="num">Order</th>'}<th class="num">Duration</th></tr></thead><tbody>
-  ${list.map((c) => `<tr data-call="${c.id}">
+  return `<table><thead><tr><th>Caller</th>${showLoc ? '<th>Location</th>' : ''}<th>When</th><th>Reason</th><th>Outcome</th>${compact ? '' : '<th class="num">Order</th>'}${showLoc ? '' : '<th class="num">Duration</th>'}</tr></thead><tbody>
+  ${list.map((c) => { const L = LOCS[c.loc]; return `<tr data-call="${c.id}">
     <td><div class="who2"><b>${c.named ? esc(c.caller.name) : 'Unknown caller'}</b><span>${c.caller.phone}</span></div></td>
-    <td>${c.ts >= todayStart ? `${timeLabel(c.ts)} <span class="muted">· ${ago(c.ts)}</span>` : whenLabel(c.ts)}</td>
+    ${showLoc ? `<td><span class="locdot" style="background:${L.cfg.color}"></span>${esc(L.cfg.city)}</td>` : ''}
+    <td>${c.ts >= L.todayStart ? `${L.timeLabel(c.ts)} <span class="muted">· ${L.ago(c.ts)}</span>` : L.whenLabel(c.ts)}</td>
     <td>${TYPES[c.type].reason}${c.afterHours ? '<span class="tag">after hours</span>' : ''}</td>
     <td><span class="chip ${TYPES[c.type].chip}">${TYPES[c.type].outcome}</span></td>
     ${compact ? '' : `<td class="num">${c.order ? money.format(c.order.total) : '<span class="muted">—</span>'}</td>`}
-    <td class="num">${durFmt(c.dur)}</td></tr>`).join('')}
+    ${showLoc ? '' : `<td class="num">${durFmt(c.dur)}</td>`}</tr>`; }).join('')}
   </tbody></table>`;
 }
 
 /* ---------------- orders ---------------- */
-function ordersView() {
-  if (!R.takesPhoneOrders) return `<div class="card"><h3>Orders</h3><p class="muted">This restaurant's agent does not take phone orders.</p></div>`;
-  const today = orders.filter((c) => c.ts >= todayStart);
+function ordersView(L) {
+  if (!PH) return `<div class="card"><h3>Orders</h3><p class="muted">This café's AI receptionist does not take phone orders.</p></div>`;
+  const m = S.month, cur = m === CUR_M, st = monthStats(L, m);
+  const ords = st.list.filter(isOrder);
   const items = {};
-  monthOrders.forEach((c) => c.order.items.forEach((i) => { items[i.name] = (items[i.name] || 0) + i.qty; }));
+  ords.forEach((c) => c.order.items.forEach((i) => { items[i.name] = (items[i.name] || 0) + i.qty; }));
   const top = Object.entries(items).sort((a, b) => b[1] - a[1]).slice(0, 8);
-  const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
+  const todayOrd = L.today.filter(isOrder);
   return `
-  <div class="h"><div><h2>Phone orders</h2><p>Pickup orders the AI took this month</p></div></div>
-  <div class="grid kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
-    ${kp('Orders this month', monthOrders.length, `${today.length} today`)}
-    ${kp('Order value', money.format(sum(monthOrders, (c) => c.order.total)), 'this month, incl. GST')}
-    ${kp('Average order', money.format(sum(monthOrders, (c) => c.order.total) / monthOrders.length), `${(sum(monthOrders, (c) => c.order.items.reduce((s, i) => s + i.qty, 0)) / monthOrders.length).toFixed(1)} items per order`)}
+  <div class="h"><div><h2>Phone orders</h2><p>${esc(L.cfg.name)} · pickup orders the AI took in ${monthLabel(m)}</p></div><div class="ctl">${monthSelect()}</div></div>
+  <div class="grid kpis k4">
+    ${kp('Orders', num.format(st.orders), cur ? `${todayOrd.length} today` : `${(st.orders / st.days).toFixed(1)} a day`)}
+    ${kp('Order value', money.format(st.value), `incl. ${L.cfg.salesTaxLabel}`)}
+    ${kp('Average order', money.format(st.value / Math.max(1, st.orders)), `${(sum(ords, (c) => c.order.items.reduce((s, i) => s + i.qty, 0)) / Math.max(1, st.orders)).toFixed(1)} items per order`)}
     ${kp('POS', 'Not connected', 'tickets shown here for now')}
   </div>
   <div class="grid two" style="margin-top:14px">
-    <div class="card"><h3>All orders</h3><div class="sub">Newest first</div><div class="tablewrap" style="margin-top:8px">
+    <div class="card"><h3>Orders in ${monthName(m)}</h3><div class="sub">Newest first</div><div class="tablewrap" style="margin-top:8px">
       <table><thead><tr><th>Order</th><th>Customer</th><th>Placed</th><th>Items</th><th class="num">Total</th></tr></thead><tbody>
-      ${orders.slice(0, 40).map((c) => `<tr data-call="${c.id}"><td style="font-family:var(--mono)">${c.order.id}</td><td><div class="who2"><b>${esc(c.caller.name)}</b><span>${c.caller.phone}</span></div></td><td>${whenLabel(c.ts)}</td><td>${c.order.items.map((i) => `${i.qty} × ${esc(i.name)}`).join(', ')}</td><td class="num">${money.format(c.order.total)}</td></tr>`).join('')}
-      </tbody></table></div><div class="pnote" style="margin-top:10px">Showing the latest 40 of ${num.format(orders.length)} since April.</div></div>
-    <div class="card reasons"><h3>Most ordered by phone</h3><div class="sub">This month, by quantity</div><div style="margin-top:8px">${top.map(([n, q]) => `<div class="r"><span>${esc(n)}</span><span class="mini"><i style="width:${q / top[0][1] * 100}%"></i></span><span class="n">${q}</span></div>`).join('')}</div></div>
+      ${ords.slice(0, 40).map((c) => `<tr data-call="${c.id}"><td style="font-family:var(--mono)">${c.order.id}</td><td><div class="who2"><b>${esc(c.caller.name)}</b><span>${c.caller.phone}</span></div></td><td>${L.whenLabel(c.ts)}</td><td class="wrap">${c.order.items.map((i) => `${i.qty} × ${esc(i.name)}`).join(', ')}</td><td class="num">${money.format(c.order.total)}</td></tr>`).join('')}
+      </tbody></table></div><div class="sub" style="margin-top:10px">Showing the latest ${Math.min(40, ords.length)} of ${num.format(ords.length)} orders in ${monthName(m)}.</div></div>
+    <div class="card reasons"><h3>Most ordered by phone</h3><div class="sub">${monthName(m)}, by quantity</div><div style="margin-top:8px">${top.map(([n, q]) => `<div class="r"><span>${esc(n)}</span><span class="mini"><i style="width:${q / top[0][1] * 100}%"></i></span><span class="n">${q}</span></div>`).join('')}</div></div>
   </div>`;
 }
 
-/* ---------------- reports: six months, month by month ---------------- */
-function reportsView() {
-  const months = [];
-  for (let m = 3; m <= M; m++) {
-    const s = localMidnight(Y, m, 1), e = m === M ? NOW : localMidnight(Y, m + 1, 1);
-    const inM = calls.filter((c) => c.ts >= s && c.ts < e);
-    const ord = inM.filter(isOrder);
-    const mins = Math.round(sum(inM, (c) => c.dur) / 60);
-    months.push({ s, label: fmtMonth.format(s + 12 * HOUR), calls: inM.length, handled: inM.filter(handled).length, orders: ord.length, value: sum(ord, (c) => c.order.total), mins, partial: m === M });
-  }
-  const ch = lineChart('6m', 260);
-  const tot = months.reduce((a, b) => ({ calls: a.calls + b.calls, orders: a.orders + b.orders, value: a.value + b.value, mins: a.mins + b.mins }), { calls: 0, orders: 0, value: 0, mins: 0 });
-  const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
+/* ---------------- reports (one location): month by month ---------------- */
+function reportsView(L) {
+  const rows = MONTHS.slice().reverse().map((m) => monthStats(L, m));   // Apr → Oct
+  const tot = { calls: sum(rows, (r) => r.calls), handled: sum(rows, (r) => r.handled), orders: sum(rows, (r) => r.orders), value: sum(rows, (r) => r.value), mins: sum(rows, (r) => r.mins), days: sum(rows, (r) => r.days) };
+  const labs = rows.map((r) => fMonthShort.format(Date.UTC(L.Y, r.m, 15)) + (r.m === CUR_M ? ' (to date)' : ''));
   return `
-  <div class="h"><div><h2>Reports</h2><p>April 1 to ${fmtShortDay.format(NOW)} · ${months.length} months</p></div></div>
-  <div class="grid kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
-    ${kp('Calls', num.format(tot.calls), `${num.format(Math.round(tot.calls / ((NOW - HIST_START) / (24 * HOUR))))} a day on average`)}
-    ${kp('Answered by AI', Math.round(sum(months, (m) => m.handled) / tot.calls * 100) + '%', 'all calls since April')}
-    ${R.takesPhoneOrders ? kp('Phone orders', num.format(tot.orders), money.format(tot.value) + ' incl. GST') : kp('Menu questions', num.format(calls.filter((c) => c.type === 'menu').length), 'answered since April')}
-    ${kp('Minutes used', num.format(tot.mins), `${PLAN.name} plan · ${num.format(PLAN.minutes)} min a month`)}
+  <div class="h"><div><h2>Reports</h2><p>${esc(L.cfg.name)} · ${monthName(rows[0].m)} 1 to ${L.fmtShortDay(NOW)}</p></div></div>
+  <div class="grid kpis k4">
+    ${kp('Calls', num.format(tot.calls), `${(tot.calls / tot.days).toFixed(1)} a day on average`)}
+    ${kp('Answered by AI', pctOf(tot.handled, tot.calls) + '%', `all calls since ${monthName(rows[0].m)}`)}
+    ${PH ? kp('Phone orders', num.format(tot.orders), money.format(tot.value) + ' incl. tax') : kp('Menu questions', '—', '')}
+    ${kp('Minutes used', num.format(tot.mins), `${L.plan.name} plan · ${num.format(L.plan.minutes)} min a month`)}
   </div>
-  <div class="card" style="margin-top:14px"><h3>Call volume trend</h3><div class="sub">Calls per week since April</div>${ch.svg}
-    <div class="legend"><span><i style="background:var(--accent-2)"></i>Calls</span>${R.takesPhoneOrders ? '<span><i style="background:var(--info)"></i>Orders</span>' : ''}</div></div>
-  <div class="card" style="margin-top:14px"><h3>Month by month</h3><div class="sub">Minutes against the ${PLAN.name} plan (${num.format(PLAN.minutes)} included)</div>
-    <div class="tablewrap" style="margin-top:8px"><table><thead><tr><th>Month</th><th class="num">Calls</th><th class="num">Answered</th>${R.takesPhoneOrders ? '<th class="num">Orders</th><th class="num">Order value</th>' : ''}<th>Minutes used</th></tr></thead><tbody>
-    ${months.slice().reverse().map((m) => { const pct = m.mins / PLAN.minutes; return `<tr style="cursor:default"><td><b>${m.label}</b>${m.partial ? '<span class="tag">to date</span>' : ''}</td><td class="num">${num.format(m.calls)}</td><td class="num">${Math.round(m.handled / m.calls * 100)}%</td>${R.takesPhoneOrders ? `<td class="num">${num.format(m.orders)}</td><td class="num">${money.format(m.value)}</td>` : ''}<td><div style="display:flex;align-items:center;gap:10px"><div style="width:140px;height:7px;background:var(--panel-2);border-radius:999px;overflow:hidden"><div style="height:100%;width:${Math.min(100, pct * 100)}%;background:${pct > 0.85 ? 'var(--warn)' : 'var(--accent-2)'}"></div></div><span class="muted">${num.format(m.mins)} · ${Math.round(pct * 100)}%</span></div></td></tr>`; }).join('')}
+  <div class="card" style="margin-top:14px"><h3>Calls per month</h3><div class="sub">${monthName(CUR_M)} is month to date</div>
+    ${lineChart(labs, [{ values: rows.map((r) => r.calls), color: 'var(--accent-2)', fill: true }, ...(PH ? [{ values: rows.map((r) => r.orders), color: 'var(--info)', width: 2 }] : [])], rows.map((r) => `${monthLabel(r.m)}: ${r.calls} calls${PH ? `, ${r.orders} orders` : ''}`), 240)}
+    <div class="legend"><span><i style="background:var(--accent-2)"></i>Calls</span>${PH ? '<span><i style="background:var(--info)"></i>Orders</span>' : ''}</div></div>
+  <div class="card" style="margin-top:14px"><h3>Month by month</h3><div class="sub">Click a month to open it on the overview</div>
+    <div class="tablewrap" style="margin-top:8px"><table><thead><tr><th>Month</th><th class="num">Calls</th><th class="num">Answered</th>${PH ? '<th class="num">Orders</th><th class="num">Order value</th>' : ''}<th>Minutes used (of ${num.format(L.plan.minutes)})</th></tr></thead><tbody>
+    ${rows.slice().reverse().map((r) => `<tr data-month="${r.m}"><td><b>${monthLabel(r.m)}</b></td><td class="num">${num.format(r.calls)}</td><td class="num">${pctOf(r.handled, r.calls)}%</td>${PH ? `<td class="num">${num.format(r.orders)}</td><td class="num">${money.format(r.value)}</td>` : ''}<td>${usageBar(r.mins, L.plan.minutes)}</td></tr>`).join('')}
     </tbody></table></div></div>`;
 }
 
 /* ---------------- café info (what the agent knows) ---------------- */
-function settingsView() {
-  const row = (k, v) => `<div><span>${k}</span>${v}</div>`;
+function settingsView(L) {
+  const c = L.cfg, row = (k, v) => `<div><span>${k}</span>${v}</div>`, notSet = '<span class="muted" style="display:inline;font-size:inherit;color:var(--muted)">Not added yet</span>';
   return `
-  <div class="h"><div><h2>Café info</h2><p>What the AI receptionist tells callers</p></div></div>
+  <div class="h"><div><h2>Café info</h2><p>What the AI receptionist tells callers at ${esc(c.name)}</p></div></div>
   <div class="grid halves">
     <div class="card"><h3>Details</h3><div class="facts" style="margin-top:12px">
-      ${row('Address', esc(R.address))}${row('Area', esc(R.area))}${row('Parking', esc(R.parking))}${row('Hours', esc(R.hoursText))}
-      ${row('Reservations', R.reservations ? 'Yes' : 'Not taken, walk in')}${row('Online ordering', R.onlineOrdering ? 'Yes' : 'Not available')}
-      ${row('Catering', esc(R.cateringEmail))}${row('Instagram', esc(R.instagram))}
+      ${row('Address', esc(c.address))}${row('Area', esc(c.area))}${row('Parking', c.parking ? esc(c.parking) : notSet)}${row('Hours', esc(c.hoursText.charAt(0).toUpperCase() + c.hoursText.slice(1)))}
+      ${row('Reservations', CONFIG.reservations ? 'Yes' : 'Not taken, walk in')}${row('Online ordering', CONFIG.onlineOrdering ? 'Yes' : 'Not available')}
+      ${row('Catering', esc(CONFIG.cateringEmail))}${row('Instagram', c.instagram ? esc(c.instagram) : notSet)}
+      ${row('Time zone', `${esc(c.timeZone.split('/')[1])} (${c.tzLabel})`)}${row('Sales tax', esc(c.salesTaxLabel))}
     </div></div>
     <div class="card"><h3>Greeting and closing</h3>
-      <div class="sect"><div class="lab">Greeting</div><div class="summary">${esc(R.greeting)}</div></div>
-      <div class="sect"><div class="lab">Closing</div><div class="summary">${esc(R.closing)}</div></div>
-      <div class="sect"><div class="lab">Milk options</div>${R.milkOptions.join(', ')}</div>
+      <div class="sect"><div class="lab">Greeting</div><div class="summary">${esc(CONFIG.greeting)}</div></div>
+      <div class="sect"><div class="lab">Closing</div><div class="summary">${esc(CONFIG.closing)}</div></div>
+      <div class="sect"><div class="lab">Milk options</div>${CONFIG.milkOptions.join(', ')}</div>
       <div class="sect"><div class="lab">Best sellers</div>${CONFIG.menu.filter((m) => m.best).map((m) => esc(m.name)).join(' · ')}</div>
     </div>
   </div>`;
 }
 
-/* ---------------- agency ---------------- */
-function agencyView() {
-  const live = AGENCY.filter((a) => a.status === 'Live').length;
-  const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
+/* ---------------- owner overview: both locations ---------------- */
+function ownerView() {
+  const m = S.month, cur = m === CUR_M;
+  const st = LOC_IDS.map((id) => ({ id, L: LOCS[id], ...monthStats(LOCS[id], m) }));
+  const T = { calls: sum(st, (s) => s.calls), handled: sum(st, (s) => s.handled), orders: sum(st, (s) => s.orders), value: sum(st, (s) => s.value), mins: sum(st, (s) => s.mins), plan: sum(st, (s) => s.L.plan.minutes) };
+  const all = st.flatMap((s) => s.list);
+  const latest = all.slice().sort((a, b) => b.ts - a.ts).slice(0, 8);
+  const todayN = sum(LOC_IDS, (id) => LOCS[id].today.length);
+  const B = LOC_IDS.map((id) => dayBuckets(LOCS[id], m));
+  const n = Math.min(...B.map((b) => b.length));
+  const labels = B[0].slice(0, n).map((b) => b.label);
   return `
-  <div class="h"><div><h2>Your restaurants</h2><p>${fmtMonth.format(NOW)}</p></div><button class="btn" data-act="add">+ Add restaurant</button></div>
-  <div class="grid kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
-    ${kp('Restaurants', AGENCY.length, `${live} live`)}
-    ${kp('Calls this month', num.format(sum(AGENCY, (a) => a.calls)), 'across all restaurants')}
-    ${kp('Minutes used', num.format(sum(AGENCY, (a) => a.used)), `of ${num.format(sum(AGENCY, (a) => CONFIG.plans.find((p) => p.id === a.plan).minutes))} included`)}
-    ${kp('Near limit', AGENCY.filter((a) => a.used / CONFIG.plans.find((p) => p.id === a.plan).minutes > 0.85).length, 'over 85% of plan')}
+  <div class="h"><div><h2>${cur ? `${greet()}, ${esc(CONFIG.owner.name)}` : 'Owner overview'}</h2><p>${cur ? `Both locations · ${num.format(todayN)} calls so far today` : `${monthLabel(m)} · both locations`}</p></div><div class="ctl">${monthSelect()}<button class="btn" data-act="add">+ Add location</button></div></div>
+  <div class="grid kpis">
+    ${kp('Calls', num.format(T.calls), cur ? `${num.format(todayN)} today` : `${(T.calls / st[0].days).toFixed(1)} a day across both`)}
+    ${kp('Answered by AI', pctOf(T.handled, T.calls) + '%', `${num.format(T.handled)} of ${num.format(T.calls)} handled`)}
+    ${kp('Phone orders', num.format(T.orders), cur ? `${sum(LOC_IDS, (id) => LOCS[id].today.filter(isOrder).length)} today` : 'pickup, pay in store')}
+    ${kp('Order value', money.format(T.value), 'incl. tax')}
+    ${kp('Minutes used', num.format(T.mins), `of ${num.format(T.plan)} across both · ${pctOf(T.mins, T.plan)}%`)}
   </div>
-  <div class="card" style="margin-top:14px"><div class="tablewrap"><table>
-    <thead><tr><th>Restaurant</th><th>Status</th><th>Plan</th><th>Minutes used</th><th class="num">Calls</th></tr></thead>
-    <tbody>${AGENCY.map((a) => { const p = CONFIG.plans.find((x) => x.id === a.plan); const pct = a.used / p.minutes; return `
-      <tr data-rest="${a.id}">
-        <td><div class="who2"><b>${esc(a.name)}</b><span>${esc(a.city)}</span></div></td>
-        <td><span class="chip ${a.status === 'Live' ? 'c-live' : 'c-setup'}">${a.status}</span></td>
-        <td>${p.name} · ${num.format(p.minutes)} min</td>
-        <td><div style="display:flex;align-items:center;gap:10px"><div style="width:120px;height:7px;background:var(--panel-2);border-radius:999px;overflow:hidden"><div style="height:100%;width:${Math.min(100, pct * 100)}%;background:${pct > 0.85 ? 'var(--warn)' : 'var(--accent-2)'}"></div></div><span class="muted">${num.format(a.used)} · ${Math.round(pct * 100)}%</span></div></td>
-        <td class="num">${num.format(a.calls)}</td></tr>`; }).join('')}
+  <div class="card" style="margin-top:14px"><div class="row-head"><div><h3>Locations</h3><div class="sub">${monthLabel(m)} · click a location to open its dashboard</div></div></div>
+    <div class="tablewrap" style="margin-top:8px"><table>
+      <thead><tr><th>Location</th><th>Status</th><th>Plan</th><th>Minutes used</th><th class="num">Calls</th><th class="num">Answered</th>${PH ? '<th class="num">Orders</th><th class="num">Order value</th>' : ''}</tr></thead>
+      <tbody>${st.map((s) => `
+        <tr data-scope="${s.id}">
+          <td><div class="who2"><b><span class="locdot" style="background:${s.L.cfg.color}"></span>${esc(s.L.cfg.name)}</b><span>${esc(s.L.cfg.street)} · ${cur ? 'last call ' + s.L.ago(s.L.calls[0].ts) : s.L.timeLabel(NOW)}</span></div></td>
+          <td><span class="chip c-live">Live</span></td>
+          <td>${s.L.plan.name}</td>
+          <td>${usageBar(s.mins, s.L.plan.minutes)}</td>
+          <td class="num">${num.format(s.calls)}</td><td class="num">${pctOf(s.handled, s.calls)}%</td>
+          ${PH ? `<td class="num">${num.format(s.orders)}</td><td class="num">${money.format(s.value)}</td>` : ''}
+          </tr>`).join('')}
+        ${S.extra.map((x) => `<tr style="cursor:default"><td><div class="who2"><b>${esc(x.name)}</b><span>${esc(x.city)} · invite sent to ${esc(x.email)}</span></div></td><td><span class="chip c-setup">Setting up</span></td><td>${CONFIG.plans.find((p) => p.id === x.plan).name}</td><td><span class="muted">Not live yet</span></td><td class="num muted">—</td><td class="num muted">—</td>${PH ? '<td class="num muted">—</td><td class="num muted">—</td>' : ''}</tr>`).join('')}
+      </tbody></table></div></div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="grid">
+      <div class="card"><h3>Calls per day by location</h3><div class="sub">${monthLabel(m)}</div>
+        ${lineChart(labels, st.map((s, i) => ({ values: B[i].slice(0, n).map((b) => b.calls), color: s.L.cfg.color, fill: i === 0 })), labels.map((lab, j) => `${B[0][j].s ? LOCS[LOC_IDS[0]].fmtShortDay(B[0][j].s) : lab}: ${st.map((s, i) => `${s.L.cfg.city} ${B[i][j].calls}`).join(', ')}`))}
+        <div class="legend">${st.map((s) => `<span><i style="background:${s.L.cfg.color}"></i>${esc(s.L.cfg.city)}</span>`).join('')}</div></div>
+      <div class="card"><div class="row-head" style="align-items:center"><div><h3>${cur ? 'Latest calls' : `Last calls in ${monthName(m)}`}</h3><div class="sub">Both locations · click a call to hear it</div></div></div>
+        <div class="tablewrap" style="margin-top:8px">${callTable(latest, { compact: true, showLoc: true })}</div></div>
+    </div>
+    <div class="grid">
+      <div class="card reasons"><h3>Why people call</h3><div class="sub">Both locations · ${monthName(m)}</div><div style="margin-top:8px">${reasonRows(all)}</div></div>
+      <div class="card resolve"><h3>How calls ended</h3><div class="sub">${num.format(T.calls)} calls</div>${resolveBars(all)}</div>
+    </div>
+  </div>`;
+}
+function locationsView() {
+  return `
+  <div class="h"><div><h2>Locations</h2><p>${CONFIG.brand} · ${LOC_IDS.length + S.extra.length} locations</p></div><button class="btn" data-act="add">+ Add location</button></div>
+  <div class="grid halves">
+    ${LOC_IDS.map((id) => { const L = LOCS[id], c = L.cfg, st = monthStats(L, CUR_M); return `
+    <div class="card loccard">
+      <div class="lh"><div class="lav" style="background:var(--accent-soft);color:${c.color}">${c.prefix}</div><div><h3>${esc(c.name)}</h3><div class="sub">${esc(c.address)}</div></div><span class="chip c-live" style="margin-left:auto">Live</span></div>
+      <div class="stats"><div><b>${L.today.length}</b><span>calls today</span></div><div><b>${L.today.filter(isOrder).length}</b><span>orders today</span></div><div><b>${pctOf(st.mins, L.plan.minutes)}%</b><span>of ${L.plan.name} minutes</span></div></div>
+      <div class="facts"><div><span>Local time</span>${L.fmtDay(NOW)} · ${L.timeLabel(NOW)}</div><div><span>Hours</span>${esc(c.hoursText.charAt(0).toUpperCase() + c.hoursText.slice(1))}</div><div><span>Last call</span>${L.ago(L.calls[0].ts)}</div><div><span>Phone orders</span>Pickup, pay in store</div></div>
+      <div class="actions" style="justify-content:flex-start"><button class="btn" data-scope="${id}">Open dashboard</button><button class="btn ghost" data-scope="${id}" data-goto="calls">View calls</button></div>
+    </div>`; }).join('')}
+    ${S.extra.map((x) => `<div class="card loccard"><div class="lh"><div class="lav" style="background:var(--panel-2);color:var(--muted)">+</div><div><h3>${esc(x.name)}</h3><div class="sub">${esc(x.city)}</div></div><span class="chip c-setup" style="margin-left:auto">Setting up</span></div><p class="muted" style="margin-top:12px">Invite sent to ${esc(x.email)}. Calls show up here once the AI receptionist goes live.</p></div>`).join('')}
+  </div>`;
+}
+function ownerReportsView() {
+  const ms = MONTHS.slice().reverse();
+  const rows = ms.map((m) => ({ m, s: LOC_IDS.map((id) => monthStats(LOCS[id], m)) }));
+  const labs = ms.map((m) => fMonthShort.format(Date.UTC(REF.Y, m, 15)) + (m === CUR_M ? ' (to date)' : ''));
+  return `
+  <div class="h"><div><h2>Reports</h2><p>Both locations · ${monthName(ms[0])} 1 to ${REF.fmtShortDay(NOW)}</p></div></div>
+  <div class="card"><h3>Calls per month by location</h3><div class="sub">${monthName(CUR_M)} is month to date</div>
+    ${lineChart(labs, LOC_IDS.map((id, i) => ({ values: rows.map((r) => r.s[i].calls), color: LOCS[id].cfg.color, fill: i === 0 })), rows.map((r) => `${monthLabel(r.m)}: ${r.s.map((s, i) => `${LOCS[LOC_IDS[i]].cfg.city} ${s.calls}`).join(', ')}`))}
+    <div class="legend">${LOC_IDS.map((id) => `<span><i style="background:${LOCS[id].cfg.color}"></i>${esc(LOCS[id].cfg.city)}</span>`).join('')}</div></div>
+  <div class="card" style="margin-top:14px"><h3>Month by month</h3><div class="sub">Minutes are out of ${num.format(REF.plan.minutes)} per location (${REF.plan.name} plan) · click a month to open it</div>
+    <div class="tablewrap" style="margin-top:8px"><table><thead><tr><th>Month</th>${LOC_IDS.map((id) => `<th class="num">${esc(LOCS[id].cfg.city)} calls</th>`).join('')}<th class="num">Total calls</th><th class="num">Answered</th>${PH ? '<th class="num">Orders</th><th class="num">Order value</th>' : ''}${LOC_IDS.map((id) => `<th class="num">${esc(LOCS[id].cfg.city)} minutes</th>`).join('')}</tr></thead><tbody>
+    ${rows.slice().reverse().map((r) => { const c = sum(r.s, (s) => s.calls); return `<tr data-month="${r.m}"><td><b>${monthLabel(r.m)}</b></td>${r.s.map((s) => `<td class="num">${num.format(s.calls)}</td>`).join('')}<td class="num">${num.format(c)}</td><td class="num">${pctOf(sum(r.s, (s) => s.handled), c)}%</td>${PH ? `<td class="num">${num.format(sum(r.s, (s) => s.orders))}</td><td class="num">${money.format(sum(r.s, (s) => s.value))}</td>` : ''}${r.s.map((s, i) => { const pc = pctOf(s.mins, LOCS[LOC_IDS[i]].plan.minutes); return `<td class="num">${num.format(s.mins)} <span class="muted">· ${pc}%</span></td>`; }).join('')}</tr>`; }).join('')}
     </tbody></table></div></div>`;
 }
 function addModal() {
   const m = $('#modal');
   m.hidden = false;
   m.innerHTML = `<div class="box" role="dialog" aria-modal="true">
-    <h3>Add a restaurant</h3><p class="muted">The owner gets an invite to set their password.</p>
-    <div class="field"><label>Restaurant name</label><input id="f-name" placeholder="e.g. Saffron Café" /></div>
-    <div class="field"><label>City</label><input id="f-city" placeholder="e.g. Edmonton" /></div>
+    <h3>Add a location</h3><p class="muted">The location manager gets an invite to set their password.</p>
+    <div class="field"><label>Location name</label><input id="f-name" placeholder="e.g. Qamaria Calgary" /></div>
+    <div class="field"><label>City</label><input id="f-city" placeholder="e.g. Calgary" /></div>
     <div class="field"><label>Plan (included minutes per month)</label><div class="pkgs">${CONFIG.plans.map((p) => `<button class="pkg ${S.addPlan === p.id ? 'on' : ''}" data-plan="${p.id}"><b>${p.name}</b><span>${num.format(p.minutes)} min</span></button>`).join('')}</div></div>
-    <div class="field"><label>Owner email</label><input id="f-email" placeholder="owner@example.com" /></div>
-    <div class="actions"><button class="btn ghost" data-act="close">Cancel</button><button class="btn" data-act="save">Add and invite owner</button></div>
+    <div class="field"><label>Manager email</label><input id="f-email" placeholder="manager@example.com" /></div>
+    <div class="actions"><button class="btn ghost" data-act="close">Cancel</button><button class="btn" data-act="save">Add and send invite</button></div>
   </div>`;
   setTimeout(() => $('#f-name').focus(), 30);
 }
 
-/* ---------------- call drawer with simulated playback ---------------- */
+/* ---------------- call drawer with transcript-led playback ---------------- */
 let playTimer = null;
 function openCall(id) {
-  const c = calls.find((x) => x.id === id);
+  const c = ALL.get(id);
   if (!c) return;
+  const L = LOCS[c.loc];
   const lines = transcript(c);
   const bars = Array.from({ length: 64 }, (_, i) => 18 + Math.abs(Math.sin(i * 1.7 + c.dur) * 60 + Math.sin(i * 0.43) * 20));
   const d = $('#drawer');
   d.innerHTML = `
     <div class="dh"><div><h3>${c.named ? esc(c.caller.name) : 'Unknown caller'} <span class="chip ${TYPES[c.type].chip}" style="margin-left:6px;vertical-align:2px">${TYPES[c.type].outcome}</span></h3>
-      <div class="meta">${c.caller.phone} · ${whenLabel(c.ts)} · ${durFmt(c.dur)}</div></div>
+      <div class="meta">${esc(L.cfg.name)} · ${c.caller.phone} · ${L.whenLabel(c.ts)} · ${durFmt(c.dur)}</div></div>
       <button class="x" data-act="closecall" aria-label="Close">×</button></div>
     <div class="db">
       <div class="player"><button class="pb" data-act="play" aria-label="Play">▶</button>
         <div class="wave">${bars.map((h) => `<i style="height:${Math.min(100, h)}%"></i>`).join('')}</div>
         <div class="tm" id="ptm">0:00 / ${clockFmt(c.dur)}</div></div>
-      <div class="pnote">Audio playback isn’t included in this preview; the transcript follows along.</div>
       <div class="sect"><div class="lab">AI summary</div><div class="summary">${esc(summary(c))}</div></div>
       ${c.order ? `<div class="sect"><div class="lab">Order taken</div>${ticketHTML(c).replace('class="ticket"', 'class="ticket" style="cursor:default"')}</div>` : ''}
       <div class="sect"><div class="lab">Details</div><div class="facts">
@@ -854,13 +1105,13 @@ function openCall(id) {
       </div></div>
       <div class="sect"><div class="lab">Transcript</div><div class="tx">${lines.map((l, i) => `<div class="ln" data-at="${l.at}" id="ln${i}"><span class="ts">${clockFmt(l.at)}</span><span class="sp ${l.who === 'AI' ? 'ai' : 'cu'}">${l.who === 'AI' ? 'AI' : 'Caller'}</span><span>${esc(l.text)}</span></div>`).join('')}</div></div>
     </div>`;
-  d.dataset.id = id;
+  d.dataset.id = id; d.dataset.t = 0;
   d.classList.add('on'); $('#scrim').classList.add('on');
   stopPlay();
 }
 function stopPlay() { clearInterval(playTimer); playTimer = null; const b = $('#drawer .pb'); if (b) b.textContent = '▶'; }
 function togglePlay() {
-  const d = $('#drawer'); const c = calls.find((x) => x.id === d.dataset.id);
+  const d = $('#drawer'); const c = ALL.get(d.dataset.id);
   if (playTimer) { stopPlay(); return; }
   let t = Number(d.dataset.t || 0); if (t >= c.dur) t = 0;
   $('#drawer .pb').textContent = '❚❚';
@@ -875,38 +1126,63 @@ function togglePlay() {
     if (t >= c.dur) stopPlay();
   }, 250);
 }
-function closeCall() { stopPlay(); $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); $('#drawer').dataset.t = 0; }
+function closeCall() { stopPlay(); $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); }
 
 /* ---------------- events ---------------- */
+function goScope(scope, view) {
+  S.scope = scope; S.menu = false; S.page = 0; S.q = ''; S.outcome = 'all';
+  S.view = view || (scope === 'all' ? 'owner' : 'overview');
+  S.callRange = 'm' + S.month;
+  closeCall(); render(); window.scrollTo(0, 0);
+}
+function signOut() { S.stage = 'signin'; S.menu = false; S.month = CUR_M; closeCall(); render(); }
+
+document.addEventListener('submit', (e) => {
+  if (e.target.id !== 'signin') return;
+  e.preventDefault();
+  const email = $('#si-email').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { $('#si-err').textContent = 'Enter the email you use for RezFlo.'; $('#si-email').focus(); return; }
+  S.email = email;
+  const b = $('#si-go'); b.disabled = true; b.textContent = 'Signing in…';
+  setTimeout(() => { S.stage = 'pick'; render(); }, 650);
+});
 document.addEventListener('click', (e) => {
-  const el = e.target.closest('[data-login],[data-view],[data-act],[data-call],[data-chart],[data-crange],[data-page],[data-plan],[data-rest]');
+  const el = e.target.closest('[data-pick],[data-scope],[data-view],[data-act],[data-call],[data-page],[data-plan],[data-month]');
+  if (S.menu && !e.target.closest('.acctwrap')) { S.menu = false; const mm = $('#acctmenu'); if (mm) mm.hidden = true; const ab = $('.acctbtn'); if (ab) ab.classList.remove('on'); }
   if (!el) { if (e.target.id === 'scrim') closeCall(); if (e.target.id === 'modal') { $('#modal').hidden = true; } return; }
-  if (el.dataset.login) { S.role = el.dataset.login; S.view = S.role === 'agency' ? 'restaurants' : 'overview'; render(); return; }
-  if (el.dataset.view) { S.view = el.dataset.view; render(); window.scrollTo(0, 0); return; }
-  if (el.dataset.chart) { S.chartRange = el.dataset.chart; render(); return; }
-  if (el.dataset.crange) { S.callRange = el.dataset.crange; S.page = 0; render(); return; }
+  if (el.dataset.pick) { S.stage = 'app'; goScope(el.dataset.pick); return; }
+  if (el.dataset.scope) { goScope(el.dataset.scope, el.dataset.goto); return; }
+  if (el.dataset.view) { S.view = el.dataset.view; if (S.view === 'calls') { S.callRange = 'm' + S.month; S.page = 0; } render(); window.scrollTo(0, 0); return; }
+  if (el.dataset.month) { S.month = Number(el.dataset.month); S.view = S.scope === 'all' ? 'owner' : 'overview'; render(); window.scrollTo(0, 0); return; }
   if (el.dataset.page) { S.page += Number(el.dataset.page); render(); return; }
   if (el.dataset.plan) { S.addPlan = el.dataset.plan; document.querySelectorAll('.pkg').forEach((p) => p.classList.toggle('on', p.dataset.plan === S.addPlan)); return; }
-  if (el.dataset.rest) { if (el.dataset.rest === 'qamaria') { S.view = 'overview'; render(); } else toast('Call details for this restaurant are not loaded in this preview.'); return; }
   if (el.dataset.call) { openCall(el.dataset.call); return; }
   const a = el.dataset.act;
-  if (a === 'logout') { S.role = null; closeCall(); render(); }
+  if (a === 'acct') { S.menu = !S.menu; $('#acctmenu').hidden = !S.menu; el.classList.toggle('on', S.menu); el.setAttribute('aria-expanded', S.menu); }
+  else if (a === 'signout') signOut();
+  else if (a === 'forgot') toast('Your RezFlo contact can send you a reset link.');
   else if (a === 'closecall') closeCall();
   else if (a === 'play') togglePlay();
   else if (a === 'add') addModal();
   else if (a === 'close') $('#modal').hidden = true;
   else if (a === 'save') {
-    const name = $('#f-name').value.trim() || 'New restaurant';
-    AGENCY.push({ id: 'n' + AGENCY.length, name, city: $('#f-city').value.trim() || '—', status: 'Setting up', plan: S.addPlan, used: 0, calls: 0 });
+    const name = $('#f-name').value.trim() || 'New location';
+    const email = $('#f-email').value.trim() || 'the manager';
+    S.extra.push({ name, city: $('#f-city').value.trim() || '—', email, plan: S.addPlan });
     $('#modal').hidden = true; render();
-    toast(`${name} added. Owner invite created.`);
+    toast(`${name} added. Invite sent to ${email}.`);
   }
 });
 document.addEventListener('input', (e) => {
   if (e.target.id === 'q') { S.q = e.target.value; S.page = 0; const pos = e.target.selectionStart; render(); const q = $('#q'); q.focus(); q.setSelectionRange(pos, pos); }
+  if (e.target.id === 'si-email') { const er = $('#si-err'); if (er) er.textContent = ''; }
 });
-document.addEventListener('change', (e) => { if (e.target.id === 'outcome') { S.outcome = e.target.value; S.page = 0; render(); } });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeCall(); $('#modal').hidden = true; } });
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'outcome') { S.outcome = e.target.value; S.page = 0; render(); }
+  if (e.target.id === 'crange') { S.callRange = e.target.value; S.page = 0; if (S.callRange[0] === 'm') S.month = Number(S.callRange.slice(1)); render(); }
+  if (e.target.id === 'month') { S.month = Number(e.target.value); render(); }
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeCall(); $('#modal').hidden = true; if (S.menu) { S.menu = false; const mm = $('#acctmenu'); if (mm) mm.hidden = true; } } });
 
 render();
 </script>
