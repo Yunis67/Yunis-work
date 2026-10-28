@@ -295,7 +295,7 @@ const CONFIG = {
   currency: 'CAD',
   seed: 20261029,
   brand: 'Qamaria Yemeni Coffee Co.',
-  owner: { name: 'Salman', role: 'Owner' },
+  owner: { name: 'Anwar', role: 'Owner' },
   historyStart: { year: 2026, month: 3 },   // April 2026 (months are 0-based): six full months before October
 
   // SAMPLE: RezFlo plan tiers until Yousef's real price sheet exists. Included minutes only, no prices shown.
@@ -1139,7 +1139,7 @@ document.addEventListener('submit', (e) => {
   if (e.target.id !== 'signin') return;
   e.preventDefault();
   // any email and password (or none) signs in; there is no real account check
-  S.email = $('#si-email').value.trim() || 'salman@qamaria.ca';
+  S.email = $('#si-email').value.trim() || 'anwar@qamaria.ca';
   const b = $('#si-go'); b.disabled = true; b.textContent = 'Signing in…';
   setTimeout(() => { S.stage = 'pick'; render(); }, 650);
 });
