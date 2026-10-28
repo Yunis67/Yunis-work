@@ -44,11 +44,10 @@
   .gate-card h1 { font-size: 23px; margin-bottom: 6px; letter-spacing: -0.01em; }
   .gate-card > p { color: var(--muted); margin-bottom: 22px; }
   .gate-card .field input { padding: 12px 14px; }
-  .gate-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 13px; color: var(--muted); }
+  .gate-row { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 13px; color: var(--muted); }
   .gate-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
   .gate-row input { accent-color: var(--accent); }
   .linkbtn { background: none; border: 0; color: var(--accent-2); font-size: 13px; padding: 0; }
-  .err { color: #ff8a8e; font-size: 12.5px; margin-top: 6px; min-height: 18px; }
   .btn.wide { width: 100%; padding: 12px 16px; margin-top: 16px; font-size: 15px; }
   .gate-foot { color: var(--faint); font-size: 12.5px; margin-top: 18px; text-align: center; }
   .acct { width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; transition: border-color .15s, transform .15s; }
@@ -729,9 +728,8 @@ function signInView() {
     <div class="brand">${MARK} RezFlo</div>
     <h1>Welcome back</h1>
     <p>Sign in to see your calls, orders and minutes.</p>
-    <div class="field"><label for="si-email">Email</label><input id="si-email" type="email" autocomplete="username" placeholder="you@yourcafe.com" value="${esc(S.email)}" /></div>
+    <div class="field"><label for="si-email">Email</label><input id="si-email" type="email" autocomplete="username" placeholder="you@yourrestaurant.ca" value="${esc(S.email)}" /></div>
     <div class="field"><label for="si-pass">Password</label><input id="si-pass" type="password" autocomplete="current-password" placeholder="••••••••" /></div>
-    <div class="err" id="si-err"></div>
     <div class="gate-row"><label><input type="checkbox" checked /> Keep me signed in</label><button type="button" class="linkbtn" data-act="forgot">Forgot password?</button></div>
     <button class="btn wide" type="submit" id="si-go">Sign in</button>
     <div class="gate-foot">Need access? Ask your RezFlo contact for an invite.</div>
@@ -1140,9 +1138,8 @@ function signOut() { S.stage = 'signin'; S.menu = false; S.month = CUR_M; closeC
 document.addEventListener('submit', (e) => {
   if (e.target.id !== 'signin') return;
   e.preventDefault();
-  const email = $('#si-email').value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { $('#si-err').textContent = 'Enter the email you use for RezFlo.'; $('#si-email').focus(); return; }
-  S.email = email;
+  // any email and password (or none) signs in; there is no real account check
+  S.email = $('#si-email').value.trim() || 'salman@qamaria.ca';
   const b = $('#si-go'); b.disabled = true; b.textContent = 'Signing in…';
   setTimeout(() => { S.stage = 'pick'; render(); }, 650);
 });
@@ -1175,7 +1172,6 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('input', (e) => {
   if (e.target.id === 'q') { S.q = e.target.value; S.page = 0; const pos = e.target.selectionStart; render(); const q = $('#q'); q.focus(); q.setSelectionRange(pos, pos); }
-  if (e.target.id === 'si-email') { const er = $('#si-err'); if (er) er.textContent = ''; }
 });
 document.addEventListener('change', (e) => {
   if (e.target.id === 'outcome') { S.outcome = e.target.value; S.page = 0; render(); }
