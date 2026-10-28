@@ -138,7 +138,6 @@
 
   .chart { width: 100%; display: block; margin-top: 10px; }
   .chart text { fill: var(--muted); font-size: 12px; font-family: var(--font); }
-  .chart text.vlab { font-size: 12.5px; font-weight: 700; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
   .chartbox { position: relative; cursor: crosshair; }
   .chartbox .guide { position: absolute; width: 1px; background: var(--muted); opacity: .5; pointer-events: none; }
   .chartbox .hdot { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--panel); border: 3px solid; pointer-events: none; }
@@ -299,9 +298,9 @@
 /* =====================================================================
    The dashboard clock. During October 2026 it follows the viewer's real clock (taken once when the page
    loads), so "latest call" times line up with when the dashboard is opened. Outside October it falls back
-   to just after the Oct 29 meeting starts (4:35 PM ET = 2:35 PM MT). Calls are generated up to this moment.
+   to the Oct 29 meeting start (4:30 PM ET = 2:30 PM MT). Calls are generated up to this moment.
    ===================================================================== */
-const MEETING_NOW = '2026-10-29T16:35:00-04:00';
+const MEETING_NOW = '2026-10-29T16:30:00-04:00';
 const DEMO_NOW = (() => {
   const real = Date.now();
   const inOct = real >= Date.parse('2026-10-02T00:00:00-04:00') && real < Date.parse('2026-11-01T00:00:00-06:00');
@@ -322,7 +321,7 @@ const CONFIG = {
   // SAMPLE: RezFlo plan tiers until Yousef's real price sheet exists. Included minutes only, no prices shown.
   plans: [
     { id: 'starter', name: 'Starter', minutes: 500 },
-    { id: 'growth',  name: 'Growth',  minutes: 1000 },
+    { id: 'growth',  name: 'Growth',  minutes: 1500 },
     { id: 'pro',     name: 'Pro',     minutes: 5000 },
   ],
 
@@ -351,7 +350,7 @@ const CONFIG = {
       usage: { 3: 0.58, 4: 0.63, 5: 0.67, 6: 0.76, 7: 0.81, 8: 0.71, 9: 0.70 },
       rate:  { 3: 0.78, 4: 0.84, 5: 0.89, 6: 0.98, 7: 1.04, 8: 0.93, 9: 1.0 },
       todayBoost: 2.4,           // today is a busy Thursday so far
-      lastCallMinAgo: 10,
+      lastCallMinAgo: 64,        // latest call a little over an hour before the page is opened (shows as "1h ago")
     },
     {
       id: 'mis',
@@ -377,7 +376,7 @@ const CONFIG = {
       usage: { 3: 0.49, 4: 0.55, 5: 0.61, 6: 0.69, 7: 0.75, 8: 0.70, 9: 0.64 },
       rate:  { 3: 0.68, 4: 0.74, 5: 0.80, 6: 0.88, 7: 0.94, 8: 0.86, 9: 0.92 },
       todayBoost: 1.9,
-      lastCallMinAgo: 8,
+      lastCallMinAgo: 67,
     },
   ],
 
@@ -796,11 +795,6 @@ function lineChart({ labels, titles, lines, h = 260 }) {
     let s2 = '';
     if (ln.fill) s2 += `<defs><linearGradient id="${id}-${li}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ln.color}" stop-opacity=".30"/><stop offset="1" stop-color="${ln.color}" stop-opacity="0"/></linearGradient></defs><polygon points="${x(0)},${y(0)} ${pts} ${x(n - 1)},${y(0)}" fill="url(#${id}-${li})"/>`;
     s2 += `<polyline points="${pts}" fill="none" stroke="${ln.color}" stroke-width="${ln.width || 2.5}" stroke-linejoin="round" stroke-linecap="round"/>`;
-    // value labels: every point on short charts (months), otherwise the peak and the latest point
-    const mx = ln.values.indexOf(Math.max(...ln.values));
-    ln.values.forEach((v, i) => {
-      if (n <= 12 || i === mx || i === n - 1) s2 += `<text class="vlab" x="${x(i)}" y="${y(v) - 9}" text-anchor="${i === n - 1 && n > 12 ? 'end' : 'middle'}" style="fill:${ln.color}">${num.format(v)}</text>`;
-    });
     g += `<g class="ser s${li}">${s2}</g>`;
   });
   return `<div class="chartbox" data-chart="${id}">
