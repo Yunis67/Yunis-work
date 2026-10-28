@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RezFlo · Qamaria Yemeni Coffee Co. (demo)</title>
+<style>
+  /* Brand colours live here so the dashboard can be white-labelled (e.g. for Eat&Repeat) by swapping these values. */
+  :root {
+    --accent: #5B41DA;          /* RezFlo purple */
+    --accent-2: #8F7BFF;        /* accent for text and lines on dark */
+    --accent-soft: rgba(91, 65, 218, 0.16);
+    --bg: #0f0e17;
+    --panel: #17151f;
+    --panel-2: #1e1b29;
+    --line: #2a2738;
+    --text: #f1eff8;
+    --muted: #9b97ae;
+    --faint: #6d6982;
+    --ok: #34c759;              /* answered / done */
+    --warn: #ffb547;
+    --bad: #ff5a5f;             /* missed / hung up */
+    --info: #4da3ff;
+    --radius: 16px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px; line-height: 1.45; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  a { color: var(--accent-2); }
+
+  .demo-banner { background: #2a2140; color: #d9d2ff; text-align: center; font-size: 12.5px; padding: 6px 12px; border-bottom: 1px solid #3a2f5c; letter-spacing: 0.01em; }
+
+  /* login */
+  .login { min-height: calc(100vh - 31px); display: grid; place-items: center; padding: 24px 16px; }
+  .login-card { width: 100%; max-width: 440px; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 32px 28px; }
+  .login-card .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; margin-bottom: 22px; }
+  .login-card h1 { font-size: 22px; margin-bottom: 6px; }
+  .login-card p { color: var(--muted); margin-bottom: 22px; }
+  .acct { width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; transition: border-color .15s, transform .15s; }
+  .acct:hover { border-color: var(--accent-2); transform: translateY(-1px); }
+  .acct .av { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 700; background: var(--accent-soft); color: var(--accent-2); flex: none; }
+  .acct b { display: block; }
+  .acct span { color: var(--muted); font-size: 13px; }
+  .login-note { color: var(--faint); font-size: 12px; margin-top: 10px; }
+
+  /* app shell */
+  .top { display: flex; align-items: center; gap: 14px; padding: 12px 22px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 20; flex-wrap: wrap; }
+  .top .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; }
+  .top .sep { width: 1px; height: 22px; background: var(--line); }
+  .top .rest { font-weight: 600; }
+  .top .rest small { color: var(--muted); font-weight: 400; margin-left: 6px; }
+  .top .spacer { flex: 1; }
+  .clock { color: var(--muted); font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .clock .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px rgba(52,199,89,.18); }
+  .who { display: flex; align-items: center; gap: 8px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px 5px 6px; }
+  .who .av { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--accent); color: #fff; }
+  .who button { background: none; border: 0; color: var(--accent-2); font-size: 13px; }
+
+  .tabs { display: flex; gap: 6px; padding: 12px 22px 0; flex-wrap: wrap; }
+  .tab { background: none; border: 1px solid transparent; border-radius: 999px; padding: 7px 14px; color: var(--muted); font-weight: 600; }
+  .tab.on { background: var(--panel-2); border-color: var(--line); color: var(--text); }
+
+  main { padding: 18px 22px 40px; max-width: 1360px; margin: 0 auto; }
+  .h { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .h h2 { font-size: 22px; letter-spacing: -0.01em; }
+  .h p { color: var(--muted); font-size: 13px; }
+
+  .grid { display: grid; gap: 14px; }
+  .kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; min-width: 0; }
+  .card h3 { font-size: 15px; margin-bottom: 2px; }
+  .card .sub { color: var(--muted); font-size: 12.5px; }
+  .kpi .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); }
+  .kpi .val { font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -0.02em; }
+  .kpi .delta { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+
+  .two { grid-template-columns: minmax(0, 1fr) 340px; align-items: start; }
+  .halves { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .usage .barwrap { height: 12px; background: var(--panel-2); border-radius: 999px; overflow: hidden; margin: 12px 0 8px; border: 1px solid var(--line); }
+  .usage .bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 999px; }
+  .usage .row { display: flex; justify-content: space-between; color: var(--muted); font-size: 12.5px; gap: 10px; flex-wrap: wrap; }
+  .usage .big { font-size: 24px; font-weight: 700; }
+  .usage .big small { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+  .seg { display: inline-flex; background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+  .seg button { background: none; border: 0; padding: 5px 12px; border-radius: 999px; color: var(--muted); font-size: 12.5px; font-weight: 600; }
+  .seg button.on { background: var(--text); color: var(--bg); }
+
+  .chart { width: 100%; height: 220px; display: block; margin-top: 10px; }
+  .chart text { fill: var(--faint); font-size: 11px; font-family: var(--font); }
+  .legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+  .resolve .item { margin-top: 12px; }
+  .resolve .item .t { display: flex; justify-content: space-between; font-size: 13px; }
+  .resolve .item .t span { color: var(--muted); }
+  .resolve .track { height: 8px; background: var(--panel-2); border-radius: 999px; margin-top: 6px; overflow: hidden; }
+  .resolve .fill { height: 100%; border-radius: 999px; }
+
+  .reasons .r { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .reasons .r:last-child { border-bottom: 0; }
+  .reasons .r .n { margin-left: auto; color: var(--muted); font-family: var(--mono); font-size: 12px; }
+  .reasons .r .mini { width: 90px; height: 6px; background: var(--panel-2); border-radius: 999px; overflow: hidden; }
+  .reasons .r .mini i { display: block; height: 100%; background: var(--accent-2); border-radius: 999px; }
+
+  /* tables */
+  .tablewrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--faint); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; font-family: var(--mono); }
+  td { padding: 11px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  tbody tr { cursor: pointer; transition: background .12s; }
+  tbody tr:hover { background: var(--panel-2); }
+  td .who2 b { display: block; font-weight: 600; }
+  td .who2 span { color: var(--muted); font-size: 12.5px; font-family: var(--mono); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .muted { color: var(--muted); }
+
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .c-order { color: #b7a9ff; background: rgba(143,123,255,.14); }
+  .c-answer { color: #7cc0ff; background: rgba(77,163,255,.13); }
+  .c-ref { color: #ffcf7d; background: rgba(255,181,71,.13); }
+  .c-msg { color: #ffa98a; background: rgba(255,154,118,.13); }
+  .c-miss { color: #ff8a8e; background: rgba(255,90,95,.13); }
+  .c-live { color: #7be39a; background: rgba(52,199,89,.13); }
+  .c-setup { color: #ffcf7d; background: rgba(255,181,71,.13); }
+
+  .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .search { flex: 1; min-width: 200px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; }
+  select { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; }
+  .pager { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12.5px; padding-top: 12px; }
+  .pager button { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 5px 12px; }
+  .pager button:disabled { opacity: .35; cursor: default; }
+
+  /* order ticket rail */
+  .rail { display: flex; flex-direction: column; gap: 12px; max-height: 980px; overflow-y: auto; padding-right: 2px; }
+  .ticket { background: #f6f3ea; color: #1b1a22; border-radius: 12px; padding: 14px 16px 12px; position: relative; cursor: pointer; font-size: 13px; transition: transform .12s; }
+  .ticket:hover { transform: translateY(-2px); }
+  .ticket::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 12px; background: radial-gradient(circle at 6px -2px, transparent 6px, #f6f3ea 6.5px) 0 0 / 12px 12px repeat-x; }
+  .ticket .tk-h { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11.5px; color: #5c5870; text-transform: uppercase; letter-spacing: .06em; }
+  .ticket .tk-n { font-weight: 700; font-size: 15px; margin: 6px 0 8px; }
+  .ticket .tk-i { display: flex; justify-content: space-between; gap: 10px; padding: 2px 0; }
+  .ticket .tk-i small { display: block; color: #6b6780; font-size: 11.5px; }
+  .ticket .tk-t { display: flex; justify-content: space-between; border-top: 1px dashed #c9c3b4; margin-top: 8px; padding-top: 8px; font-weight: 700; }
+  .ticket .tk-s { margin-top: 6px; font-size: 11.5px; color: #6b6780; }
+
+  /* call drawer */
+  .scrim { position: fixed; inset: 0; background: rgba(5,4,10,.55); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .scrim.on { opacity: 1; pointer-events: auto; }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100vw); background: var(--panel); border-left: 1px solid var(--line); z-index: 50; transform: translateX(100%); transition: transform .25s ease; display: flex; flex-direction: column; }
+  .drawer.on { transform: none; }
+  .drawer .dh { padding: 18px 20px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; align-items: flex-start; }
+  .drawer .dh h3 { font-size: 18px; }
+  .drawer .dh .meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .drawer .x { margin-left: auto; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; width: 34px; height: 34px; font-size: 18px; flex: none; }
+  .drawer .db { padding: 16px 20px 30px; overflow-y: auto; }
+  .sect { margin-top: 18px; }
+  .sect > .lab { font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--faint); margin-bottom: 8px; }
+  .player { background: var(--panel-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
+  .player .pb { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); border: 0; color: #fff; display: grid; place-items: center; flex: none; }
+  .player .wave { flex: 1; height: 36px; display: flex; align-items: center; gap: 2px; }
+  .player .wave i { flex: 1; background: var(--line); border-radius: 2px; }
+  .player .wave i.p { background: var(--accent-2); }
+  .player .tm { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 86px; text-align: right; }
+  .pnote { color: var(--faint); font-size: 11.5px; margin-top: 6px; }
+  .summary { background: var(--accent-soft); border: 1px solid rgba(143,123,255,.3); border-radius: 12px; padding: 12px 14px; }
+  .tx { display: flex; flex-direction: column; gap: 10px; }
+  .tx .ln { display: flex; gap: 10px; padding: 6px 8px; border-radius: 10px; transition: background .2s; }
+  .tx .ln.hl { background: var(--panel-2); }
+  .tx .sp { flex: none; width: 54px; font-size: 12px; font-weight: 700; padding-top: 1px; }
+  .tx .sp.ai { color: var(--accent-2); }
+  .tx .sp.cu { color: var(--muted); }
+  .tx .ts { flex: none; font-family: var(--mono); font-size: 11px; color: var(--faint); width: 36px; padding-top: 2px; }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .facts div { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .facts span { display: block; color: var(--faint); font-size: 11.5px; }
+
+  /* agency */
+  .btn { background: var(--accent); border: 0; color: #fff; border-radius: 12px; padding: 9px 16px; font-weight: 600; }
+  .btn.ghost { background: var(--panel-2); border: 1px solid var(--line); color: var(--text); }
+  .modal { position: fixed; inset: 0; display: grid; place-items: center; z-index: 60; padding: 16px; background: rgba(5,4,10,.6); }
+  .modal[hidden] { display: none; }
+  .modal .box { width: 100%; max-width: 480px; background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 22px; }
+  .modal h3 { font-size: 18px; margin-bottom: 4px; }
+  .field { margin-top: 12px; }
+  .field label { display: block; color: var(--muted); font-size: 12.5px; margin-bottom: 5px; }
+  .field input, .field select { width: 100%; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .pkgs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .pkg { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px; text-align: center; }
+  .pkg b { display: block; }
+  .pkg span { color: var(--muted); font-size: 12px; }
+  .pkg.on { border-color: var(--accent-2); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+  .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 13px; opacity: 0; transition: all .25s; z-index: 70; max-width: calc(100vw - 32px); }
+  .toast.on { opacity: 1; transform: translateX(-50%); }
+  .tag { font-family: var(--mono); font-size: 10.5px; color: var(--faint); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px; }
+
+  @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(3, minmax(0,1fr)); } .two { grid-template-columns: 1fr; } .rail { max-height: none; flex-direction: row; overflow-x: auto; } .ticket { min-width: 260px; } }
+  @media (max-width: 700px) { .kpis { grid-template-columns: repeat(2, minmax(0,1fr)); } .halves { grid-template-columns: 1fr; } main, .top, .tabs { padding-left: 14px; padding-right: 14px; } .clock span.long { display: none; } .facts { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="demo-banner">Demo with sample data. Not real Qamaria calls or customers.</div>
+<div id="app"></div>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Call detail"></aside>
+<div class="modal" id="modal" hidden></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   The demo clock. Every timestamp is generated relative to this moment,
+   never the real current time.
+   ===================================================================== */
+const DEMO_NOW = '2026-10-29T14:00:00-06:00';
+
+/* =====================================================================
+   CONFIG: everything that changes per restaurant / per country.
+   Swap this block for a UK restaurant later (GBP, en-GB, Europe/London).
+   ===================================================================== */
+const CONFIG = {
+  locale: 'en-CA',
+  currency: 'CAD',
+  timeZone: 'America/Edmonton',
+  tzLabel: 'MT',
+  utcOffsetHours: -6,          // Mountain Daylight Time for all of October 2026 (DST ends Nov 1)
+  salesTaxRate: 0.05,          // Alberta GST
+  salesTaxLabel: 'GST 5%',
+  seed: 20261029,
+
+  restaurant: {                // real details, from the agent's setup
+    name: 'Qamaria Yemeni Coffee Co.',
+    city: 'Edmonton',
+    address: '395 Parsons Road SW, Edmonton, Alberta',
+    area: 'South Edmonton, near Ellerslie Road',
+    parking: 'Free on-site parking',
+    hours: { sunThu: [8, 24], friSat: [8, 25] },   // 8:00 AM to midnight; Fri/Sat to 1:00 AM
+    hoursText: 'Sunday to Thursday 8 AM to 12 AM, Friday and Saturday 8 AM to 1 AM',
+    reservations: false,
+    onlineOrdering: false,
+    cateringEmail: 'qamariacanada@gmail.com',
+    milkOptions: ['oat', 'almond', 'soy', 'skim'],
+    instagram: '@QamariaEdmonton',
+    greeting: "Hi there! You've reached Qamaria Yemeni Coffee Co., How can I help you today?",
+    closing: 'Is there anything else I can help you with today?',
+    // SAMPLE / TO CONFIRM: the facts above say orders are placed in person. This demo shows the AI taking
+    // phone pickup orders (paid in store). If Qamaria's agent does not take phone orders, set this to false
+    // and those calls become "menu question, told to order in store".
+    takesPhoneOrders: true,
+  },
+
+  // SAMPLE: RezFlo plan tiers until Yousef's real price sheet exists. Included minutes only, no prices shown.
+  plans: [
+    { id: 'starter', name: 'Starter', minutes: 500 },
+    { id: 'growth',  name: 'Growth',  minutes: 1000 },
+    { id: 'pro',     name: 'Pro',     minutes: 5000 },
+  ],
+  restaurantPlan: 'growth',
+  targetUsage: 0.70,           // tune generated call durations so month-to-date usage lands near 70%
+
+  // Menu. Drink NAMES in `bestSellers` are real (Qamaria's best sellers). Every PRICE is a SAMPLE placeholder (CAD).
+  // Items marked placeholder:true are generic café items added for realism and are NOT confirmed on Qamaria's menu.
+  menu: [
+    { name: 'Qamaria Latte',                          price: 7.25, milk: true,  best: true },
+    { name: 'Pistachio Latte',                        price: 7.50, milk: true,  best: true },
+    { name: 'Caramel Macchiato',                      price: 6.75, milk: true,  best: true },
+    { name: 'Adeni Tea',                              price: 4.50, milk: false, best: true },
+    { name: 'Mufawaar',                               price: 6.25, milk: true,  best: true },
+    { name: 'Pistachio Frappe',                       price: 8.25, milk: true,  best: true },
+    { name: 'Salted Caramel Frappe',                  price: 7.75, milk: true,  best: true },
+    { name: 'Mango Matcha',                           price: 7.50, milk: true,  best: true },
+    { name: 'Strawberry Matcha',                      price: 7.50, milk: true,  best: true },
+    { name: 'Mango Dragonfruit Refresher',            price: 7.00, milk: false, best: true },
+    { name: 'Brown Sugar Oat Milk Shaken Espresso',   price: 6.95, milk: false, best: true },
+    { name: 'Araysi Smoothie',                        price: 8.00, milk: false, best: true },
+    { name: 'Assorted sweets box',                    price: 12.00, milk: false, sweets: true },
+    { name: 'Pastry of the day',                      price: 5.50, milk: false, sweets: true },
+    { name: 'Americano',                              price: 4.25, milk: false, placeholder: true },
+    { name: 'Cappuccino',                             price: 5.25, milk: true,  placeholder: true },
+    { name: 'Iced Latte',                             price: 6.25, milk: true,  placeholder: true },
+    { name: 'Chai Latte',                             price: 5.75, milk: true,  placeholder: true },
+    { name: 'Hot Chocolate',                          price: 4.95, milk: true,  placeholder: true },
+    { name: 'Bottled water',                          price: 2.25, milk: false, placeholder: true },
+  ],
+  plantMilkExtra: 0.75,        // SAMPLE: oat / almond / soy add-on; skim at no charge
+};
+
+/* ---------------- seeded random (same numbers on every load) ---------------- */
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const rnd = mulberry32(CONFIG.seed);
+const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
+const between = (a, b) => a + rnd() * (b - a);
+const weighted = (pairs) => { const tot = pairs.reduce((s, p) => s + p[1], 0); let r = rnd() * tot; for (const [v, w] of pairs) { if ((r -= w) <= 0) return v; } return pairs[pairs.length - 1][0]; };
+function poisson(lambda) { const L = Math.exp(-lambda); let k = 0, p = 1; do { k++; p *= rnd(); } while (p > L); return k - 1; }
+
+/* ---------------- time helpers (café time zone, never the real clock) ---------------- */
+const NOW = Date.parse(DEMO_NOW);
+const HOUR = 3600e3, MIN = 60e3;
+const fmtTime = new Intl.DateTimeFormat(CONFIG.locale, { timeZone: CONFIG.timeZone, hour: 'numeric', minute: '2-digit' });
+const fmtDay = new Intl.DateTimeFormat(CONFIG.locale, { timeZone: CONFIG.timeZone, weekday: 'short', month: 'short', day: 'numeric' });
+const fmtShortDay = new Intl.DateTimeFormat(CONFIG.locale, { timeZone: CONFIG.timeZone, month: 'short', day: 'numeric' });
+const fmtMonth = new Intl.DateTimeFormat(CONFIG.locale, { timeZone: CONFIG.timeZone, month: 'long', year: 'numeric' });
+const money = new Intl.NumberFormat(CONFIG.locale, { style: 'currency', currency: CONFIG.currency });
+const num = new Intl.NumberFormat(CONFIG.locale);
+// local midnight (café time) of day d of October 2026, as epoch ms
+const localMidnight = (y, m, d) => Date.UTC(y, m, d) - CONFIG.utcOffsetHours * HOUR;
+const nowLocal = new Date(NOW + CONFIG.utcOffsetHours * HOUR);   // fields read with getUTC* = café wall clock
+const Y = nowLocal.getUTCFullYear(), M = nowLocal.getUTCMonth(), TODAY = nowLocal.getUTCDate();
+const todayStart = localMidnight(Y, M, TODAY);
+const dayIndex = (ts) => Math.floor((ts - localMidnight(Y, M, 1)) / (24 * HOUR)) + 1;   // day of month (Oct)
+const durFmt = (s) => `${Math.floor(s / 60)}m ${String(Math.round(s % 60)).padStart(2, '0')}s`;
+const clockFmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+function ago(ts) { const m = Math.round((NOW - ts) / MIN); if (m < 60) return `${m}m ago`; const h = Math.round(m / 60); if (h < 24) return `${h}h ago`; return fmtShortDay.format(ts); }
+const timeLabel = (ts) => `${fmtTime.format(ts)} ${CONFIG.tzLabel}`;
+const whenLabel = (ts) => (ts >= todayStart ? 'Today' : ts >= todayStart - 24 * HOUR ? 'Yesterday' : fmtDay.format(ts)) + ', ' + timeLabel(ts);
+
+/* ---------------- invented callers (fake numbers, first names only) ---------------- */
+const FIRST = ['Amira','Omar','Layla','Yusuf','Noor','Hana','Zaid','Sara','Ali','Maya','Liam','Emma','Noah','Olivia','Ethan','Jordan','Priya','Arjun','Mei','Daniel','Fatima','Khalid','Rania','Tariq','Chloe','Lucas','Sophia','Malik','Iman','Hassan','Leila','Adam','Mariam','Samir','Grace','Owen','Aisha','Ryan','Nadia','Karim','Jasmine','Ben','Dina','Marcus','Huda','Isaac','Salma','Tyler','Reem','Kevin'];
+const CALLERS = Array.from({ length: 100 }, (_, i) => ({ phone: `(780) 555-01${String(i).padStart(2, '0')}`, name: FIRST[i % FIRST.length] }));
+
+/* ---------------- call types ---------------- */
+const R = CONFIG.restaurant;
+const TYPES = {
+  order:    { reason: 'Pickup order',        outcome: 'Order taken',        chip: 'c-order',  w: R.takesPhoneOrders ? 33 : 0, dur: [70, 190] },
+  hours:    { reason: 'Hours',               outcome: 'Question answered',  chip: 'c-answer', w: 15, dur: [25, 55] },
+  location: { reason: 'Location & parking',  outcome: 'Question answered',  chip: 'c-answer', w: 12, dur: [30, 70] },
+  menu:     { reason: 'Menu question',       outcome: 'Question answered',  chip: 'c-answer', w: R.takesPhoneOrders ? 12 : 30, dur: [35, 90] },
+  reserve:  { reason: 'Reservation request', outcome: 'Question answered',  chip: 'c-answer', w: 6, dur: [30, 60] },
+  catering: { reason: 'Catering',            outcome: 'Referred to email',  chip: 'c-ref',    w: 5, dur: [40, 80] },
+  online:   { reason: 'Online ordering',     outcome: 'Question answered',  chip: 'c-answer', w: 4, dur: [30, 60] },
+  staff:    { reason: 'Message for staff',   outcome: 'Message for staff',  chip: 'c-msg',    w: 6, dur: [45, 100] },
+  hangup:   { reason: 'Hung up',             outcome: 'Hung up',            chip: 'c-miss',   w: 5, dur: [3, 12] },
+};
+const typeWeights = Object.entries(TYPES).filter(([, t]) => t.w > 0).map(([k, t]) => [k, t.w]);
+
+/* hour-of-day weights (café rhythm: morning coffee, lunch, evening hangout) */
+const HOUR_W = { 8: 1.3, 9: 1.5, 10: 1.1, 11: 1.0, 12: 1.2, 13: 1.0, 14: 0.8, 15: 0.8, 16: 0.9, 17: 1.0, 18: 1.2, 19: 1.4, 20: 1.4, 21: 1.2, 22: 0.9, 23: 0.6, 24: 0.4 };
+
+/* ---------------- generate the month to date ---------------- */
+function makeOrder(ts) {
+  const items = [];
+  const nItems = weighted([[1, 45], [2, 35], [3, 15], [4, 5]]);
+  const drinks = CONFIG.menu.filter((m) => !m.sweets);
+  for (let i = 0; i < nItems; i++) {
+    const it = i === nItems - 1 && rnd() < 0.25 ? pick(CONFIG.menu.filter((m) => m.sweets)) : (rnd() < 0.8 ? pick(drinks.filter((d) => d.best)) : pick(drinks));
+    const qty = it.sweets ? 1 : weighted([[1, 75], [2, 20], [3, 5]]);
+    let milk = null;
+    if (it.milk && rnd() < 0.35) milk = pick(CONFIG.restaurant.milkOptions);
+    const extra = milk && milk !== 'skim' ? CONFIG.plantMilkExtra : 0;
+    const same = items.find((x) => x.name === it.name && x.milk === milk);   // same drink twice → one line, higher qty
+    if (same) same.qty += qty; else items.push({ name: it.name, qty, milk, unit: it.price + extra, placeholder: !!it.placeholder });
+  }
+  const subtotal = items.reduce((s, i) => s + i.qty * i.unit, 0);
+  const tax = Math.round(subtotal * CONFIG.salesTaxRate * 100) / 100;
+  const pickupMin = pick([10, 15, 15, 20, 20, 25, 30]);
+  return { items, subtotal, tax, total: subtotal + tax, pickup: ts + pickupMin * MIN, pickupMin, note: rnd() < 0.15 ? pick(['Extra hot, please', 'Less ice', 'Can you write the name on the cups?', 'Picking up at the counter']) : '' };
+}
+
+const calls = [];
+let orderNo = 1001;
+for (let d = 1; d <= TODAY; d++) {
+  const start = localMidnight(Y, M, d);
+  const dow = new Date(start + 12 * HOUR).getUTCDay();          // 0 Sun … 6 Sat
+  const [open, close] = dow === 5 || dow === 6 ? R.hours.friSat : R.hours.sunThu;
+  const dayBoost = dow === 5 || dow === 6 ? 1.35 : dow === 0 ? 1.15 : 1;
+  for (let h = open; h < close; h++) {
+    let n = poisson(1.1 * dayBoost * (HOUR_W[h] || 0.4));
+    for (let k = 0; k < n; k++) {
+      const ts = start + h * HOUR + Math.floor(rnd() * 60) * MIN + Math.floor(rnd() * 60) * 1000;
+      if (ts > NOW - 9 * MIN) continue;                          // nothing after the last call below
+      calls.push({ ts, type: weighted(typeWeights) });
+    }
+  }
+  // a few after-hours hang-ups (2:00 to 6:00 AM)
+  if (rnd() < 0.22) calls.push({ ts: start + (2 + Math.floor(rnd() * 4)) * HOUR + Math.floor(rnd() * 59) * MIN, type: 'hangup', afterHours: true });
+}
+// the most recent call: about 10 minutes before the demo clock
+calls.push({ ts: NOW - 10 * MIN - 24 * 1000, type: R.takesPhoneOrders ? 'order' : 'menu' });
+calls.sort((a, b) => a.ts - b.ts);
+
+// fill in callers, durations, orders
+const order = CALLERS.map((c) => [rnd(), c]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);   // shuffled, so numbers don't run in sequence
+let callerIx = 0;
+for (const c of calls) {
+  const t = TYPES[c.type];
+  c.caller = rnd() < 0.2 && callerIx > 5 ? order[Math.floor(rnd() * Math.min(callerIx, 100))] : order[callerIx++ % 100];
+  c.named = c.type === 'order' || c.type === 'staff' || (c.type !== 'hangup' && rnd() < 0.35);
+  c.dur = between(t.dur[0], t.dur[1]);
+  if (c.type === 'order') { c.order = makeOrder(c.ts); c.order.id = `Q-${orderNo++}`; c.dur += c.order.items.length * 14; }
+}
+// tune durations so month-to-date minutes land near targetUsage of the plan (hang-ups stay short)
+const PLAN = CONFIG.plans.find((p) => p.id === CONFIG.restaurantPlan);
+{
+  const target = PLAN.minutes * CONFIG.targetUsage * 60;
+  const fixed = calls.filter((c) => c.type === 'hangup').reduce((s, c) => s + c.dur, 0);
+  const flex = calls.filter((c) => c.type !== 'hangup').reduce((s, c) => s + c.dur, 0);
+  const k = (target - fixed) / flex;
+  for (const c of calls) { if (c.type !== 'hangup') c.dur = Math.max(18, c.dur * k); c.dur = Math.round(c.dur); }
+}
+calls.forEach((c, i) => { c.id = `CALL-${String(i + 1).padStart(4, '0')}`; });
+calls.reverse();                                                   // newest first
+
+/* ---------------- transcripts (built from the real greeting / closing; no invented recipes) ---------------- */
+function transcript(c) {
+  const AI = 'AI', CU = 'Caller';
+  const nm = c.caller.name;
+  const L = [];
+  const say = (who, text) => L.push({ who, text });
+  if (c.type === 'hangup') {
+    say(AI, R.greeting);
+    say(CU, c.afterHours ? '(caller hung up; call came in after hours)' : '(caller hung up without speaking)');
+    return timeLines(L, c.dur);
+  }
+  say(AI, R.greeting);
+  if (c.type === 'order') {
+    const o = c.order;
+    say(CU, `Hi, can I place an order for pickup?`);
+    say(AI, `Of course! What can I get started for you?`);
+    o.items.forEach((it, i) => {
+      say(CU, `${i === 0 ? 'Can I get' : 'And'} ${it.qty === 1 ? 'a' : it.qty} ${it.name}${it.qty > 1 ? 's' : ''}${it.milk ? ` with ${it.milk} milk` : ''}${i === o.items.length - 1 ? ', please.' : '.'}`);
+      say(AI, i === o.items.length - 1 ? `Got it. ${it.qty} ${it.name}${it.milk ? `, ${it.milk} milk` : ''}. Anything else to add?` : `${it.qty} ${it.name}${it.milk ? ` with ${it.milk} milk` : ''}. What else?`);
+    });
+    say(CU, o.note ? `That's it. ${o.note}` : `No, that's everything.`);
+    say(AI, `Perfect. Can I get a name for the order?`);
+    say(CU, `${nm}.`);
+    say(AI, `Thanks, ${nm}. It'll be ready in about ${o.pickupMin} minutes at 395 Parsons Road SW. Your total is ${money.format(o.total)} with tax, and you'll pay when you pick it up. ${R.closing}`);
+    say(CU, `No, that's all. Thank you!`);
+    say(AI, `See you soon, ${nm}!`);
+  } else if (c.type === 'hours') {
+    const late = rnd() < 0.5;
+    say(CU, late ? `Hey, how late are you open tonight?` : `Hi, what are your hours?`);
+    say(AI, `We're open ${R.hoursText}. ${R.closing}`);
+    say(CU, `That's it, thanks.`);
+  } else if (c.type === 'location') {
+    say(CU, pick([`Where exactly are you located?`, `Is there parking at your location?`, `What's your address?`]));
+    say(AI, `We're at 395 Parsons Road SW in South Edmonton, near Ellerslie Road, and there's free on-site parking. ${R.closing}`);
+    say(CU, `Perfect, see you soon.`);
+  } else if (c.type === 'menu') {
+    const q = weighted([['milk', 4], ['best', 4], ['item', 3]]);
+    if (q === 'milk') { say(CU, `Do you have non-dairy milk?`); say(AI, `Yes, we have oat, almond, soy and skim milk. ${R.closing}`); }
+    else if (q === 'best') { say(CU, `What do people usually get there?`); say(AI, `Some of our most popular drinks are the Qamaria Latte, Pistachio Latte, Adeni Tea and the Mango Dragonfruit Refresher. ${R.closing}`); }
+    else { const it = pick(CONFIG.menu.filter((m) => m.best)); say(CU, `Do you have the ${it.name} today?`); say(AI, `Yes, the ${it.name} is on our menu. ${R.takesPhoneOrders ? 'I can put in a pickup order for you if you like.' : 'You can order it in store.'} ${R.closing}`); }
+    say(CU, `No, that's it. Thanks!`);
+  } else if (c.type === 'reserve') {
+    say(CU, `Can I book a table for ${pick([4, 5, 6, 8])} on ${pick(['Friday', 'Saturday', 'Sunday'])} evening?`);
+    say(AI, `We don't take reservations, but you're welcome to come by any time. We're open ${R.hoursText}. ${R.closing}`);
+    say(CU, `Okay, we'll just come by. Thanks.`);
+  } else if (c.type === 'catering') {
+    say(CU, `Hi, do you do catering for events?`);
+    say(AI, `For catering, please email our team at ${R.cateringEmail} and they'll take care of you. ${R.closing}`);
+    say(CU, `Great, I'll send an email. Thanks.`);
+  } else if (c.type === 'online') {
+    say(CU, `Can I order online for pickup?`);
+    say(AI, `We don't have online ordering. ${R.takesPhoneOrders ? `I can take your pickup order right now over the phone, and you pay when you pick it up.` : `Orders are placed in person at the café.`} ${R.closing}`);
+    say(CU, pick([`Oh okay, I'll just come in.`, `No worries, I'll call back when I'm ready to order.`]));
+  } else if (c.type === 'staff') {
+    const why = pick(['I think I left my sunglasses there yesterday', 'I wanted to ask about job openings', 'I have a question about a gift card', 'I wanted to give some feedback about my visit']);
+    say(CU, `Hi, ${why}.`);
+    say(AI, `I'm sorry about that, I'll pass a message to the team. Can I get your name?`);
+    say(CU, `It's ${nm}.`);
+    say(AI, `Thanks, ${nm}. The team will call you back at this number. ${R.closing}`);
+    say(CU, `No, that's all. Thanks.`);
+  }
+  if (c.type !== 'order') say(AI, `Thanks for calling Qamaria. Have a great day!`);
+  return timeLines(L, c.dur);
+}
+function timeLines(lines, dur) {
+  const w = lines.map((l) => 1.2 + l.text.length / 18);
+  const tot = w.reduce((a, b) => a + b, 0);
+  let t = 0;
+  return lines.map((l, i) => { const at = t; t += (w[i] / tot) * dur; return { ...l, at }; });
+}
+function summary(c) {
+  const nm = c.named ? c.caller.name : 'The caller';
+  switch (c.type) {
+    case 'order': return `${nm} placed a pickup order: ${c.order.items.map((i) => `${i.qty} × ${i.name}`).join(', ')}. Ready in about ${c.order.pickupMin} minutes; pays in store.`;
+    case 'hours': return `${nm} asked about opening hours. The AI gave today's hours.`;
+    case 'location': return `${nm} asked for the address and parking. The AI gave the Parsons Road address and mentioned free on-site parking.`;
+    case 'menu': return `${nm} had a menu question. The AI answered from the café's menu and milk options.`;
+    case 'reserve': return `${nm} asked to book a table. The AI explained there are no reservations and invited them to walk in.`;
+    case 'catering': return `${nm} asked about catering. The AI referred them to ${R.cateringEmail}.`;
+    case 'online': return `${nm} asked about online ordering. The AI explained it isn't available${R.takesPhoneOrders ? ' and offered a phone pickup order' : ''}.`;
+    case 'staff': return `${nm} left a message for the team. Staff should call back.`;
+    case 'hangup': return c.afterHours ? 'Call came in after hours; the caller hung up.' : 'The caller hung up before saying anything.';
+  }
+}
+
+/* ---------------- derived numbers ---------------- */
+const monthCalls = calls;
+const usedMin = Math.round(monthCalls.reduce((s, c) => s + c.dur, 0) / 60);
+const todayCalls = calls.filter((c) => c.ts >= todayStart);
+const yestCalls = calls.filter((c) => c.ts >= todayStart - 24 * HOUR && c.ts < todayStart);
+const isOrder = (c) => c.type === 'order';
+const handled = (c) => c.type !== 'hangup';
+const orders = calls.filter(isOrder);
+const sum = (arr, f) => arr.reduce((s, x) => s + f(x), 0);
+
+// agency sample rows (clearly sample restaurants)
+const AGENCY = [
+  { id: 'qamaria', name: CONFIG.restaurant.name, city: CONFIG.restaurant.city, status: 'Live', plan: 'growth', used: usedMin, calls: monthCalls.length, real: true },
+  { id: 's1', name: 'Sample Grill (demo)', city: 'Calgary', status: 'Live', plan: 'starter', used: 288, calls: 191 },
+  { id: 's2', name: 'Sample Bistro (demo)', city: 'Red Deer', status: 'Setting up', plan: 'pro', used: 0, calls: 0 },
+];
+
+/* ---------------- state + rendering ---------------- */
+const S = { role: null, view: 'overview', range: '7', callRange: 'month', outcome: 'all', q: '', page: 0, chartRange: '7', addPlan: 'growth' };
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+const MARK = `<svg width="26" height="26" viewBox="23.15 10.56 50.59 50.44" aria-hidden="true"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#B9B7C6"/><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#B9B7C6"/><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="var(--accent-2)"/><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="var(--accent-2)"/></svg>`;
+
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2600); }
+
+function render() {
+  const app = $('#app');
+  if (!S.role) { app.innerHTML = loginView(); return; }
+  const tabs = S.role === 'agency'
+    ? [['restaurants', 'Restaurants'], ['overview', 'Qamaria overview'], ['calls', 'Calls'], ['orders', 'Orders']]
+    : [['overview', 'Overview'], ['calls', 'Calls'], ['orders', 'Orders'], ['settings', 'Café info']];
+  if (!tabs.some(([k]) => k === S.view)) S.view = tabs[0][0];
+  app.innerHTML = `
+    <header class="top">
+      <div class="brand">${MARK} RezFlo</div>
+      <div class="sep"></div>
+      <div class="rest">${S.role === 'agency' && S.view === 'restaurants' ? 'Partner view' : esc(R.name)}<small>${S.role === 'agency' && S.view === 'restaurants' ? `${AGENCY.length} restaurants` : esc(R.city)}</small></div>
+      <div class="spacer"></div>
+      <div class="clock"><i class="dot"></i><span class="long">Agent live ·</span> ${fmtDay.format(NOW)} · ${timeLabel(NOW)}</div>
+      <div class="who"><span class="av">${S.role === 'agency' ? 'A' : 'Q'}</span><span>${S.role === 'agency' ? 'Atif · Agency' : 'Qamaria owner'}</span><button data-act="logout">Switch</button></div>
+    </header>
+    <nav class="tabs">${tabs.map(([k, l]) => `<button class="tab ${S.view === k ? 'on' : ''}" data-view="${k}">${l}</button>`).join('')}</nav>
+    <main>${({ restaurants: agencyView, overview: overviewView, calls: callsView, orders: ordersView, settings: settingsView })[S.view]()}</main>`;
+}
+
+function loginView() {
+  return `<div class="login"><div class="login-card">
+    <div class="brand">${MARK} RezFlo</div>
+    <h1>Sign in</h1>
+    <p>Choose a demo account. This demo has no real logins.</p>
+    <button class="acct" data-login="agency"><span class="av">A</span><span><b>Atif · Agency partner</b><span>All restaurants, add a restaurant, usage</span></span></button>
+    <button class="acct" data-login="owner"><span class="av">Q</span><span><b>Qamaria Yemeni Coffee Co.</b><span>Restaurant owner · calls, orders, minutes</span></span></button>
+    <div class="login-note">Times shown in Mountain Time (Edmonton).</div>
+  </div></div>`;
+}
+
+/* ---------------- overview ---------------- */
+function overviewView() {
+  const ordersToday = todayCalls.filter(isOrder);
+  const pct = usedMin / PLAN.minutes;
+  const daysInMonth = new Date(Date.UTC(Y, M + 1, 0)).getUTCDate();
+  const projected = Math.round(usedMin / ((NOW - localMidnight(Y, M, 1)) / (24 * HOUR)) * daysInMonth);
+  const answeredToday = todayCalls.filter(handled).length;
+  const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
+  return `
+  <div class="h"><div><h2>${S.role === 'agency' ? esc(R.name) : 'Good afternoon, Qamaria'}</h2><p>${fmtDay.format(NOW)} · open until ${new Date(NOW).getUTCDay() === 5 || new Date(NOW).getUTCDay() === 6 ? '1:00 AM' : '12:00 AM'} · last call ${ago(calls[0].ts)}</p></div></div>
+  <div class="grid kpis">
+    ${kp('Calls today', todayCalls.length, `${yestCalls.length} yesterday`)}
+    ${kp('Answered by AI', todayCalls.length ? Math.round(answeredToday / todayCalls.length * 100) + '%' : '—', `${answeredToday} of ${todayCalls.length} calls handled`)}
+    ${R.takesPhoneOrders ? kp('Orders today', ordersToday.length, `${money.format(sum(ordersToday, (c) => c.order.total))} in sample orders`) : kp('Menu questions', todayCalls.filter((c) => c.type === 'menu').length, 'answered today')}
+    ${kp('Avg call', durFmt(sum(todayCalls, (c) => c.dur) / Math.max(1, todayCalls.length)), 'today')}
+    ${kp('Minutes used', num.format(usedMin), `of ${num.format(PLAN.minutes)} this month`)}
+  </div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="grid">
+      <div class="card usage">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
+          <div><h3>Minutes this month</h3><div class="sub">${PLAN.name} plan · ${num.format(PLAN.minutes)} minutes included · resets Nov 1</div></div>
+          <div class="big">${num.format(usedMin)} <small>/ ${num.format(PLAN.minutes)} min</small></div>
+        </div>
+        <div class="barwrap"><div class="bar" style="width:${Math.min(100, pct * 100).toFixed(1)}%"></div></div>
+        <div class="row"><span>${Math.round(pct * 100)}% used · ${num.format(PLAN.minutes - usedMin)} minutes left</span><span>On pace for about ${num.format(projected)} by Oct 31 ${projected > PLAN.minutes ? '· will go over' : '· within plan'}</span></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div><h3>Call activity</h3><div class="sub">Calls per day, ${S.chartRange === '7' ? 'last 7 days' : 'this month'}</div></div>
+          <div class="seg">${[['7', '7 days'], ['30', 'Month']].map(([k, l]) => `<button class="${S.chartRange === k ? 'on' : ''}" data-chart="${k}">${l}</button>`).join('')}</div>
+        </div>
+        ${chartSVG()}
+        <div class="legend"><span><i style="background:var(--accent-2)"></i>Handled by AI</span><span><i style="background:var(--bad)"></i>Hung up</span></div>
+      </div>
+      <div class="grid halves">
+        <div class="card resolve"><h3>How calls ended</h3><div class="sub">This month · ${num.format(monthCalls.length)} calls</div>${resolveBars()}</div>
+        <div class="card reasons"><h3>Why people call</h3><div class="sub">Top reasons this month</div><div style="margin-top:8px">${reasonRows()}</div></div>
+      </div>
+      <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div><h3>Latest calls</h3><div class="sub">Click a call to hear it and read the transcript</div></div><button class="btn ghost" data-view="calls">All calls</button></div>
+        <div class="tablewrap" style="margin-top:8px">${callTable(calls.slice(0, 6), true)}</div></div>
+    </div>
+    <div class="card"><h3>${R.takesPhoneOrders ? "Today's order tickets" : 'Today at a glance'}</h3><div class="sub" style="margin-bottom:12px">${R.takesPhoneOrders ? `${ordersToday.length} pickup orders · pay in store` : ''}</div>
+      <div class="rail">${R.takesPhoneOrders ? ordersToday.map(ticketHTML).join('') || '<div class="muted">No orders yet today.</div>' : ''}</div>
+    </div>
+  </div>`;
+}
+
+function chartSVG() {
+  const days = S.chartRange === '7' ? 7 : TODAY;
+  const W = 760, H = 220, P = { l: 30, r: 10, t: 14, b: 26 };
+  const buckets = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const s = todayStart - i * 24 * HOUR, e = s + 24 * HOUR;
+    const inDay = calls.filter((c) => c.ts >= s && c.ts < e);
+    buckets.push({ s, ok: inDay.filter(handled).length, miss: inDay.filter((c) => !handled(c)).length });
+  }
+  const max = Math.max(...buckets.map((b) => b.ok + b.miss)) || 1;
+  const step = Math.max(1, Math.ceil(max / 4 / 5) * 5);   // round ticks: 5, 10, 15…
+  const top = step * 4;
+  const iw = (W - P.l - P.r) / buckets.length, bw = Math.min(38, iw * 0.62);
+  const y = (v) => P.t + (H - P.t - P.b) * (1 - v / top);
+  let g = '';
+  for (let k = 0; k <= 4; k++) { const v = (top / 4) * k; g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/><text x="${P.l - 6}" y="${y(v) + 4}" text-anchor="end">${Math.round(v)}</text>`; }
+  buckets.forEach((b, i) => {
+    const x = P.l + iw * i + (iw - bw) / 2;
+    const isToday = i === buckets.length - 1;
+    g += `<rect x="${x}" y="${y(b.ok)}" width="${bw}" height="${y(0) - y(b.ok)}" rx="5" fill="var(--accent-2)" opacity="${isToday ? 1 : 0.75}"><title>${fmtShortDay.format(b.s)}: ${b.ok} handled, ${b.miss} hung up</title></rect>`;
+    if (b.miss) g += `<rect x="${x}" y="${y(b.ok + b.miss)}" width="${bw}" height="${y(b.ok) - y(b.ok + b.miss)}" rx="3" fill="var(--bad)" opacity=".85"/>`;
+    if (days <= 7 || i % 3 === 0 || isToday) g += `<text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle">${isToday ? 'Today' : fmtShortDay.format(b.s)}</text>`;
+  });
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${g}</svg>`;
+}
+
+function resolveBars() {
+  const total = monthCalls.length;
+  const groups = [['Order taken', 'var(--accent-2)'], ['Question answered', 'var(--info)'], ['Referred to email', 'var(--warn)'], ['Message for staff', '#ff9a76'], ['Hung up', 'var(--bad)']];
+  return groups.map(([o, col]) => {
+    const n = monthCalls.filter((c) => TYPES[c.type].outcome === o).length;
+    if (!n) return '';
+    return `<div class="item"><div class="t"><b>${o}</b><span>${Math.round(n / total * 100)}% · ${n} calls</span></div><div class="track"><div class="fill" style="width:${(n / total * 100).toFixed(1)}%;background:${col}"></div></div></div>`;
+  }).join('');
+}
+
+function reasonRows() {
+  const counts = {};
+  monthCalls.forEach((c) => { const r = TYPES[c.type].reason; counts[r] = (counts[r] || 0) + 1; });
+  const rows = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 7);
+  const max = rows[0][1];
+  return rows.map(([r, n]) => `<div class="r"><span>${r}</span><span class="mini"><i style="width:${n / max * 100}%"></i></span><span class="n">${n}</span></div>`).join('');
+}
+
+function ticketHTML(c) {
+  const o = c.order;
+  return `<div class="ticket" data-call="${c.id}">
+    <div class="tk-h"><span>${o.id} · phone</span><span>${fmtTime.format(c.ts)}</span></div>
+    <div class="tk-n">${esc(c.caller.name)} <span style="font-weight:500;color:#6b6780">· pickup ${fmtTime.format(o.pickup)}</span></div>
+    ${o.items.map((i) => `<div class="tk-i"><span>${i.qty} × ${esc(i.name)}${i.milk ? `<small>${i.milk} milk</small>` : ''}</span><span>${money.format(i.qty * i.unit)}</span></div>`).join('')}
+    ${o.note ? `<div class="tk-s">Note: ${esc(o.note)}</div>` : ''}
+    <div class="tk-t"><span>Total (${CONFIG.salesTaxLabel})</span><span>${money.format(o.total)}</span></div>
+    <div class="tk-s">Pays in store · POS not connected yet</div>
+  </div>`;
+}
+
+/* ---------------- calls ---------------- */
+function filteredCalls() {
+  let list = calls;
+  if (S.callRange === 'today') list = list.filter((c) => c.ts >= todayStart);
+  else if (S.callRange === 'yesterday') list = list.filter((c) => c.ts >= todayStart - 24 * HOUR && c.ts < todayStart);
+  else if (S.callRange === '7') list = list.filter((c) => c.ts >= todayStart - 6 * 24 * HOUR);
+  if (S.outcome !== 'all') list = list.filter((c) => TYPES[c.type].outcome === S.outcome);
+  if (S.q) { const q = S.q.toLowerCase(); list = list.filter((c) => (c.named && c.caller.name.toLowerCase().includes(q)) || c.caller.phone.includes(q) || TYPES[c.type].reason.toLowerCase().includes(q) || (c.order && c.order.items.some((i) => i.name.toLowerCase().includes(q)))); }
+  return list;
+}
+function callsView() {
+  const list = filteredCalls();
+  const per = 25, pages = Math.max(1, Math.ceil(list.length / per));
+  S.page = Math.min(S.page, pages - 1);
+  const slice = list.slice(S.page * per, S.page * per + per);
+  const outcomes = ['all', ...new Set(Object.values(TYPES).filter((t) => t.w > 0).map((t) => t.outcome))];
+  return `
+  <div class="h"><div><h2>Calls</h2><p>${num.format(list.length)} calls · click any call to listen and read the transcript</p></div></div>
+  <div class="card">
+    <div class="filters">
+      <input class="search" id="q" placeholder="Search by name, phone, reason or drink…" value="${esc(S.q)}" />
+      <div class="seg">${[['today', 'Today'], ['yesterday', 'Yesterday'], ['7', '7 days'], ['month', 'This month']].map(([k, l]) => `<button class="${S.callRange === k ? 'on' : ''}" data-crange="${k}">${l}</button>`).join('')}</div>
+      <select id="outcome">${outcomes.map((o) => `<option value="${o}" ${S.outcome === o ? 'selected' : ''}>${o === 'all' ? 'All outcomes' : o}</option>`).join('')}</select>
+    </div>
+    <div class="tablewrap">${callTable(slice)}</div>
+    <div class="pager"><span>Page ${S.page + 1} of ${pages}</span><span><button data-page="-1" ${S.page === 0 ? 'disabled' : ''}>‹ Prev</button> <button data-page="1" ${S.page >= pages - 1 ? 'disabled' : ''}>Next ›</button></span></div>
+  </div>`;
+}
+function callTable(list, compact) {
+  if (!list.length) return '<div class="muted" style="padding:20px 4px">No calls match these filters.</div>';
+  return `<table><thead><tr><th>Caller</th><th>When</th><th>Reason</th><th>Outcome</th>${compact ? '' : '<th class="num">Order</th>'}<th class="num">Duration</th></tr></thead><tbody>
+  ${list.map((c) => `<tr data-call="${c.id}">
+    <td><div class="who2"><b>${c.named ? esc(c.caller.name) : 'Unknown caller'}</b><span>${c.caller.phone}</span></div></td>
+    <td>${c.ts >= todayStart ? `${timeLabel(c.ts)} <span class="muted">· ${ago(c.ts)}</span>` : whenLabel(c.ts)}</td>
+    <td>${TYPES[c.type].reason}${c.afterHours ? '<span class="tag">after hours</span>' : ''}</td>
+    <td><span class="chip ${TYPES[c.type].chip}">${TYPES[c.type].outcome}</span></td>
+    ${compact ? '' : `<td class="num">${c.order ? money.format(c.order.total) : '<span class="muted">—</span>'}</td>`}
+    <td class="num">${durFmt(c.dur)}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+/* ---------------- orders ---------------- */
+function ordersView() {
+  if (!R.takesPhoneOrders) return `<div class="card"><h3>Orders</h3><p class="muted">This restaurant's agent does not take phone orders.</p></div>`;
+  const today = orders.filter((c) => c.ts >= todayStart);
+  const items = {};
+  orders.forEach((c) => c.order.items.forEach((i) => { items[i.name] = (items[i.name] || 0) + i.qty; }));
+  const top = Object.entries(items).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
+  return `
+  <div class="h"><div><h2>Phone orders</h2><p>Pickup orders the AI took this month · all prices are sample</p></div></div>
+  <div class="grid kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    ${kp('Orders this month', orders.length, `${today.length} today`)}
+    ${kp('Order value', money.format(sum(orders, (c) => c.order.total)), 'sample prices, incl. GST')}
+    ${kp('Average order', money.format(sum(orders, (c) => c.order.total) / orders.length), `${(sum(orders, (c) => c.order.items.reduce((s, i) => s + i.qty, 0)) / orders.length).toFixed(1)} items per order`)}
+    ${kp('POS', 'Not connected', 'tickets shown here for now')}
+  </div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="card"><h3>All orders</h3><div class="sub">Newest first</div><div class="tablewrap" style="margin-top:8px">
+      <table><thead><tr><th>Order</th><th>Customer</th><th>Placed</th><th>Items</th><th class="num">Total</th></tr></thead><tbody>
+      ${orders.slice(0, 40).map((c) => `<tr data-call="${c.id}"><td style="font-family:var(--mono)">${c.order.id}</td><td><div class="who2"><b>${esc(c.caller.name)}</b><span>${c.caller.phone}</span></div></td><td>${whenLabel(c.ts)}</td><td>${c.order.items.map((i) => `${i.qty} × ${esc(i.name)}`).join(', ')}</td><td class="num">${money.format(c.order.total)}</td></tr>`).join('')}
+      </tbody></table></div><div class="pnote" style="margin-top:10px">Showing the latest 40 of ${orders.length}.</div></div>
+    <div class="card reasons"><h3>Most ordered by phone</h3><div class="sub">This month, by quantity</div><div style="margin-top:8px">${top.map(([n, q]) => `<div class="r"><span>${esc(n)}</span><span class="mini"><i style="width:${q / top[0][1] * 100}%"></i></span><span class="n">${q}</span></div>`).join('')}</div></div>
+  </div>`;
+}
+
+/* ---------------- café info (what the agent knows) ---------------- */
+function settingsView() {
+  const row = (k, v) => `<div><span>${k}</span>${v}</div>`;
+  return `
+  <div class="h"><div><h2>Café info</h2><p>What the AI receptionist tells callers</p></div></div>
+  <div class="grid halves">
+    <div class="card"><h3>Details</h3><div class="facts" style="margin-top:12px">
+      ${row('Address', esc(R.address))}${row('Area', esc(R.area))}${row('Parking', esc(R.parking))}${row('Hours', esc(R.hoursText))}
+      ${row('Reservations', R.reservations ? 'Yes' : 'Not taken, walk in')}${row('Online ordering', R.onlineOrdering ? 'Yes' : 'Not available')}
+      ${row('Catering', esc(R.cateringEmail))}${row('Instagram', esc(R.instagram))}
+    </div></div>
+    <div class="card"><h3>Greeting and closing</h3>
+      <div class="sect"><div class="lab">Greeting</div><div class="summary">${esc(R.greeting)}</div></div>
+      <div class="sect"><div class="lab">Closing</div><div class="summary">${esc(R.closing)}</div></div>
+      <div class="sect"><div class="lab">Milk options</div>${R.milkOptions.join(', ')}</div>
+      <div class="sect"><div class="lab">Best sellers</div>${CONFIG.menu.filter((m) => m.best).map((m) => esc(m.name)).join(' · ')}</div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- agency ---------------- */
+function agencyView() {
+  const live = AGENCY.filter((a) => a.status === 'Live').length;
+  const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
+  return `
+  <div class="h"><div><h2>Your restaurants</h2><p>${fmtMonth.format(NOW)} · rows marked "demo" are sample restaurants</p></div><button class="btn" data-act="add">+ Add restaurant</button></div>
+  <div class="grid kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    ${kp('Restaurants', AGENCY.length, `${live} live`)}
+    ${kp('Calls this month', num.format(sum(AGENCY, (a) => a.calls)), 'across all restaurants')}
+    ${kp('Minutes used', num.format(sum(AGENCY, (a) => a.used)), `of ${num.format(sum(AGENCY, (a) => CONFIG.plans.find((p) => p.id === a.plan).minutes))} included`)}
+    ${kp('Near limit', AGENCY.filter((a) => a.used / CONFIG.plans.find((p) => p.id === a.plan).minutes > 0.85).length, 'over 85% of plan')}
+  </div>
+  <div class="card" style="margin-top:14px"><div class="tablewrap"><table>
+    <thead><tr><th>Restaurant</th><th>Status</th><th>Plan</th><th>Minutes used</th><th class="num">Calls</th></tr></thead>
+    <tbody>${AGENCY.map((a) => { const p = CONFIG.plans.find((x) => x.id === a.plan); const pct = a.used / p.minutes; return `
+      <tr data-rest="${a.id}">
+        <td><div class="who2"><b>${esc(a.name)}</b><span>${esc(a.city)}</span></div></td>
+        <td><span class="chip ${a.status === 'Live' ? 'c-live' : 'c-setup'}">${a.status}</span></td>
+        <td>${p.name} · ${num.format(p.minutes)} min</td>
+        <td><div style="display:flex;align-items:center;gap:10px"><div style="width:120px;height:7px;background:var(--panel-2);border-radius:999px;overflow:hidden"><div style="height:100%;width:${Math.min(100, pct * 100)}%;background:${pct > 0.85 ? 'var(--warn)' : 'var(--accent-2)'}"></div></div><span class="muted">${num.format(a.used)} · ${Math.round(pct * 100)}%</span></div></td>
+        <td class="num">${num.format(a.calls)}</td></tr>`; }).join('')}
+    </tbody></table></div></div>`;
+}
+function addModal() {
+  const m = $('#modal');
+  m.hidden = false;
+  m.innerHTML = `<div class="box" role="dialog" aria-modal="true">
+    <h3>Add a restaurant</h3><p class="muted">The owner gets an invite to set their password. (Demo: nothing is sent.)</p>
+    <div class="field"><label>Restaurant name</label><input id="f-name" placeholder="e.g. Sample Café" /></div>
+    <div class="field"><label>City</label><input id="f-city" placeholder="e.g. Edmonton" /></div>
+    <div class="field"><label>Plan (included minutes per month)</label><div class="pkgs">${CONFIG.plans.map((p) => `<button class="pkg ${S.addPlan === p.id ? 'on' : ''}" data-plan="${p.id}"><b>${p.name}</b><span>${num.format(p.minutes)} min</span></button>`).join('')}</div></div>
+    <div class="field"><label>Owner email</label><input id="f-email" placeholder="owner@example.com" /></div>
+    <div class="actions"><button class="btn ghost" data-act="close">Cancel</button><button class="btn" data-act="save">Add and invite owner</button></div>
+  </div>`;
+  setTimeout(() => $('#f-name').focus(), 30);
+}
+
+/* ---------------- call drawer with simulated playback ---------------- */
+let playTimer = null;
+function openCall(id) {
+  const c = calls.find((x) => x.id === id);
+  if (!c) return;
+  const lines = transcript(c);
+  const bars = Array.from({ length: 64 }, (_, i) => 18 + Math.abs(Math.sin(i * 1.7 + c.dur) * 60 + Math.sin(i * 0.43) * 20));
+  const d = $('#drawer');
+  d.innerHTML = `
+    <div class="dh"><div><h3>${c.named ? esc(c.caller.name) : 'Unknown caller'} <span class="chip ${TYPES[c.type].chip}" style="margin-left:6px;vertical-align:2px">${TYPES[c.type].outcome}</span></h3>
+      <div class="meta">${c.caller.phone} · ${whenLabel(c.ts)} · ${durFmt(c.dur)}</div></div>
+      <button class="x" data-act="closecall" aria-label="Close">×</button></div>
+    <div class="db">
+      <div class="player"><button class="pb" data-act="play" aria-label="Play">▶</button>
+        <div class="wave">${bars.map((h) => `<i style="height:${Math.min(100, h)}%"></i>`).join('')}</div>
+        <div class="tm" id="ptm">0:00 / ${clockFmt(c.dur)}</div></div>
+      <div class="pnote">Sample call: playback follows the transcript (no audio file in this demo).</div>
+      <div class="sect"><div class="lab">AI summary</div><div class="summary">${esc(summary(c))}</div></div>
+      ${c.order ? `<div class="sect"><div class="lab">Order taken</div>${ticketHTML(c).replace('class="ticket"', 'class="ticket" style="cursor:default"')}</div>` : ''}
+      <div class="sect"><div class="lab">Details</div><div class="facts">
+        <div><span>Reason</span>${TYPES[c.type].reason}</div><div><span>Outcome</span>${TYPES[c.type].outcome}</div>
+        <div><span>Call ID</span><span style="color:var(--text);font-family:var(--mono)">${c.id}</span></div><div><span>Minutes billed</span>${(c.dur / 60).toFixed(1)}</div>
+      </div></div>
+      <div class="sect"><div class="lab">Transcript</div><div class="tx">${lines.map((l, i) => `<div class="ln" data-at="${l.at}" id="ln${i}"><span class="ts">${clockFmt(l.at)}</span><span class="sp ${l.who === 'AI' ? 'ai' : 'cu'}">${l.who === 'AI' ? 'AI' : 'Caller'}</span><span>${esc(l.text)}</span></div>`).join('')}</div></div>
+    </div>`;
+  d.dataset.id = id;
+  d.classList.add('on'); $('#scrim').classList.add('on');
+  stopPlay();
+}
+function stopPlay() { clearInterval(playTimer); playTimer = null; const b = $('#drawer .pb'); if (b) b.textContent = '▶'; }
+function togglePlay() {
+  const d = $('#drawer'); const c = calls.find((x) => x.id === d.dataset.id);
+  if (playTimer) { stopPlay(); return; }
+  let t = Number(d.dataset.t || 0); if (t >= c.dur) t = 0;
+  $('#drawer .pb').textContent = '❚❚';
+  const bars = [...d.querySelectorAll('.wave i')], lines = [...d.querySelectorAll('.tx .ln')];
+  playTimer = setInterval(() => {
+    t += 0.25; d.dataset.t = t;
+    const f = Math.min(1, t / c.dur);
+    bars.forEach((b, i) => b.classList.toggle('p', i / bars.length <= f));
+    $('#ptm').textContent = `${clockFmt(t)} / ${clockFmt(c.dur)}`;
+    let cur = 0; lines.forEach((l, i) => { if (Number(l.dataset.at) <= t) cur = i; });
+    lines.forEach((l, i) => l.classList.toggle('hl', i === cur));
+    if (t >= c.dur) stopPlay();
+  }, 250);
+}
+function closeCall() { stopPlay(); $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); $('#drawer').dataset.t = 0; }
+
+/* ---------------- events ---------------- */
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-login],[data-view],[data-act],[data-call],[data-chart],[data-crange],[data-page],[data-plan],[data-rest]');
+  if (!el) { if (e.target.id === 'scrim') closeCall(); if (e.target.id === 'modal') { $('#modal').hidden = true; } return; }
+  if (el.dataset.login) { S.role = el.dataset.login; S.view = S.role === 'agency' ? 'restaurants' : 'overview'; render(); return; }
+  if (el.dataset.view) { S.view = el.dataset.view; render(); window.scrollTo(0, 0); return; }
+  if (el.dataset.chart) { S.chartRange = el.dataset.chart; render(); return; }
+  if (el.dataset.crange) { S.callRange = el.dataset.crange; S.page = 0; render(); return; }
+  if (el.dataset.page) { S.page += Number(el.dataset.page); render(); return; }
+  if (el.dataset.plan) { S.addPlan = el.dataset.plan; document.querySelectorAll('.pkg').forEach((p) => p.classList.toggle('on', p.dataset.plan === S.addPlan)); return; }
+  if (el.dataset.rest) { if (el.dataset.rest === 'qamaria') { S.view = 'overview'; render(); } else toast('Sample row. Open Qamaria for the full demo.'); return; }
+  if (el.dataset.call) { openCall(el.dataset.call); return; }
+  const a = el.dataset.act;
+  if (a === 'logout') { S.role = null; closeCall(); render(); }
+  else if (a === 'closecall') closeCall();
+  else if (a === 'play') togglePlay();
+  else if (a === 'add') addModal();
+  else if (a === 'close') $('#modal').hidden = true;
+  else if (a === 'save') {
+    const name = $('#f-name').value.trim() || 'New restaurant';
+    AGENCY.push({ id: 'n' + AGENCY.length, name, city: $('#f-city').value.trim() || '—', status: 'Setting up', plan: S.addPlan, used: 0, calls: 0 });
+    $('#modal').hidden = true; render();
+    toast(`${name} added. Owner invite ready (demo: not sent).`);
+  }
+});
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'q') { S.q = e.target.value; S.page = 0; const pos = e.target.selectionStart; render(); const q = $('#q'); q.focus(); q.setSelectionRange(pos, pos); }
+});
+document.addEventListener('change', (e) => { if (e.target.id === 'outcome') { S.outcome = e.target.value; S.page = 0; render(); } });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeCall(); $('#modal').hidden = true; } });
+
+render();
+</script>
+</body>
+</html>
