@@ -296,16 +296,11 @@
 
 <script>
 /* =====================================================================
-   The dashboard clock. During October 2026 it follows the viewer's real clock (taken once when the page
-   loads), so "latest call" times line up with when the dashboard is opened. Outside October it falls back
-   to the Oct 29 meeting start (4:30 PM ET = 2:30 PM MT). Calls are generated up to this moment.
+   The dashboard clock. Fixed (never the viewer's real clock), so it reads the same whenever it's opened.
+   Set for the Oct 29 4:30 PM ET meeting: the latest call at each location was at 2:43 PM ET (12:43 PM MT),
+   and the "x ago" labels read as of 3:45 PM ET, so that call shows as "1h ago".
    ===================================================================== */
-const MEETING_NOW = '2026-10-29T16:30:00-04:00';
-const DEMO_NOW = (() => {
-  const real = Date.now();
-  const inOct = real >= Date.parse('2026-10-02T00:00:00-04:00') && real < Date.parse('2026-11-01T00:00:00-06:00');
-  return new Date(inOct ? real - (real % 60000) : Date.parse(MEETING_NOW)).toISOString();
-})();
+const DEMO_NOW = '2026-10-29T15:45:00-04:00';
 
 /* =====================================================================
    CONFIG: everything that changes per business / per location / per country.
@@ -350,7 +345,7 @@ const CONFIG = {
       usage: { 3: 0.58, 4: 0.63, 5: 0.67, 6: 0.76, 7: 0.81, 8: 0.71, 9: 0.70 },
       rate:  { 3: 0.78, 4: 0.84, 5: 0.89, 6: 0.98, 7: 1.04, 8: 0.93, 9: 1.0 },
       todayBoost: 2.4,           // today is a busy Thursday so far
-      lastCallMinAgo: 64,        // latest call a little over an hour before the page is opened (shows as "1h ago")
+      lastCallAt: '2026-10-29T12:43:00-06:00',   // 12:43 PM MT (= 2:43 PM ET)
     },
     {
       id: 'mis',
@@ -376,7 +371,7 @@ const CONFIG = {
       usage: { 3: 0.49, 4: 0.55, 5: 0.61, 6: 0.69, 7: 0.75, 8: 0.70, 9: 0.64 },
       rate:  { 3: 0.68, 4: 0.74, 5: 0.80, 6: 0.88, 7: 0.94, 8: 0.86, 9: 0.92 },
       todayBoost: 1.9,
-      lastCallMinAgo: 67,
+      lastCallAt: '2026-10-29T14:43:00-04:00',   // 2:43 PM ET
     },
   ],
 
@@ -502,7 +497,7 @@ function buildLocation(cfg, seedOffset) {
   // calls, day by day from April 1 to now
   const calls = [];
   const histStart = mid(CONFIG.historyStart.year, CONFIG.historyStart.month, 1);
-  const lastCallAt = NOW - cfg.lastCallMinAgo * MIN - 24 * 1000;
+  const lastCallAt = Date.parse(cfg.lastCallAt);
   for (let start = histStart; start <= todayStart; start += DAY) {
     const d = new Date(start + off * HOUR + 12 * HOUR);              // local noon of this day
     const mIx = d.getUTCMonth(), dow = d.getUTCDay();
@@ -519,7 +514,7 @@ function buildLocation(cfg, seedOffset) {
     // a few after-hours hang-ups (2:00 to 6:00 AM)
     if (K.rnd() < 0.22) calls.push({ ts: start + (2 + Math.floor(K.rnd() * 4)) * HOUR + Math.floor(K.rnd() * 59) * MIN, type: 'hangup', afterHours: true });
   }
-  calls.push({ ts: lastCallAt, type: PH ? 'order' : 'menu' });       // the latest call, a few minutes ago
+  calls.push({ ts: lastCallAt, type: PH ? 'order' : 'menu' });       // the latest call (see cfg.lastCallAt)
   calls.sort((a, b) => a.ts - b.ts);
 
   // callers, durations, orders
