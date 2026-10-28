@@ -742,7 +742,7 @@ function pickerView() {
     <h1>Welcome back, ${esc(CONFIG.owner.name)}</h1>
     <p>Where would you like to start?</p>
     ${card('all', ICONS.owner, 'Owner overview', 'Both locations, side by side', sum(LOC_IDS, (id) => LOCS[id].today.length))}
-    ${LOC_IDS.map((id) => { const L = LOCS[id]; return card(id, ICONS.store, esc(L.cfg.name), `${esc(L.cfg.street)} · ${L.timeLabel(NOW)}`, L.today.length); }).join('')}
+    ${LOC_IDS.map((id) => { const L = LOCS[id]; return card(id, ICONS.store, esc(L.cfg.name), esc(L.cfg.street), L.today.length); }).join('')}
     <div class="gate-foot">Signed in as ${esc(S.email)} · <button class="linkbtn" data-act="signout">Not you?</button></div>
   </div></div>`;
 }
