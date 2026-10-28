@@ -119,6 +119,8 @@
   .card .sub { color: var(--muted); font-size: 12.5px; }
   .kpi .label { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); }
   .kpi .val { font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -0.02em; }
+  .toastval { display: inline-flex; align-items: center; gap: 10px; }
+  .toastlogo { width: 30px; height: 30px; flex: none; }
   .kpi .delta { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
 
   .two { grid-template-columns: minmax(0, 1fr) 340px; align-items: start; }
@@ -135,9 +137,22 @@
   .minibar .tr i { display: block; height: 100%; border-radius: 999px; }
 
   .chart { width: 100%; display: block; margin-top: 10px; }
-  .chart text { fill: var(--faint); font-size: 11px; font-family: var(--font); }
-  .legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 4px; flex-wrap: wrap; }
-  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .chart text { fill: var(--muted); font-size: 12px; font-family: var(--font); }
+  .chart text.vlab { font-size: 12.5px; font-weight: 700; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
+  .chartbox { position: relative; cursor: crosshair; }
+  .chartbox .guide { position: absolute; width: 1px; background: var(--muted); opacity: .5; pointer-events: none; }
+  .chartbox .hdot { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--panel); border: 3px solid; pointer-events: none; }
+  .chartbox .ctip { position: absolute; z-index: 5; min-width: 170px; background: #0b0a12; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 12.5px; pointer-events: none; box-shadow: 0 12px 30px rgba(0,0,0,.45); }
+  .chartbox .ctip b { display: block; margin-bottom: 6px; font-size: 12.5px; }
+  .chartbox .ctip div { display: flex; align-items: center; gap: 8px; padding: 2px 0; color: var(--muted); }
+  .chartbox .ctip div i { width: 9px; height: 9px; border-radius: 3px; flex: none; }
+  .chartbox .ctip div span { margin-left: auto; padding-left: 14px; color: var(--text); font-weight: 700; font-family: var(--mono); font-size: 13px; }
+  .chartbox.hide-0 .ser.s0, .chartbox.hide-1 .ser.s1, .chartbox.hide-2 .ser.s2 { display: none; }
+  .chartbox.hide-0 .lg[data-series="0"], .chartbox.hide-1 .lg[data-series="1"], .chartbox.hide-2 .lg[data-series="2"] { opacity: .4; text-decoration: line-through; }
+  .legend { display: flex; gap: 6px; color: var(--muted); font-size: 12.5px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+  .legend .lg { background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; color: var(--text); font-size: 12.5px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; }
+  .legend .hint { margin-left: auto; color: var(--faint); font-size: 12px; }
 
   .resolve .item { margin-top: 12px; }
   .resolve .item .t { display: flex; justify-content: space-between; font-size: 13px; }
@@ -282,10 +297,16 @@
 
 <script>
 /* =====================================================================
-   The dashboard clock. Every timestamp is generated relative to this moment,
-   never the real current time. (2:00 PM in Edmonton = 4:00 PM in Mississauga.)
+   The dashboard clock. During October 2026 it follows the viewer's real clock (taken once when the page
+   loads), so "latest call" times line up with when the dashboard is opened. Outside October it falls back
+   to just after the Oct 29 meeting starts (4:35 PM ET = 2:35 PM MT). Calls are generated up to this moment.
    ===================================================================== */
-const DEMO_NOW = '2026-10-29T14:00:00-06:00';
+const MEETING_NOW = '2026-10-29T16:35:00-04:00';
+const DEMO_NOW = (() => {
+  const real = Date.now();
+  const inOct = real >= Date.parse('2026-10-02T00:00:00-04:00') && real < Date.parse('2026-11-01T00:00:00-06:00');
+  return new Date(inOct ? real - (real % 60000) : Date.parse(MEETING_NOW)).toISOString();
+})();
 
 /* =====================================================================
    CONFIG: everything that changes per business / per location / per country.
@@ -673,6 +694,7 @@ const ICONS = {
   settings: ico('<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.5"/>'),
   store: ico('<path d="M4 9h16l-1.5-5h-13z"/><path d="M5 9v11h14V9"/><path d="M10 20v-5h4v5"/>'),
 };
+const TOAST_LOGO = `<svg class="toastlogo" viewBox="0 0 19 19" aria-label="Toast logo" role="img"><g fill="#FF4C00" fill-rule="nonzero"><path d="M9.41381916,19.0817797 C14.6129279,19.0817797 18.8276383,14.8101778 18.8276383,9.54088983 C18.8276383,4.27160188 14.6129279,3.22650831e-16 9.41381916,0 C4.2147104,-3.22650831e-16 6.3670719e-16,4.27160188 0,9.54088983 C-6.3670719e-16,14.8101778 4.2147104,19.0817797 9.41381916,19.0817797 Z M3.89239567,8.75211864 C4.03722841,8.25286695 4.27378723,7.78582719 4.58963663,7.37555085 C4.58963663,7.37555085 4.42438839,7.20050847 4.35509074,7.12487288 C4.19767184,6.96377066 4.07305814,6.77285843 3.98834626,6.56300847 C3.67703989,5.71697034 4.38387592,4.95521186 4.99795971,4.56514831 C7.35621202,3.05891949 10.6089371,2.94870763 13.0407515,4.26584746 C13.7166701,4.63322034 14.4011177,5.18427966 14.6879033,5.96332627 C14.9075236,6.55760593 14.9554989,7.37879237 14.3360845,7.71266949 C14.2672852,7.73635847 14.1931261,7.73898908 14.122861,7.72023305 C14.6559198,7.85205508 14.8233003,8.50144068 14.8776723,9.00927966 C14.9507375,9.76110867 14.9827698,10.5164542 14.9736229,11.2718644 C14.9736229,11.3561441 14.9736229,11.4415042 14.9736229,11.5257839 C14.9650939,12.3253602 14.9608295,13.1465466 14.7891845,13.9234322 C14.6090106,14.7467797 13.5993972,14.6873517 12.9927762,14.6797881 C11.8445675,14.6679025 10.7059538,14.3869703 9.55774504,14.3556356 C8.74642949,14.3340254 7.93404781,14.4863771 7.12806284,14.5847034 C6.39990446,14.6722246 5.60564679,14.9207415 4.87429005,14.8170127 C3.97768508,14.6862712 3.7196846,13.4901483 3.64399025,12.6894915 C3.51818836,11.3950424 3.44569236,10.3588347 3.89239567,8.75211864 Z"/><path d="M7.26665814,13.1443856 C7.99588264,12.9801483 8.74216501,12.8331992 9.48844739,12.8580508 C10.3349448,12.8839831 11.1643844,13.0925212 12.0076835,13.1670763 C12.5716597,13.2156992 13.3787108,13.2891737 13.6644304,12.626822 C13.7071796,12.5258608 13.7372657,12.4198641 13.7539843,12.3113136 C13.9150225,11.3325988 13.9437163,10.3362076 13.8392737,9.34963983 C13.7753066,8.73375 13.6260501,7.86826271 13.0354209,7.58192797 C13.9949268,7.01682203 12.9682555,5.88120763 12.4405273,5.55165254 C10.7475324,4.49275424 8.24322194,4.4117161 6.45427646,5.23506356 C5.94360609,5.47061441 5.00862088,6.15241525 5.38815878,6.96387712 C5.48837384,7.17997881 5.66428326,7.26209746 5.81460585,7.41985169 C5.7996802,7.40364407 5.51076231,7.71158898 5.31353054,8.22591102 C5.16904618,8.5805156 5.0618422,8.949567 4.99369524,9.32694915 C4.88738414,9.9393567 4.82927539,10.5593604 4.81991805,11.1811017 C4.82631476,11.8672246 4.92652982,12.6851695 5.47238208,13.1649153 C5.95746562,13.5927966 6.71654141,13.2686441 7.26665814,13.1443856 Z"/></g></svg>`;   // Toast's own icon, from pos.toasttab.com
 const kp = (label, val, delta) => `<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="delta">${delta}</div></div>`;
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2800); }
 const scopeName = (s) => (s === 'all' ? 'Owner overview' : LOCS[s].cfg.name);
@@ -680,6 +702,7 @@ const greet = () => { const h = new Date(NOW + REF.cfg.utcOffsetHours * HOUR).ge
 
 function render() {
   const app = $('#app');
+  for (const k in CHARTS) delete CHARTS[k];
   if (S.stage === 'signin') { app.innerHTML = signInView(); setTimeout(() => { const e = $('#si-email'); if (e) e.focus(); }, 30); return; }
   if (S.stage === 'pick') { app.innerHTML = pickerView(); return; }
   const owner = S.scope === 'all';
@@ -689,9 +712,6 @@ function render() {
   if (!nav.some(([k]) => k === S.view)) S.view = nav[0][0];
   const L = owner ? null : LOCS[S.scope];
   const title = nav.find(([k]) => k === S.view)[1];
-  const clock = owner
-    ? LOC_IDS.map((id) => `${LOCS[id].cfg.city} ${LOCS[id].timeLabel(NOW)}`).join(' · ')
-    : `${L.fmtDay(NOW)} · ${L.timeLabel(NOW)}`;
   const views = { owner: ownerView, locations: locationsView, oreports: ownerReportsView, overview: () => locOverview(L), calls: () => callsView(L), orders: () => ordersView(L), reports: () => reportsView(L), settings: () => settingsView(L) };
   app.innerHTML = `<div class="shell">
     <aside class="side">
@@ -715,7 +735,6 @@ function render() {
         <h1>${title}</h1>
         <span class="pill"><i class="dot"></i>${owner ? 'Both locations live' : esc(L.cfg.name) + ' · Live'}</span>
         <div class="spacer"></div>
-        <div class="clock">${clock}</div>
       </header>
       <main>${views[S.view]()}</main>
     </div>
@@ -755,28 +774,61 @@ function monthSelect() {
 /* ---------------- charts ---------------- */
 let chartN = 0;
 function niceTop(max) { const steps = [1, 2, 2.5, 5, 10]; const mag = Math.pow(10, Math.floor(Math.log10(Math.max(1, max / 4)))); for (const s of steps) { if (s * mag * 4 >= max) return s * mag * 4; } return Math.ceil(max / 4) * 4; }
-// labels: x labels; lines: [{ values, color, fill, width }]; tips: tooltip text per point
-function lineChart(labels, lines, tips, h = 240) {
-  const W = 760, H = h, P = { l: 38, r: 14, t: 16, b: 28 }, n = labels.length;
-  const top = niceTop(Math.max(1, ...lines.flatMap((l) => l.values)) * 1.08);
+// labels: x-axis labels; titles: full label per point (tooltip); lines: [{ name, values, color, fill, width }]
+// Hover (or tap) anywhere on a chart to see every value at that point; click a legend item to hide/show a line.
+const CHARTS = {};
+function lineChart({ labels, titles, lines, h = 260 }) {
+  const W = 760, H = h, P = { l: 40, r: 16, t: 26, b: 30 }, n = labels.length;
+  const top = niceTop(Math.max(1, ...lines.flatMap((l) => l.values)) * 1.12);
   const x = (i) => P.l + (W - P.l - P.r) * (n === 1 ? 0.5 : i / (n - 1));
   const y = (v) => P.t + (H - P.t - P.b) * (1 - v / top);
-  const id = 'g' + (++chartN);
+  const id = 'c' + (++chartN);
+  CHARTS[id] = { n, W, H, P, top, labels, titles, lines };
   let g = '';
   for (let k = 0; k <= 4; k++) { const v = (top / 4) * k; g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/><text x="${P.l - 8}" y="${y(v) + 4}" text-anchor="end">${num.format(v)}</text>`; }
-  lines.forEach((ln, li) => {
-    const pts = ln.values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
-    if (ln.fill) g += `<defs><linearGradient id="${id}-${li}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ln.color}" stop-opacity=".32"/><stop offset="1" stop-color="${ln.color}" stop-opacity="0"/></linearGradient></defs><polygon points="${x(0)},${y(0)} ${pts} ${x(n - 1)},${y(0)}" fill="url(#${id}-${li})"/>`;
-    g += `<polyline points="${pts}" fill="none" stroke="${ln.color}" stroke-width="${ln.width || 2.5}" stroke-linejoin="round" stroke-linecap="round"/>`;
-    if (ln.dots !== false) ln.values.forEach((v, i) => { g += `<circle cx="${x(i)}" cy="${y(v)}" r="${n > 20 ? 2.5 : 3.5}" fill="var(--panel)" stroke="${ln.color}" stroke-width="2"><title>${esc(tips[i])}</title></circle>`; });
-  });
   const every = Math.max(1, Math.ceil(n / 8));
   labels.forEach((lab, i) => {
     const last = i === n - 1;
-    if ((i % every === 0 && n - 1 - i >= every * 0.75) || last) g += `<text x="${x(i)}" y="${H - 8}" text-anchor="${last && n > 1 ? 'end' : i === 0 && n > 1 ? 'start' : 'middle'}">${lab}</text>`;
+    if ((i % every === 0 && n - 1 - i >= every * 0.75) || last) g += `<text x="${x(i)}" y="${H - 9}" text-anchor="${last && n > 1 ? 'end' : i === 0 && n > 1 ? 'start' : 'middle'}">${lab}</text>`;
   });
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${h}px">${g}</svg>`;
+  lines.forEach((ln, li) => {
+    const pts = ln.values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    let s2 = '';
+    if (ln.fill) s2 += `<defs><linearGradient id="${id}-${li}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ln.color}" stop-opacity=".30"/><stop offset="1" stop-color="${ln.color}" stop-opacity="0"/></linearGradient></defs><polygon points="${x(0)},${y(0)} ${pts} ${x(n - 1)},${y(0)}" fill="url(#${id}-${li})"/>`;
+    s2 += `<polyline points="${pts}" fill="none" stroke="${ln.color}" stroke-width="${ln.width || 2.5}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    // value labels: every point on short charts (months), otherwise the peak and the latest point
+    const mx = ln.values.indexOf(Math.max(...ln.values));
+    ln.values.forEach((v, i) => {
+      if (n <= 12 || i === mx || i === n - 1) s2 += `<text class="vlab" x="${x(i)}" y="${y(v) - 9}" text-anchor="${i === n - 1 && n > 12 ? 'end' : 'middle'}" style="fill:${ln.color}">${num.format(v)}</text>`;
+    });
+    g += `<g class="ser s${li}">${s2}</g>`;
+  });
+  return `<div class="chartbox" data-chart="${id}">
+    <svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${h}px">${g}</svg>
+    <div class="guide" hidden></div>${lines.map((ln, li) => `<i class="hdot s${li}" style="border-color:${ln.color}" hidden></i>`).join('')}
+    <div class="ctip" hidden></div>
+    <div class="legend">${lines.map((ln, li) => `<button class="lg" data-series="${li}"><i style="background:${ln.color}"></i>${esc(ln.name)}</button>`).join('')}<span class="hint">Hover a point to see the numbers</span></div>
+  </div>`;
 }
+function chartHover(box, clientX) {
+  const C = CHARTS[box.dataset.chart]; if (!C) return;
+  const svg = box.querySelector('svg'), r = svg.getBoundingClientRect(), br = box.getBoundingClientRect();
+  const fx = (clientX - r.left) / r.width * C.W;
+  const i = Math.max(0, Math.min(C.n - 1, Math.round((fx - C.P.l) / (C.W - C.P.l - C.P.r) * (C.n - 1))));
+  const px = (C.P.l + (C.W - C.P.l - C.P.r) * (C.n === 1 ? 0.5 : i / (C.n - 1))) / C.W * r.width + (r.left - br.left);
+  const py = (v) => (C.P.t + (C.H - C.P.t - C.P.b) * (1 - v / C.top)) / C.H * r.height + (r.top - br.top);
+  const guide = box.querySelector('.guide');
+  guide.hidden = false; guide.style.left = px + 'px'; guide.style.top = (r.top - br.top + C.P.t / C.H * r.height) + 'px'; guide.style.height = ((C.H - C.P.t - C.P.b) / C.H * r.height) + 'px';
+  C.lines.forEach((ln, li) => { const d = box.querySelector(`.hdot.s${li}`); d.hidden = box.classList.contains('hide-' + li); d.style.left = px + 'px'; d.style.top = py(ln.values[i]) + 'px'; });
+  const tip = box.querySelector('.ctip');
+  tip.innerHTML = `<b>${esc(C.titles[i])}</b>${C.lines.map((ln, li) => box.classList.contains('hide-' + li) ? '' : `<div><i style="background:${ln.color}"></i>${esc(ln.name)}<span>${num.format(ln.values[i])}</span></div>`).join('')}`;
+  tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = (px + 14 + tw > br.width ? px - 14 - tw : px + 14) + 'px';
+  tip.style.top = Math.max(0, Math.min(...C.lines.map((ln) => py(ln.values[i]))) - 20) + 'px';
+}
+function chartLeave(box) { box.querySelectorAll('.guide,.hdot,.ctip').forEach((e) => { e.hidden = true; }); }
+
 // one bucket per day of month m, in this location's time zone
 function dayBuckets(L, m) {
   const out = [];
@@ -824,13 +876,12 @@ function locOverview(L) {
   const tickets = cur ? L.today.filter(isOrder) : ords.slice(0, 6);
   const latest = st.list.slice(0, 6);
   return `
-  <div class="h"><div><h2>${cur ? `${greet()}, ${esc(CONFIG.owner.name)}` : esc(L.cfg.name)}</h2><p>${cur ? `${esc(L.cfg.name)} · ${L.fmtDay(NOW)} · open until ${L.closesAt} · last call ${L.ago(L.calls[0].ts)}` : `${monthLabel(m)} · ${num.format(st.calls)} calls`}</p></div><div class="ctl">${monthSelect()}</div></div>
-  <div class="grid kpis">
+  <div class="h"><div><h2>${cur ? `${greet()}, ${esc(CONFIG.owner.name)}` : esc(L.cfg.name)}</h2><p>${cur ? `${esc(L.cfg.name)} · ${L.fmtDay(NOW)} · open until ${L.closesAt}` : `${monthLabel(m)} · ${num.format(st.calls)} calls`}</p></div><div class="ctl">${monthSelect()}</div></div>
+  <div class="grid kpis k4">
     ${kp(cur ? 'Calls this month' : 'Calls', num.format(st.calls), cur ? `${L.today.length} today · ${L.yesterday.length} yesterday` : `${(st.calls / st.days).toFixed(1)} a day on average`)}
     ${kp('Answered by AI', pctOf(st.handled, st.calls) + '%', `${num.format(st.handled)} of ${num.format(st.calls)} calls handled`)}
     ${PH ? kp('Phone orders', num.format(st.orders), `${money.format(st.value)} incl. tax`) : kp('Menu questions', st.list.filter((c) => c.type === 'menu').length, 'answered')}
     ${kp('Avg call', durFmt(sum(st.list, (c) => c.dur) / Math.max(1, st.calls)), cur ? `${durFmt(sum(L.today, (c) => c.dur) / Math.max(1, L.today.length))} today` : 'per call')}
-    ${kp('Minutes used', num.format(st.mins), `of ${num.format(L.plan.minutes)} · ${Math.round(pct * 100)}%`)}
   </div>
   <div class="grid two" style="margin-top:14px">
     <div class="grid">
@@ -844,8 +895,7 @@ function locOverview(L) {
       </div>
       <div class="card">
         <h3>Calls per day</h3><div class="sub">${monthLabel(m)} · ${(st.calls / st.days).toFixed(1)} calls a day on average</div>
-        ${lineChart(B.map((b) => b.label), [{ values: B.map((b) => b.calls), color: 'var(--accent-2)', fill: true }, ...(PH ? [{ values: B.map((b) => b.orders), color: 'var(--info)', width: 2, dots: false }] : [])], B.map((b) => `${L.fmtShortDay(b.s)}: ${b.calls} calls, ${b.handled} handled${PH ? `, ${b.orders} orders` : ''}`))}
-        <div class="legend"><span><i style="background:var(--accent-2)"></i>Calls</span>${PH ? '<span><i style="background:var(--info)"></i>Orders</span>' : ''}</div>
+        ${lineChart({ labels: B.map((b) => b.label), titles: B.map((b) => L.fmtDay(b.s) + (b.s === L.todayStart ? ' (today so far)' : '')), lines: [{ name: 'Calls', values: B.map((b) => b.calls), color: 'var(--accent-2)', fill: true }, ...(PH ? [{ name: 'Orders', values: B.map((b) => b.orders), color: 'var(--info)', width: 2 }] : [])] })}
       </div>
       <div class="grid halves">
         <div class="card resolve"><h3>How calls ended</h3><div class="sub">${monthLabel(m)} · ${num.format(st.calls)} calls</div>${resolveBars(st.list)}</div>
@@ -868,7 +918,7 @@ function ticketHTML(c) {
     ${o.items.map((i) => `<div class="tk-i"><span>${i.qty} × ${esc(i.name)}${i.milk ? `<small>${i.milk} milk</small>` : ''}</span><span>${money.format(i.qty * i.unit)}</span></div>`).join('')}
     ${o.note ? `<div class="tk-s">Note: ${esc(o.note)}</div>` : ''}
     <div class="tk-t"><span>Total (${L.cfg.salesTaxLabel})</span><span>${money.format(o.total)}</span></div>
-    <div class="tk-s">Pays in store · POS not connected yet</div>
+    <div class="tk-s">Pays in store · sent to Toast</div>
   </div>`;
 }
 
@@ -934,7 +984,7 @@ function ordersView(L) {
     ${kp('Orders', num.format(st.orders), cur ? `${todayOrd.length} today` : `${(st.orders / st.days).toFixed(1)} a day`)}
     ${kp('Order value', money.format(st.value), `incl. ${L.cfg.salesTaxLabel}`)}
     ${kp('Average order', money.format(st.value / Math.max(1, st.orders)), `${(sum(ords, (c) => c.order.items.reduce((s, i) => s + i.qty, 0)) / Math.max(1, st.orders)).toFixed(1)} items per order`)}
-    ${kp('POS', 'Not connected', 'tickets shown here for now')}
+    ${kp('POS', `<span class="toastval">Toast ${TOAST_LOGO}</span>`, 'orders sent to Toast')}
   </div>
   <div class="grid two" style="margin-top:14px">
     <div class="card"><h3>Orders in ${monthName(m)}</h3><div class="sub">Newest first</div><div class="tablewrap" style="margin-top:8px">
@@ -959,8 +1009,7 @@ function reportsView(L) {
     ${kp('Minutes used', num.format(tot.mins), `${L.plan.name} plan · ${num.format(L.plan.minutes)} min a month`)}
   </div>
   <div class="card" style="margin-top:14px"><h3>Calls per month</h3><div class="sub">${monthName(CUR_M)} is month to date</div>
-    ${lineChart(labs, [{ values: rows.map((r) => r.calls), color: 'var(--accent-2)', fill: true }, ...(PH ? [{ values: rows.map((r) => r.orders), color: 'var(--info)', width: 2 }] : [])], rows.map((r) => `${monthLabel(r.m)}: ${r.calls} calls${PH ? `, ${r.orders} orders` : ''}`), 240)}
-    <div class="legend"><span><i style="background:var(--accent-2)"></i>Calls</span>${PH ? '<span><i style="background:var(--info)"></i>Orders</span>' : ''}</div></div>
+    ${lineChart({ labels: labs, titles: rows.map((r) => monthLabel(r.m)), lines: [{ name: 'Calls', values: rows.map((r) => r.calls), color: 'var(--accent-2)', fill: true }, ...(PH ? [{ name: 'Orders', values: rows.map((r) => r.orders), color: 'var(--info)', width: 2 }] : [])] })}</div>
   <div class="card" style="margin-top:14px"><h3>Month by month</h3><div class="sub">Click a month to open it on the overview</div>
     <div class="tablewrap" style="margin-top:8px"><table><thead><tr><th>Month</th><th class="num">Calls</th><th class="num">Answered</th>${PH ? '<th class="num">Orders</th><th class="num">Order value</th>' : ''}<th>Minutes used (of ${num.format(L.plan.minutes)})</th></tr></thead><tbody>
     ${rows.slice().reverse().map((r) => `<tr data-month="${r.m}"><td><b>${monthLabel(r.m)}</b></td><td class="num">${num.format(r.calls)}</td><td class="num">${pctOf(r.handled, r.calls)}%</td>${PH ? `<td class="num">${num.format(r.orders)}</td><td class="num">${money.format(r.value)}</td>` : ''}<td>${usageBar(r.mins, L.plan.minutes)}</td></tr>`).join('')}
@@ -1013,7 +1062,7 @@ function ownerView() {
       <thead><tr><th>Location</th><th>Status</th><th>Plan</th><th>Minutes used</th><th class="num">Calls</th><th class="num">Answered</th>${PH ? '<th class="num">Orders</th><th class="num">Order value</th>' : ''}</tr></thead>
       <tbody>${st.map((s) => `
         <tr data-scope="${s.id}">
-          <td><div class="who2"><b><span class="locdot" style="background:${s.L.cfg.color}"></span>${esc(s.L.cfg.name)}</b><span>${esc(s.L.cfg.street)} · ${cur ? 'last call ' + s.L.ago(s.L.calls[0].ts) : s.L.timeLabel(NOW)}</span></div></td>
+          <td><div class="who2"><b><span class="locdot" style="background:${s.L.cfg.color}"></span>${esc(s.L.cfg.name)}</b><span>${esc(s.L.cfg.street)}</span></div></td>
           <td><span class="chip c-live">Live</span></td>
           <td>${s.L.plan.name}</td>
           <td>${usageBar(s.mins, s.L.plan.minutes)}</td>
@@ -1025,8 +1074,7 @@ function ownerView() {
   <div class="grid two" style="margin-top:14px">
     <div class="grid">
       <div class="card"><h3>Calls per day by location</h3><div class="sub">${monthLabel(m)}</div>
-        ${lineChart(labels, st.map((s, i) => ({ values: B[i].slice(0, n).map((b) => b.calls), color: s.L.cfg.color, fill: i === 0 })), labels.map((lab, j) => `${B[0][j].s ? LOCS[LOC_IDS[0]].fmtShortDay(B[0][j].s) : lab}: ${st.map((s, i) => `${s.L.cfg.city} ${B[i][j].calls}`).join(', ')}`))}
-        <div class="legend">${st.map((s) => `<span><i style="background:${s.L.cfg.color}"></i>${esc(s.L.cfg.city)}</span>`).join('')}</div></div>
+        ${lineChart({ labels, titles: B[0].slice(0, n).map((b) => REF.fmtDay(b.s) + (b.s === REF.todayStart ? ' (today so far)' : '')), lines: st.map((s, i) => ({ name: s.L.cfg.city, values: B[i].slice(0, n).map((b) => b.calls), color: s.L.cfg.color, fill: i === 0 })) })}</div>
       <div class="card"><div class="row-head" style="align-items:center"><div><h3>${cur ? 'Latest calls' : `Last calls in ${monthName(m)}`}</h3><div class="sub">Both locations · click a call to hear it</div></div></div>
         <div class="tablewrap" style="margin-top:8px">${callTable(latest, { compact: true, showLoc: true })}</div></div>
     </div>
@@ -1044,7 +1092,7 @@ function locationsView() {
     <div class="card loccard">
       <div class="lh"><div class="lav" style="background:var(--accent-soft);color:${c.color}">${c.prefix}</div><div><h3>${esc(c.name)}</h3><div class="sub">${esc(c.address)}</div></div><span class="chip c-live" style="margin-left:auto">Live</span></div>
       <div class="stats"><div><b>${L.today.length}</b><span>calls today</span></div><div><b>${L.today.filter(isOrder).length}</b><span>orders today</span></div><div><b>${pctOf(st.mins, L.plan.minutes)}%</b><span>of ${L.plan.name} minutes</span></div></div>
-      <div class="facts"><div><span>Local time</span>${L.fmtDay(NOW)} · ${L.timeLabel(NOW)}</div><div><span>Hours</span>${esc(c.hoursText.charAt(0).toUpperCase() + c.hoursText.slice(1))}</div><div><span>Last call</span>${L.ago(L.calls[0].ts)}</div><div><span>Phone orders</span>Pickup, pay in store</div></div>
+      <div class="facts"><div><span>Hours</span>${esc(c.hoursText.charAt(0).toUpperCase() + c.hoursText.slice(1))}</div><div><span>Phone orders</span>Pickup, pay in store</div><div><span>POS</span>Toast</div><div><span>Plan</span>${L.plan.name} · ${num.format(L.plan.minutes)} min</div></div>
       <div class="actions" style="justify-content:flex-start"><button class="btn" data-scope="${id}">Open dashboard</button><button class="btn ghost" data-scope="${id}" data-goto="calls">View calls</button></div>
     </div>`; }).join('')}
     ${S.extra.map((x) => `<div class="card loccard"><div class="lh"><div class="lav" style="background:var(--panel-2);color:var(--muted)">+</div><div><h3>${esc(x.name)}</h3><div class="sub">${esc(x.city)}</div></div><span class="chip c-setup" style="margin-left:auto">Setting up</span></div><p class="muted" style="margin-top:12px">Invite sent to ${esc(x.email)}. Calls show up here once the AI receptionist goes live.</p></div>`).join('')}
@@ -1057,8 +1105,7 @@ function ownerReportsView() {
   return `
   <div class="h"><div><h2>Reports</h2><p>Both locations · ${monthName(ms[0])} 1 to ${REF.fmtShortDay(NOW)}</p></div></div>
   <div class="card"><h3>Calls per month by location</h3><div class="sub">${monthName(CUR_M)} is month to date</div>
-    ${lineChart(labs, LOC_IDS.map((id, i) => ({ values: rows.map((r) => r.s[i].calls), color: LOCS[id].cfg.color, fill: i === 0 })), rows.map((r) => `${monthLabel(r.m)}: ${r.s.map((s, i) => `${LOCS[LOC_IDS[i]].cfg.city} ${s.calls}`).join(', ')}`))}
-    <div class="legend">${LOC_IDS.map((id) => `<span><i style="background:${LOCS[id].cfg.color}"></i>${esc(LOCS[id].cfg.city)}</span>`).join('')}</div></div>
+    ${lineChart({ labels: labs, titles: rows.map((r) => monthLabel(r.m)), lines: LOC_IDS.map((id, i) => ({ name: LOCS[id].cfg.city, values: rows.map((r) => r.s[i].calls), color: LOCS[id].cfg.color, fill: i === 0 })) })}</div>
   <div class="card" style="margin-top:14px"><h3>Month by month</h3><div class="sub">Minutes are out of ${num.format(REF.plan.minutes)} per location (${REF.plan.name} plan) · click a month to open it</div>
     <div class="tablewrap" style="margin-top:8px"><table><thead><tr><th>Month</th>${LOC_IDS.map((id) => `<th class="num">${esc(LOCS[id].cfg.city)} calls</th>`).join('')}<th class="num">Total calls</th><th class="num">Answered</th>${PH ? '<th class="num">Orders</th><th class="num">Order value</th>' : ''}${LOC_IDS.map((id) => `<th class="num">${esc(LOCS[id].cfg.city)} minutes</th>`).join('')}</tr></thead><tbody>
     ${rows.slice().reverse().map((r) => { const c = sum(r.s, (s) => s.calls); return `<tr data-month="${r.m}"><td><b>${monthLabel(r.m)}</b></td>${r.s.map((s) => `<td class="num">${num.format(s.calls)}</td>`).join('')}<td class="num">${num.format(c)}</td><td class="num">${pctOf(sum(r.s, (s) => s.handled), c)}%</td>${PH ? `<td class="num">${num.format(sum(r.s, (s) => s.orders))}</td><td class="num">${money.format(sum(r.s, (s) => s.value))}</td>` : ''}${r.s.map((s, i) => { const pc = pctOf(s.mins, LOCS[LOC_IDS[i]].plan.minutes); return `<td class="num">${num.format(s.mins)} <span class="muted">· ${pc}%</span></td>`; }).join('')}</tr>`; }).join('')}
@@ -1144,6 +1191,8 @@ document.addEventListener('submit', (e) => {
   setTimeout(() => { S.stage = 'pick'; render(); }, 650);
 });
 document.addEventListener('click', (e) => {
+  const lg = e.target.closest('.lg[data-series]');
+  if (lg) { const box = lg.closest('.chartbox'); box.classList.toggle('hide-' + lg.dataset.series); chartLeave(box); return; }
   const el = e.target.closest('[data-pick],[data-scope],[data-view],[data-act],[data-call],[data-page],[data-plan],[data-month]');
   if (S.menu && !e.target.closest('.acctwrap')) { S.menu = false; const mm = $('#acctmenu'); if (mm) mm.hidden = true; const ab = $('.acctbtn'); if (ab) ab.classList.remove('on'); }
   if (!el) { if (e.target.id === 'scrim') closeCall(); if (e.target.id === 'modal') { $('#modal').hidden = true; } return; }
@@ -1170,6 +1219,12 @@ document.addEventListener('click', (e) => {
     toast(`${name} added. Invite sent to ${email}.`);
   }
 });
+document.addEventListener('pointermove', (e) => {
+  const box = e.target.closest && e.target.closest('.chartbox');
+  if (chartHover.active && chartHover.active !== box) { chartLeave(chartHover.active); chartHover.active = null; }
+  if (box && !e.target.closest('.legend')) { chartHover.active = box; chartHover(box, e.clientX); }
+});
+document.addEventListener('pointerdown', (e) => { const box = e.target.closest('.chartbox'); if (box && !e.target.closest('.legend')) { chartHover.active = box; chartHover(box, e.clientX); } });
 document.addEventListener('input', (e) => {
   if (e.target.id === 'q') { S.q = e.target.value; S.page = 0; const pos = e.target.selectionStart; render(); const q = $('#q'); q.focus(); q.setSelectionRange(pos, pos); }
 });
