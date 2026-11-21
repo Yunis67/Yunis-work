@@ -9,3 +9,6 @@ renders/*-draft.mp4
 # HyperFrames render scratch folders
 **/renders/work-*/
 **/renders/.*hf-transaction*
+
+# working copy of the cut (rebuild with ad-03-joudy/cut.py)
+ad-03-joudy/clip.mp4
