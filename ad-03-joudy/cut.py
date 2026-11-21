@@ -2,7 +2,8 @@
 # Sound comes from the separate recording (raw-audio.m4a); picture from the phone video (raw-video.mp4).
 # The video runs OFFSET seconds behind the audio file (measured by cross-correlation, constant, no drift).
 # Spans are (first word start, last word end) in AUDIO time. Pauses between turns are kept up to CAP seconds.
-# Run: python3 cut.py ../raw/joudy-video.mp4 ../raw/joudy-audio.m4a clip.mp4 <tmp dir>
+# Run: python3 denoise.py ../raw/joudy-audio.m4a ../raw/joudy-audio-clean.wav
+#      python3 cut.py ../raw/joudy-video.mp4 ../raw/joudy-audio-clean.wav clip.mp4 <tmp dir>
 import subprocess, sys, json, os
 vsrc, asrc, out, tmp = sys.argv[1:5]
 OFFSET = 2.645
@@ -41,15 +42,15 @@ keep = [INTRO]
 for i, (a, b) in enumerate(spans):
     lead = 0.3 if i == 0 else (JUMP if i - 1 in removed_after else min(a - spans[i-1][1], CAP)) / 2
     tail = OUTRO if i == len(spans) - 1 else (JUMP if i in removed_after else min(spans[i+1][0] - b, CAP)) / 2
-    if i == 7: lead = -0.16         # start just inside the span: the "Um" runs right up to "I'll"
+    if i == 7: lead = -0.31         # "Um" runs to 89.45, short dip, "I'll" starts 89.65: cut in the dip
     if i == 18: tail = 0.12         # stop before "That's under Emily, with phone number..."
     if i == 19: lead = 0.0          # the number's last digits run right up to "Does"
     keep.append((round(a - lead, 3), round(b + tail, 3)))
 
-# lav mic in a busy café: cut rumble, denoise, soften the room between words, even out levels
-AUDIO = ("highpass=f=85,lowpass=f=13000,afftdn=nr=12:nf=-40,"
-         "agate=threshold=0.03:ratio=2:range=0.4:attack=8:release=250,"
-         "acompressor=threshold=0.12:ratio=2.5:attack=10:release=150:makeup=1.6,")
+# Café noise is removed first by denoise.py (pass its output as the audio file). Here: trim rumble and hiss,
+# a soft gate that lowers whatever room is left between words (~14 dB, never to silence), then even levels.
+CLEAN = "highpass=f=90,lowpass=f=12000,agate=threshold=0.015:ratio=2:range=0.2:attack=5:release=200,"
+LEVEL = "acompressor=threshold=0.12:ratio=2.5:attack=10:release=150:makeup=1.6,"
 # phone export is 320x568: scale up cleanly to 1080x1920 with a light sharpen
 VF = "scale=1080:1920:flags=lanczos,unsharp=5:5:0.6:5:5:0,format=yuv420p"
 os.makedirs(tmp, exist_ok=True); lst = []
@@ -60,15 +61,23 @@ for i, (a, b) in enumerate(keep):
             else f"afade=t=in:d=0.03,afade=t=out:st={du-0.2:.3f}:d=0.18" if i == 0
             else f"afade=t=in:d=0.03,afade=t=out:st={du-0.04:.3f}:d=0.04")
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{a + OFFSET}", "-i", vsrc, "-ss", f"{a}", "-i", asrc,
-        "-t", f"{du:.3f}", "-map", "0:v", "-map", "1:a", "-vf", VF, "-af", AUDIO + fade,
+        "-t", f"{du:.3f}", "-map", "0:v", "-map", "1:a", "-vf", VF, "-af", CLEAN + LEVEL + fade,
         "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
         "-c:v", "libx264", "-crf", "16", "-preset", "fast", "-r", "30",
         "-c:a", "pcm_s16le", "-ar", "48000", "-ac", "2", f.replace(".mp4", ".mov")], check=True)
     lst.append(f"file '{f.replace('.mp4', '.mov')}'")
 open(tmp + "/list.txt", "w").write("\n".join(lst))
-# join, then one loudness pass over the whole thing (-16 LUFS, fine for Reels/TikTok)
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", tmp + "/list.txt",
-    "-c:v", "copy", "-af", "loudnorm=I=-16:TP=-1.5:LRA=9", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", out], check=True)
+# join, then set loudness to -16 LUFS (Reels/TikTok) with ONE fixed gain for the whole clip. A plain loudnorm
+# pass rides the level up in the pauses, which brings the café noise back, so measure first and apply linearly.
+joined = tmp + "/joined.mov"
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", tmp + "/list.txt", "-c", "copy", joined], check=True)
+m = subprocess.run(["ffmpeg", "-hide_banner", "-i", joined, "-af", "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json", "-f", "null", "-"],
+                   capture_output=True, text=True).stderr
+m = json.loads(m[m.rindex("{"):m.rindex("}") + 1])
+LN = (f"loudnorm=I=-16:TP=-1.5:LRA=11:linear=true:measured_I={m['input_i']}:measured_TP={m['input_tp']}"
+      f":measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}")
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", joined, "-c:v", "copy", "-af", LN,
+    "-c:a", "aac", "-b:a", "192k", "-ar", "48000", out], check=True)
 t = 0; seg = []
 for a, b in keep: seg.append({"src": [a, b], "out": [round(t, 3), round(t + b - a, 3)]}); t += b - a
 json.dump(seg, open(out.replace(".mp4", ".segs.json"), "w"), indent=1); print("total", round(t, 2))
