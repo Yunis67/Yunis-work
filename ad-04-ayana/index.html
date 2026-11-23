@@ -48,6 +48,7 @@
       /* captions: bottom edge sits just above the pills */
       .cap { position: absolute; left: 110px; bottom: 712px; width: 860px; text-align: center; font-weight: 700; font-size: 60px; line-height: 1.1; letter-spacing: -0.01em; opacity: 0; }
       .cap .w { display: inline-block; color: #fff; opacity: 0.7; text-shadow: 0 2px 0 rgba(11,10,18,0.45), 0 4px 20px rgba(11,10,18,0.95); }
+      .cap .hi { margin-left: 0.1em; transform-origin: 0% 70%; }
 
       /* pills, right under the captions */
       .chips { position: absolute; left: 60px; top: 1232px; width: 960px; display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
@@ -333,7 +334,7 @@
         tl.set(el, { opacity: 0 }, b);
       });
       // "seamless." pops on her reaction
-      tl.fromTo(".cap .hi", { scale: 1 }, { scale: 1.22, color: "#c4b9ff", textShadow: "0 0 30px rgba(143,123,255,1), 0 4px 20px rgba(11,10,18,0.95)", duration: 0.35, ease: "back.out(2.2)", immediateRender: false }, K.seam);
+      tl.fromTo(".cap .hi", { scale: 1 }, { scale: 1.16, color: "#c4b9ff", textShadow: "0 0 30px rgba(143,123,255,1), 0 4px 20px rgba(11,10,18,0.95)", duration: 0.35, ease: "back.out(2.2)", immediateRender: false }, K.seam);
 
       // pickup, then her order
       chipIn("#pko", K.pickup); sweep("#pko", K.pickup + 0.15);
