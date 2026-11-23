@@ -45,10 +45,13 @@ for i, (a, b) in enumerate(spans):
 # a soft gate that lowers whatever room is left between words (~14 dB, never to silence), then even levels.
 CLEAN = "highpass=f=90,lowpass=f=12000,agate=threshold=0.015:ratio=2:range=0.2:attack=5:release=200,"
 LEVEL = "acompressor=threshold=0.12:ratio=2.5:attack=10:release=150:makeup=1.6,"
-# phone export is 608x1080 and already bright: scale up cleanly to 1080x1920 with a light sharpen, no grade
+# phone export is 608x1080: scale up cleanly to 1080x1920 with a light sharpen, then a warm grade matched to Yunis's
+# reference edit (cream highlights, deeper blacks, richer skin)
 # with LOWRES=1 the picture stays at its native 320x568 (crf 8) for the AI upscaler (kit/upscale, then finish.py)
 LOWRES = os.environ.get("LOWRES") == "1"
-VF = "format=yuv420p" if LOWRES else "scale=1080:1920:flags=lanczos,unsharp=5:5:0.45:5:5:0,format=yuv420p"
+GRADE = ("colorbalance=rs=0.04:bs=-0.02:rm=0.05:gm=-0.01:bm=-0.035:rh=0.025:bh=-0.01,"
+         "curves=master='0/0 0.10/0.035 0.30/0.235 0.6/0.57 0.88/0.89 1/1',eq=saturation=1.18,")
+VF = "format=yuv420p" if LOWRES else "scale=1080:1920:flags=lanczos,unsharp=5:5:0.45:5:5:0," + GRADE + "format=yuv420p"
 os.makedirs(tmp, exist_ok=True); lst = []
 for i, (a, b) in enumerate(keep):
     du = b - a; f = f"{tmp}/s{i:02d}.mp4"
