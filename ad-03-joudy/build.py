@@ -164,7 +164,7 @@ page = f"""<!doctype html>
         </div>
 
         <div class="chips" id="cn"><div id="nm" class="chip">{ic("user")}<span><b class="lab">Name</b><b id="nmv">{"".join(f"<i>{c}</i>" for c in "Emily")}</b><i class="cur"></i></span></div></div>
-        <div class="chips" id="c2"><div id="two" class="chip">{ic("wrap")}<span><b class="q">2 ×</b>Original shawarma</span></div></div>
+        <div class="chips" id="cq"><div id="two" class="chip">{ic("wrap")}<span><b class="q">2 ×</b>Original shawarma</span></div></div>
         <div class="chips" id="co"><div id="oc" class="chip"><i class="pick"></i>{ic("wrap")}<span>Chicken shawarma</span>{TICK}</div><div id="ob" class="chip"><i class="pick"></i>{ic("wrap")}<span>Beef shawarma</span>{TICK}</div></div>
         <div class="chips" id="cf"><div id="fr" class="chip">{ic("fries")}<span>Side of fries</span></div></div>
 
