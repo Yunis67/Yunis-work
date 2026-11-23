@@ -12,3 +12,5 @@ renders/*-draft.mp4
 
 # working copy of the cut (rebuild with ad-03-joudy/cut.py)
 ad-03-joudy/clip.mp4
+ad-03-joudy/clip-lo.mp4
+ad-03-joudy/clip-up.mp4

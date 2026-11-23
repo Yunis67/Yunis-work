@@ -52,7 +52,9 @@ for i, (a, b) in enumerate(spans):
 CLEAN = "highpass=f=90,lowpass=f=12000,agate=threshold=0.015:ratio=2:range=0.2:attack=5:release=200,"
 LEVEL = "acompressor=threshold=0.12:ratio=2.5:attack=10:release=150:makeup=1.6,"
 # phone export is 320x568: scale up cleanly to 1080x1920 with a light sharpen
-VF = "scale=1080:1920:flags=lanczos,unsharp=5:5:0.6:5:5:0,format=yuv420p"
+# with LOWRES=1 the picture stays at its native 320x568 (crf 8) for the AI upscaler (kit/upscale, then finish.py)
+LOWRES = os.environ.get("LOWRES") == "1"
+VF = "format=yuv420p" if LOWRES else "scale=1080:1920:flags=lanczos,unsharp=5:5:0.6:5:5:0,format=yuv420p"
 os.makedirs(tmp, exist_ok=True); lst = []
 for i, (a, b) in enumerate(keep):
     du = b - a; f = f"{tmp}/s{i:02d}.mp4"
@@ -63,7 +65,7 @@ for i, (a, b) in enumerate(keep):
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{a + OFFSET}", "-i", vsrc, "-ss", f"{a}", "-i", asrc,
         "-t", f"{du:.3f}", "-map", "0:v", "-map", "1:a", "-vf", VF, "-af", CLEAN + LEVEL + fade,
         "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
-        "-c:v", "libx264", "-crf", "16", "-preset", "fast", "-r", "30",
+        "-c:v", "libx264", "-crf", "8" if LOWRES else "16", "-preset", "fast", "-r", "30",
         "-c:a", "pcm_s16le", "-ar", "48000", "-ac", "2", f.replace(".mp4", ".mov")], check=True)
     lst.append(f"file '{f.replace('.mp4', '.mov')}'")
 open(tmp + "/list.txt", "w").write("\n".join(lst))

@@ -57,19 +57,49 @@
       #nmv i { font-style: normal; opacity: 0; }
       #nm .cur { display: inline-block; width: 4px; height: 42px; margin-left: 4px; vertical-align: -6px; background: var(--peri); }
       #nm .lab { color: var(--peri); font-weight: 400; margin-right: 12px; }
+
+      /* order review ticket (top, only during the read-back) */
+      #tk { position: absolute; left: 200px; top: 110px; width: 680px; padding: 22px 30px 16px; border-radius: 30px; background: rgba(11,10,18,0.86);
+        border: 2.5px solid var(--peri); box-shadow: 0 0 26px rgba(143,123,255,0.5), 0 24px 60px rgba(11,10,18,0.5); opacity: 0; }
+      #tk .hd { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 2px solid rgba(143,123,255,0.3); }
+      #tk .t1 { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 38px; color: #fff; letter-spacing: -0.01em; }
+      #tk .t2 { font-size: 19px; color: var(--peri); margin-top: 6px; }
+      #st { position: relative; width: 196px; height: 46px; }
+      #st .s { position: absolute; right: 0; top: 0; height: 46px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-radius: 999px; font-size: 19px; white-space: nowrap; }
+      #st .live { color: var(--peri); border: 2px solid rgba(143,123,255,0.6); }
+      #st .live i { width: 11px; height: 11px; border-radius: 50%; background: var(--peri); }
+      #st .done { color: #fff; background: var(--green); opacity: 0; }
+      #st .done svg { width: 22px; height: 22px; }
+      .tr { display: flex; align-items: center; gap: 18px; height: 50px; overflow: hidden; font-size: 30px; color: #fff; opacity: 0; }
+      .tr:first-of-type { margin-top: 8px; }
+      .tr .q { width: 64px; font-size: 22px; color: var(--peri); }
+      .tr .v { font-weight: 700; white-space: nowrap; }
+      .tr.pk .v { font-weight: 400; color: rgba(255,255,255,0.85); }
+
+      /* end banner (same family as the FAQ end cards) */
+      #endc { position: absolute; inset: 0; background: radial-gradient(900px 1200px at 50% 44%, #6c53ee 0%, var(--brand) 64%); color: var(--cream);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 180px; }
+      #eR { width: 210px; height: 210px; border-radius: 54px; background: var(--cream); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 140px 30px rgba(243,239,230,0.22); }
+      #eR .rm { width: 150px; height: 150px; overflow: visible; }
+      #eq { margin-top: 54px; font-size: 26px; color: var(--cream); background: rgba(11,10,18,0.22); padding: 14px 24px; border-radius: 14px; }
+      #esee-m { margin-top: 26px; overflow: hidden; padding: 0 60px 10px; text-align: center; }
+      #esee { display: block; font-family: "Instrument Serif", serif; font-style: italic; font-size: 132px; line-height: 1.02; }
+      #eurl { font-size: 28px; margin-top: 18px; }
+      #ebelow { position: absolute; left: 0; top: 1380px; width: 1080px; display: flex; justify-content: center; align-items: center; gap: 16px; font-weight: 700; font-size: 44px; }
+      #ebelow b { display: inline-block; font-size: 50px; }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="45.0" data-width="1080" data-height="1920">
-      <!-- the call (0 to 45.0s): cut-down clip.mp4 -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="92.43" data-width="1080" data-height="1920">
+      <!-- the call (0 to 88.83s): cut-down clip.mp4 -->
       <div id="vw">
-        <video id="src" class="clip" src="clip.mp4" data-start="0" data-duration="45.0" data-has-audio="true" playsinline></video>
+        <video id="src" class="clip" src="clip.mp4" data-start="0" data-duration="88.83" data-has-audio="true" playsinline></video>
         <div id="shade"></div>
         <div id="flash"></div>
       </div>
-      <audio id="music" src="music.wav" data-start="0" data-duration="45.0" data-volume="1"></audio>
+      <audio id="music" src="music.wav" data-start="0" data-duration="92.43" data-volume="1"></audio>
 
-      <div id="ov" class="clip" data-start="0" data-duration="45.0" style="z-index:20">
+      <div id="ov" class="clip" data-start="0" data-duration="88.83" style="z-index:20">
         <div id="hook"><span class="ln"><span>She's ordering</span></span><span class="ln"><span>from an <b class="ai">AI.</b></span></span></div>
 
         <div id="agent">
@@ -84,6 +114,21 @@
         <div class="chips" id="cq"><div id="two" class="chip"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12l-3.2 18H9.2z"/><path d="M7 8h10M7.8 13h8.4"/></svg><span><b class="q">2 ×</b>Original shawarma</span></div></div>
         <div class="chips" id="co"><div id="oc" class="chip"><i class="pick"></i><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12l-3.2 18H9.2z"/><path d="M7 8h10M7.8 13h8.4"/></svg><span>Chicken shawarma</span><svg class="tk" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><div id="ob" class="chip"><i class="pick"></i><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12l-3.2 18H9.2z"/><path d="M7 8h10M7.8 13h8.4"/></svg><span>Beef shawarma</span><svg class="tk" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
         <div class="chips" id="cf"><div id="fr" class="chip"><svg class="ic" viewBox="0 0 24 24"><path d="M5 10h14l-2 11H7z"/><path d="M8 10V4M11 10V3M14 10V4M17 10V6"/></svg><span>Side of fries</span></div></div>
+        <div class="chips" id="cs"><div id="fs" class="chip"><i class="pick"></i><svg class="ic" viewBox="0 0 24 24"><path d="M5 10h14l-2 11H7z"/><path d="M8 10V4M11 10V3M14 10V4M17 10V6"/></svg><span>Small fries</span><svg class="tk" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><div id="fl" class="chip"><i class="pick"></i><svg class="ic" viewBox="0 0 24 24"><path d="M5 10h14l-2 11H7z"/><path d="M8 10V4M11 10V3M14 10V4M17 10V6"/></svg><span>Large fries</span><svg class="tk" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
+        <div class="chips" id="cp"><div id="pk" class="chip"><i class="pick"></i><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>Pickup in about 30 min</span><svg class="tk" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
+        <div class="chips" id="cx"><div id="al" class="chip"><i class="pick"></i><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7"/></svg><span id="alq">Allergies or notes?</span><span id="aln">No notes or allergies</span><svg class="tk" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
+
+        <div id="tk">
+          <div class="hd">
+            <div><div class="t1">Order review</div><div class="t2 mono">Read back to the caller</div></div>
+            <div id="st"><div class="s live mono"><i></i>Live</div><div class="s done mono"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Placed</div></div>
+          </div>
+          <div id="rn" class="tr pk"><span class="q mono">◉</span><span class="v">Name · Emily</span></div>
+          <div id="r1" class="tr"><span class="q mono">1 ×</span><span class="v">Original chicken shawarma</span></div>
+          <div id="r2" class="tr"><span class="q mono">1 ×</span><span class="v">Original beef shawarma</span></div>
+          <div id="r3" class="tr"><span class="q mono">1 ×</span><span class="v">Large fries</span></div>
+          <div id="rp" class="tr pk"><span class="q mono">◷</span><span class="v">Pickup · in about 30 minutes</span></div>
+        </div>
 
         <div id="c0" class="cap me"><span class="w">Oh</span> <span class="w">my</span> <span class="w">god,</span></div>
         <div id="c1" class="cap me"><span class="w">that&#x27;s</span> <span class="w">so</span> <span class="w">cool!</span></div>
@@ -125,6 +170,51 @@
         <div id="c37" class="cap ai"><span class="w">Anything</span> <span class="w">else</span> <span class="w">for</span> <span class="w">you?</span></div>
         <div id="c38" class="cap me"><span class="w">Can</span> <span class="w">I</span> <span class="w">get</span> <span class="w">a</span></div>
         <div id="c39" class="cap me"><span class="w">side</span> <span class="w">of</span> <span class="w">fries?</span></div>
+        <div id="c40" class="cap ai"><span class="w">Absolutely!</span></div>
+        <div id="c41" class="cap ai"><span class="w">Would</span> <span class="w">you</span> <span class="w">like</span> <span class="w">a</span></div>
+        <div id="c42" class="cap ai"><span class="w">small</span> <span class="w">or</span> <span class="w">a</span> <span class="w">large</span></div>
+        <div id="c43" class="cap ai"><span class="w">fries?</span></div>
+        <div id="c44" class="cap me"><span class="w">Can</span> <span class="w">I</span> <span class="w">get</span> <span class="w">a</span></div>
+        <div id="c45" class="cap me"><span class="w">large</span> <span class="w">fries?</span></div>
+        <div id="c46" class="cap ai"><span class="w">Perfect!</span></div>
+        <div id="c47" class="cap ai"><span class="w">One</span> <span class="w">large</span> <span class="w">fries.</span></div>
+        <div id="c48" class="cap ai"><span class="w">Anything</span> <span class="w">else</span> <span class="w">for</span> <span class="w">you?</span></div>
+        <div id="c49" class="cap me"><span class="w">No,</span> <span class="w">that</span> <span class="w">would</span> <span class="w">be</span></div>
+        <div id="c50" class="cap me"><span class="w">everything,</span> <span class="w">thank</span> <span class="w">you.</span></div>
+        <div id="c51" class="cap ai"><span class="w">Great!</span></div>
+        <div id="c52" class="cap ai"><span class="w">What</span> <span class="w">time</span> <span class="w">would</span> <span class="w">you</span></div>
+        <div id="c53" class="cap ai"><span class="w">like</span> <span class="w">that</span> <span class="w">ready</span> <span class="w">for</span></div>
+        <div id="c54" class="cap ai"><span class="w">pickup?</span></div>
+        <div id="c55" class="cap me"><span class="w">In</span> <span class="w">about</span> <span class="w">30</span> <span class="w">minutes.</span></div>
+        <div id="c56" class="cap ai"><span class="w">Got</span> <span class="w">it.</span></div>
+        <div id="c57" class="cap ai"><span class="w">Pickup</span> <span class="w">in</span> <span class="w">about</span> <span class="w">30</span></div>
+        <div id="c58" class="cap ai"><span class="w">minutes.</span></div>
+        <div id="c59" class="cap ai"><span class="w">Any</span> <span class="w">special</span> <span class="w">instructions</span> <span class="w">or</span></div>
+        <div id="c60" class="cap ai"><span class="w">allergies</span> <span class="w">we</span> <span class="w">should</span> <span class="w">know</span></div>
+        <div id="c61" class="cap ai"><span class="w">about?</span></div>
+        <div id="c62" class="cap me"><span class="w">No,</span> <span class="w">that</span> <span class="w">is</span> <span class="w">everything.</span></div>
+        <div id="c63" class="cap ai"><span class="w">Alright,</span> <span class="w">Emily,</span></div>
+        <div id="c64" class="cap ai"><span class="w">let</span> <span class="w">me</span> <span class="w">confirm</span> <span class="w">everything.</span></div>
+        <div id="c65" class="cap ai"><span class="w">I&#x27;ve</span> <span class="w">got</span> <span class="w">one</span> <span class="w">original</span></div>
+        <div id="c66" class="cap ai"><span class="w">chicken</span> <span class="w">shawarma,</span></div>
+        <div id="c67" class="cap ai"><span class="w">one</span> <span class="w">original</span> <span class="w">beef</span> <span class="w">shawarma,</span></div>
+        <div id="c68" class="cap ai"><span class="w">and</span> <span class="w">one</span> <span class="w">large</span> <span class="w">fries</span></div>
+        <div id="c69" class="cap ai"><span class="w">for</span> <span class="w">pickup</span> <span class="w">in</span> <span class="w">about</span></div>
+        <div id="c70" class="cap ai"><span class="w">30</span> <span class="w">minutes.</span></div>
+        <div id="c71" class="cap ai"><span class="w">Does</span> <span class="w">everything</span> <span class="w">sound</span> <span class="w">correct?</span></div>
+        <div id="c72" class="cap me"><span class="w">Yes,</span> <span class="w">everything</span> <span class="w">sounds</span> <span class="w">perfect.</span></div>
+        <div id="c73" class="cap ai"><span class="w">Thank</span> <span class="w">you!</span></div>
+        <div id="c74" class="cap me"><span class="w">Oh</span> <span class="w">my</span> <span class="w">god,</span></div>
+        <div id="c75" class="cap me"><span class="w">that&#x27;s</span> <span class="w">so</span> <span class="w">cool!</span></div>
+      </div>
+
+      <!-- end banner (dissolves in from 88.13s, full at 88.83s, ends 92.43s) -->
+      <div id="endc" class="clip" data-start="88.13" data-duration="4.3" style="z-index:30">
+        <div id="eR"><svg class="rm" viewBox="23.15 10.56 50.59 50.44"><g class="lane-g"><path d="M44.590,13.560 L55.240,13.560 A15.500,15.500 0 0 1 58.726,44.163 L67.360,58.000 L61.903,58.000 L50.627,39.930 L55.240,39.930 A10.870,10.870 0 0 0 55.240,18.190 L47.479,18.190 Z" fill="#737373"/></g><g class="slash-g"><path d="M26.150,13.560 L39.260,13.560 L42.973,19.510 L27.579,15.850 Z" fill="#737373"/></g><g class="lane-p"><path d="M47.479,18.190 L55.240,18.190 A10.870,10.870 0 0 1 55.240,39.930 L50.627,39.930 L61.903,58.000 L54.536,58.000 L39.360,33.680 L55.240,33.680 A4.620,4.620 0 0 0 55.240,24.440 L51.379,24.440 Z" fill="#5B4BCE"/></g><g class="slash-p"><path d="M27.579,15.850 L42.973,19.510 L46.049,24.440 L32.939,24.440 Z" fill="#5B4BCE"/></g></svg></div>
+        <div id="eq" class="mono">AI receptionist for restaurants</div>
+        <div id="esee-m"><span id="esee">Never miss<br />a call again.</span></div>
+        <div id="eurl" class="mono">rezflo.ca</div>
+        <div id="ebelow"><span>Fill out the form below</span><b>↓</b></div>
       </div>
 
       <audio id="sfx-hook" src="sfx/switch.wav" data-start="0.12" data-duration="0.14" data-volume="0.25"></audio>
@@ -139,16 +229,32 @@
       <audio id="sfx-okc" src="sfx/tick.wav" data-start="38.56" data-duration="0.09" data-volume="0.22"></audio>
       <audio id="sfx-okb" src="sfx/tick.wav" data-start="40.56" data-duration="0.09" data-volume="0.22"></audio>
       <audio id="sfx-fr" src="sfx/pop.wav" data-start="43.80" data-duration="0.17" data-volume="0.2"></audio>
+      <audio id="sfx-fs" src="sfx/pop.wav" data-start="46.84" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-fl" src="sfx/pop.wav" data-start="47.68" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-flp" src="sfx/tick.wav" data-start="49.36" data-duration="0.09" data-volume="0.3"></audio>
+      <audio id="sfx-pk" src="sfx/pop.wav" data-start="60.12" data-duration="0.17" data-volume="0.2"></audio>
+      <audio id="sfx-pkok" src="sfx/tick.wav" data-start="61.44" data-duration="0.09" data-volume="0.28"></audio>
+      <audio id="sfx-al" src="sfx/pop.wav" data-start="65.98" data-duration="0.17" data-volume="0.18"></audio>
+      <audio id="sfx-alok" src="sfx/tick.wav" data-start="68.02" data-duration="0.09" data-volume="0.28"></audio>
+      <audio id="sfx-tk" src="sfx/pop.wav" data-start="70.50" data-duration="0.17" data-volume="0.22"></audio>
+      <audio id="sfx-rn" src="sfx/tick.wav" data-start="71.16" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-r1" src="sfx/tick.wav" data-start="74.42" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-r2" src="sfx/tick.wav" data-start="76.24" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-r3" src="sfx/tick.wav" data-start="77.98" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-rp" src="sfx/tick.wav" data-start="78.82" data-duration="0.09" data-volume="0.25"></audio>
+      <audio id="sfx-ok" src="sfx/success.wav" data-start="82.44" data-duration="0.6" data-volume="0.3"></audio>
+      <audio id="sfx-fill" src="sfx/fill.wav" data-start="87.93" data-duration="0.5" data-volume="0.2"></audio>
+      <audio id="sfx-end" src="sfx/chime.wav" data-start="88.58" data-duration="0.95" data-volume="0.3"></audio>
     </div>
 
     <script>
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
-      const K = {"name": 11.06, "emily": 13.6, "nameOut": 14.9, "two": 17.98, "twoOut": 23.68, "chicken": 24.22, "beef": 25.94, "each": 35.24, "okChicken": 38.56, "okBeef": 40.56, "optsOut": 41.44, "fries": 43.8, "order": 17.26, "each2": 34.82};
-      const CAPS = [[0, -0.06, 1.1, [0.0, 0.6, 0.82]], [1, 1.1, 2.34, [1.16, 1.42, 1.58]], [2, 2.34, 4.36, [2.4, 3.02, 3.44, 3.58]], [3, 5.82, 6.52, [5.88, 6.14, 6.34, 6.44]], [4, 6.52, 7.02, [6.58]], [5, 7.02, 7.94, [7.08, 7.54, 7.66, 7.8]], [6, 7.94, 8.5, [8.0, 8.1, 8.3, 8.5]], [7, 8.5, 9.52, [8.56, 8.88]], [8, 9.52, 10.52, [9.58]], [9, 10.56, 11.52, [10.62, 11.06, 11.3, 11.44]], [10, 11.52, 12.84, [11.58, 11.74, 11.88, 12.1]], [11, 12.84, 14.36, [12.9, 13.34, 13.44, 13.6]], [12, 14.54, 15.24, [14.6]], [13, 15.24, 16.04, [15.3, 15.74, 15.88, 15.98]], [14, 16.04, 17.2, [16.1, 16.36, 16.58]], [15, 17.2, 18.18, [17.26, 17.7, 17.82, 17.98]], [16, 18.18, 19.26, [18.24, 18.74]], [17, 19.26, 20.02, [19.32]], [18, 20.32, 20.96, [20.38, 20.54, 20.74, 20.86]], [19, 20.96, 21.84, [21.02, 21.36, 21.58, 21.76]], [20, 21.84, 22.72, [21.9, 22.12, 22.4]], [21, 22.72, 24.4, [22.78, 23.22, 23.5, 24.22]], [22, 24.4, 26.18, [24.46, 24.92, 25.34, 25.94]], [23, 26.18, 26.62, [26.24]], [24, 26.62, 28.04, [26.68, 27.36, 27.58, 27.86]], [25, 28.04, 29.38, [28.1, 28.44, 28.8, 29.08]], [26, 29.38, 30.42, [29.44, 29.7, 29.94]], [27, 30.42, 31.58, [30.48, 30.82, 31.04]], [28, 31.58, 32.64, [31.64, 32.16, 32.26, 32.44]], [29, 32.64, 33.62, [32.7, 32.9, 33.14, 33.24]], [30, 33.62, 34.76, [33.68, 33.94, 34.24, 34.38]], [31, 34.76, 35.48, [34.82, 35.08, 35.24, 35.38]], [32, 35.48, 36.24, [35.54]], [33, 36.5, 37.48, [36.56, 37.08, 37.22]], [34, 37.48, 39.24, [37.54, 38.04, 38.56, 38.86]], [35, 39.24, 40.82, [39.3, 39.64, 39.98, 40.56]], [36, 40.82, 41.48, [40.88]], [37, 41.48, 42.84, [41.54, 41.98, 42.26, 42.42]], [38, 42.84, 43.74, [42.9, 43.42, 43.56, 43.68]], [39, 43.74, 45.0, [43.8, 44.12, 44.38]]];
+      const K = {"name": 11.06, "emily": 13.6, "nameOut": 14.9, "two": 17.98, "twoOut": 23.68, "chicken": 24.22, "beef": 25.94, "each": 35.24, "okChicken": 38.56, "okBeef": 40.56, "optsOut": 41.44, "fries": 43.8, "small": 46.84, "large": 47.68, "lgPick": 49.36, "lgOk": 51.52, "sizeOut": 52.3, "pickup": 60.12, "pickOk": 61.44, "pickOut": 63.82, "allergy": 65.98, "noNotes": 68.02, "notesOut": 70.2, "readback": 70.5, "rName": 71.16, "r1": 74.42, "r2": 76.24, "r3": 77.98, "rPick": 78.82, "correct": 81.76, "yes": 82.44, "cool": 86.14, "order": 17.26, "each2": 34.82};
+      const CAPS = [[0, -0.06, 1.1, [0.0, 0.6, 0.82]], [1, 1.1, 2.34, [1.16, 1.42, 1.58]], [2, 2.34, 4.36, [2.4, 3.02, 3.44, 3.58]], [3, 5.82, 6.52, [5.88, 6.14, 6.34, 6.44]], [4, 6.52, 7.02, [6.58]], [5, 7.02, 7.94, [7.08, 7.54, 7.66, 7.8]], [6, 7.94, 8.5, [8.0, 8.1, 8.3, 8.5]], [7, 8.5, 9.52, [8.56, 8.88]], [8, 9.52, 10.52, [9.58]], [9, 10.56, 11.52, [10.62, 11.06, 11.3, 11.44]], [10, 11.52, 12.84, [11.58, 11.74, 11.88, 12.1]], [11, 12.84, 14.36, [12.9, 13.34, 13.44, 13.6]], [12, 14.54, 15.24, [14.6]], [13, 15.24, 16.04, [15.3, 15.74, 15.88, 15.98]], [14, 16.04, 17.2, [16.1, 16.36, 16.58]], [15, 17.2, 18.18, [17.26, 17.7, 17.82, 17.98]], [16, 18.18, 19.26, [18.24, 18.74]], [17, 19.26, 20.02, [19.32]], [18, 20.32, 20.96, [20.38, 20.54, 20.74, 20.86]], [19, 20.96, 21.84, [21.02, 21.36, 21.58, 21.76]], [20, 21.84, 22.72, [21.9, 22.12, 22.4]], [21, 22.72, 24.4, [22.78, 23.22, 23.5, 24.22]], [22, 24.4, 26.18, [24.46, 24.92, 25.34, 25.94]], [23, 26.18, 26.62, [26.24]], [24, 26.62, 28.04, [26.68, 27.36, 27.58, 27.86]], [25, 28.04, 29.38, [28.1, 28.44, 28.8, 29.08]], [26, 29.38, 30.42, [29.44, 29.7, 29.94]], [27, 30.42, 31.58, [30.48, 30.82, 31.04]], [28, 31.58, 32.64, [31.64, 32.16, 32.26, 32.44]], [29, 32.64, 33.62, [32.7, 32.9, 33.14, 33.24]], [30, 33.62, 34.76, [33.68, 33.94, 34.24, 34.38]], [31, 34.76, 35.48, [34.82, 35.08, 35.24, 35.38]], [32, 35.48, 36.24, [35.54]], [33, 36.5, 37.48, [36.56, 37.08, 37.22]], [34, 37.48, 39.24, [37.54, 38.04, 38.56, 38.86]], [35, 39.24, 40.82, [39.3, 39.64, 39.98, 40.56]], [36, 40.82, 41.48, [40.88]], [37, 41.48, 42.84, [41.54, 41.98, 42.26, 42.42]], [38, 42.84, 43.74, [42.9, 43.42, 43.56, 43.68]], [39, 43.74, 45.04, [43.8, 44.12, 44.38]], [40, 45.04, 45.94, [45.1]], [41, 45.94, 46.78, [46.0, 46.5, 46.58, 46.76]], [42, 46.78, 47.88, [46.84, 47.16, 47.52, 47.68]], [43, 47.88, 48.5, [47.94]], [44, 48.5, 49.3, [48.56, 49.08, 49.18, 49.28]], [45, 49.3, 50.24, [49.36, 49.54]], [46, 50.24, 51.04, [50.3]], [47, 51.04, 52.34, [51.1, 51.52, 51.8]], [48, 52.34, 53.76, [52.4, 52.86, 53.14, 53.32]], [49, 53.76, 54.66, [53.82, 54.36, 54.46, 54.58]], [50, 54.66, 55.92, [54.72, 55.14, 55.34]], [51, 55.92, 56.62, [55.98]], [52, 56.62, 57.62, [56.68, 57.14, 57.38, 57.58]], [53, 57.62, 58.38, [57.68, 57.88, 58.0, 58.22]], [54, 58.38, 59.2, [58.44]], [55, 59.28, 61.18, [59.34, 59.94, 60.12, 60.36]], [56, 61.38, 62.2, [61.44, 62.04]], [57, 62.2, 63.52, [62.26, 62.84, 62.98, 63.18]], [58, 63.52, 64.06, [63.58]], [59, 64.06, 65.92, [64.12, 64.68, 64.98, 65.48]], [60, 65.92, 66.98, [65.98, 66.52, 66.76, 66.88]], [61, 66.98, 67.78, [67.04]], [62, 67.96, 70.26, [68.02, 68.68, 68.86, 69.4]], [63, 70.44, 71.52, [70.5, 71.16]], [64, 71.52, 73.08, [71.58, 72.0, 72.14, 72.46]], [65, 73.08, 74.36, [73.14, 73.56, 73.72, 74.02]], [66, 74.36, 75.3, [74.42, 74.74]], [67, 75.3, 77.1, [75.36, 75.76, 76.24, 76.56]], [68, 77.1, 78.5, [77.16, 77.58, 77.98, 78.24]], [69, 78.5, 79.5, [78.56, 78.82, 79.12, 79.36]], [70, 79.5, 80.32, [79.56, 80.0]], [71, 80.32, 82.38, [80.38, 80.64, 81.4, 81.76]], [72, 82.38, 84.54, [82.44, 83.06, 83.44, 83.74]], [73, 84.86, 86.08, [84.92, 85.52]], [74, 86.08, 86.88, [86.14, 86.42, 86.62]], [75, 86.88, 88.36, [86.94, 87.16, 87.36]]];
       const AI = [[2.4, 6.72], [9.58, 12.42], [14.6, 16.74], [20.38, 34.58], [36.56, 42.5], [45.1, 48.2], [50.3, 53.42], [55.98, 58.7], [61.44, 67.28], [70.5, 82.0], [84.92, 85.74]];
       const JUMPS = [14.1, 19.76, 80.41];
-      const VID = 45.0;
+      const VID = 88.83;
       const INTRO = 2.43;
       const AION = { opacity: 1, color: "#c4b9ff", textShadow: "0 0 22px rgba(143,123,255,0.95), 0 0 6px rgba(143,123,255,0.75), 0 4px 20px rgba(11,10,18,0.95)" };
       const MEON = { opacity: 1, color: "#ffffff", textShadow: "0 0 18px rgba(255,255,255,0.5), 0 4px 20px rgba(11,10,18,0.95)" };
@@ -169,6 +275,9 @@
       tl.to("#vw", { scale: 1.08, duration: 2.0, ease: "sine.inOut" }, K.order - 0.3);       // her order
       tl.to("#vw", { scale: 1.13, duration: 1.8, ease: "sine.inOut" }, K.each2 - 0.3);      // "one of each"
       tl.to("#vw", { scale: 1.06, duration: 1.6, ease: "sine.inOut" }, K.fries - 1.2);      // ease back out for the fries
+      tl.to("#vw", { scale: 1.1, duration: 2.2, ease: "sine.inOut" }, K.readback - 0.3);    // read-back
+      tl.to("#vw", { scale: 1.15, duration: 1.8, ease: "sine.inOut" }, K.yes - 0.2);       // "Yes, everything sounds perfect"
+      tl.to("#vw", { scale: 1.2, duration: 2.6, ease: "sine.inOut" }, K.cool - 0.3);       // her reaction
       // soft flash where part of the call was cut out
       JUMPS.forEach((t) => { if (t < VID) tl.fromTo("#flash", { opacity: 0.22 }, { opacity: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, t); });
 
@@ -216,8 +325,56 @@
       glow("#oc", K.okChicken); glow("#ob", K.okBeef);            // AI repeats them back
       chipsOut("#co .chip", K.optsOut);
 
-      // fries
+      // fries: side of fries, then small / large, "large" picked, glows when the AI repeats it
       chipIn("#fr", K.fries);
+      chipsOut("#fr", K.small - 0.35);
+      chipIn("#fs", K.small); chipIn("#fl", K.large);
+      pick("#fl", K.lgPick);
+      tl.to("#fs", { opacity: 0.25, duration: 0.2 }, K.lgPick);
+      glow("#fl", K.lgOk);
+      chipsOut("#cs .chip", K.sizeOut);
+
+      // pickup time
+      chipIn("#pk", K.pickup);
+      pick("#pk", K.pickOk);
+      chipsOut("#pk", K.pickOut);
+
+      // allergies: question chip, answered "No" -> "No notes or allergies" with a tick
+      tl.set("#aln", { display: "none" }, 0);
+      chipIn("#al", K.allergy);
+      tl.set("#alq", { display: "none" }, K.noNotes);
+      tl.set("#aln", { display: "inline" }, K.noNotes);
+      pick("#al", K.noNotes);
+      chipsOut("#al", K.notesOut);
+
+      // order review: ticket drops in on "let me confirm", rows light up as they're read
+      const flash = (sel, t) => tl.fromTo(sel, { color: "#ffffff" }, { color: "#c4b9ff", duration: 0.14, yoyo: true, repeat: 1, immediateRender: false }, t);
+      tl.fromTo("#tk", { opacity: 0, y: -40, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "back.out(1.4)" }, K.readback);
+      [["#rn", K.rName], ["#r1", K.r1], ["#r2", K.r2], ["#r3", K.r3], ["#rp", K.rPick]].forEach(([s, t]) => {
+        tl.fromTo(s, { height: 0, opacity: 0, x: -30 }, { height: 50, duration: 0.28, ease: "power3.out" }, t);
+        tl.to(s, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, t + 0.08);
+        flash(s + " .v", t + 0.05);
+      });
+      tl.fromTo("#tk", { scale: 1 }, { scale: 1.035, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, K.correct);
+      tl.to("#st .live", { opacity: 0, duration: 0.15 }, K.yes);
+      tl.fromTo("#st .done", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.2)" }, K.yes);
+      tl.to("#tk", { borderColor: "#34c759", boxShadow: "0 0 30px rgba(52,199,89,0.55), 0 24px 60px rgba(11,10,18,0.5)", duration: 0.3 }, K.yes);
+
+      if (document.getElementById("endc")) {
+        // end banner: dissolves in over her last moment, then the logo builds
+        const CLIP = 88.83, XF = 0.7, E = CLIP - 0.25;
+        tl.fromTo("#endc", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, CLIP - XF);
+        tl.to("#tk, .cap", { opacity: 0, duration: XF * 0.6, ease: "power2.in" }, CLIP - XF);
+        tl.fromTo("#eR", { scale: 0.6, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.3)" }, E);
+        tl.fromTo("#eR .lane-g", { x: 14, y: -14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, E + 0.06);
+        tl.fromTo("#eR .lane-p", { x: -14, y: 14, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.34, ease: "expo.out" }, E + 0.11);
+        tl.fromTo("#eR .slash-g, #eR .slash-p", { x: -22, opacity: 0 }, { x: 0, opacity: 1, duration: 0.26, ease: "back.out(2)", stagger: 0.05 }, E + 0.3);
+        tl.fromTo("#eq", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, E + 0.35);
+        tl.fromTo("#esee", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "power4.out" }, E + 0.55);
+        tl.fromTo("#eurl", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, E + 0.9);
+        tl.fromTo("#ebelow", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, E + 1.15);
+        tl.fromTo("#ebelow b", { y: -4 }, { y: 8, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }, E + 1.45);
+      }
 
       window.__timelines["main"] = tl;
     </script>
